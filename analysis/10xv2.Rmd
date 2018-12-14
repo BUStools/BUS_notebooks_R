@@ -1,0 +1,242 @@
+---
+title: "Processing kallisto bus Output (10x v2 chemistry)"
+author: "Lambda Moses"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Processing kallisto-bus Output (10x v2 chemistry)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+In this vignette, we process fastq data from scRNA-seq (10x v2 chemistry) to make a sparse matrix that can be used in downstream analysis. In this vignette, we will start that standard downstream analysis with `Seurat`.
+
+## Download data
+The data set we are using here is 1k 1:1 Mixture of Fresh Frozen Human (HEK293T) and Mouse (NIH3T3) Cells from the 10x website. First, we download the fastq files (6.34 GB).
+```{r}
+# Check if the file is already downloaded
+if (!file.exists("./hgmm_1k_fastqs.tar")) {
+  download.file("http://cf.10xgenomics.com/samples/cell-exp/2.1.0/hgmm_1k/hgmm_1k_fastqs.tar", destfile = "./hgmm_1k_fastqs.tar")
+} else cat("The file hgmm_1k_fastqs.tar already exists.")
+```
+
+Then untar this file
+```{bash}
+tar -xvf ./hgmm_1k_fastqs.tar
+```
+
+## Build the kallisto index
+Here we use [kallisto](https://pachterlab.github.io/kallisto/about) (see this link for install instructions) to pseudoalign the reads to the transcriptome and then to create the `bus` file to be converted to a sparse matrix. The first step is to build an index of the transcriptome. This data set has both human and mouse cells, so we need both human and mouse transcriptomes.
+```{r}
+# Download the transcriptomes from Ensembl
+if (!file.exists("./hs_cdna.fa.gz")) {
+  download.file("ftp://ftp.ensembl.org/pub/release-94/fasta/homo_sapiens/cdna/Homo_sapiens.GRCh38.cdna.all.fa.gz", "./hs_cdna.fa.gz")
+} else cat("The file hs_cdna.fa.gz already exists")
+if (!file.exists("./mm_cdna.fa.gz")) {
+  download.file("ftp://ftp.ensembl.org/pub/release-94/fasta/mus_musculus/cdna/Mus_musculus.GRCm38.cdna.all.fa.gz", "./mm_cdna.fa.gz")
+} else cat("The file mm_cdna.fa.gz already exists")
+```
+
+```{bash}
+kallisto version
+```
+Actually, we don't need to unzip the fasta files 
+```{r}
+if (!file.exists("hs_mm_tr_index.idx")) {
+  # Run bash command from R with the system function
+  system("kallisto index -i hs_mm_tr_index.idx hs_cdna.fa.gz mm_cdna.fa.gz")
+} else cat("The index already exists.")
+```
+
+## Run kallisto bus
+Here we will generate the bus file. These are the technologies supported by `kallisto bus`:
+```{bash}
+kallisto bus --list
+```
+
+Here we have 8 samples. Each sample has 3 files: `I1` means sample index, `R1` means barcode and UMI, and `R2` means the piece of cDNA. The `-i` argument specifies the index file we just built. The `-o` argument specifies the output directory. The `-x` argument specifies the sequencing technology used to generate this data set. The `-t` argument specifies the number of threads used. 
+
+```{bash}
+kallisto bus -i hs_mm_tr_index.idx -o out_hgmm1k -x 10xv2 -t8 \
+./fastqs/hgmm_1k_S1_L001_R1_001.fastq.gz ./fastqs/hgmm_1k_S1_L001_R2_001.fastq.gz \
+./fastqs/hgmm_1k_S1_L002_R1_001.fastq.gz ./fastqs/hgmm_1k_S1_L002_R2_001.fastq.gz \
+./fastqs/hgmm_1k_S1_L003_R1_001.fastq.gz ./fastqs/hgmm_1k_S1_L003_R2_001.fastq.gz \
+./fastqs/hgmm_1k_S1_L004_R1_001.fastq.gz ./fastqs/hgmm_1k_S1_L004_R2_001.fastq.gz \
+./fastqs/hgmm_1k_S1_L005_R1_001.fastq.gz ./fastqs/hgmm_1k_S1_L005_R2_001.fastq.gz \
+./fastqs/hgmm_1k_S1_L006_R1_001.fastq.gz ./fastqs/hgmm_1k_S1_L006_R2_001.fastq.gz \
+./fastqs/hgmm_1k_S1_L007_R1_001.fastq.gz ./fastqs/hgmm_1k_S1_L007_R2_001.fastq.gz \
+./fastqs/hgmm_1k_S1_L008_R1_001.fastq.gz ./fastqs/hgmm_1k_S1_L008_R2_001.fastq.gz
+```
+
+See what are the outputs
+```{r}
+list.files("./out_hgmm1k/")
+```
+
+## Running `BUStools`
+The `output.bus` file is a binary. In order to make R parse it, we need to convert it into a sorted text file. There's a command line tool [`bustools`](https://github.com/BUStools/bustools) for this.
+
+```{bash}
+# Add where I installed bustools to PATH
+export PATH=$PATH:/home/lambda/mylibs/bin/
+# Sort
+bustools sort -o ./out_hgmm1k/output.sorted -t8 ./out_hgmm1k/output.bus
+# Convert sorted file to text
+bustools text -o ./out_hgmm1k/output.sorted.txt ./out_hgmm1k/output.sorted
+```
+
+## Mapping transcripts to genes
+For the sparse matrix, we are interested in how many UMIs per gene per cell, rather than per transcript. Remember in the output of `kallisto bus`, there's the file `transcripts.txt`. Those are the transcripts in the transcriptome index. Now we'll only keep the transcripts present there and make sure that the transcripts in `tr2g` are in the same order as those in the index. This function might be a bit slow; what's slow is the biomart query, not processsing data frames. 
+
+Note that the function `transcript2gene` only works for organisms that have gene and transcript IDs in Ensembl, since behind the scene, it's using biomart to query Ensembl.
+```{r}
+tr2g <- transcript2gene(c("Homo sapiens", "Mus musculus"),
+                        kallisto_out_path = "./out_hgmm1k")
+```
+
+## Mapping ECs to genes
+The 3rd column in the `output.sorted.txt` is the equivalence class index of each UMI for each cell barcode. Equivalence class (EC) means the set of transcripts in the transcriptome that the read is compatible to. While in most cases, an EC only has transcripts for the same gene, there are some ECs that have transcripts for different genes. The file in the `kallisto bus` output, `matrix.ec`, maps the EC index in `output.sorted.txt` to sets of line numbers in the transcriptome assembly. That's why we ensured that the `tr2g` data frame has the same order as the transcripts in the index.
+```{r}
+genes <- EC2gene(tr2g, ncores = 10)
+```
+
+Now for each EC, we have a set of genes the EC is compatible to.
+
+## Making the sparse matrix
+For 10x, we do have a file with all valid cell barcodes that comes with CellRanger.
+```{bash}
+# Copy v2 chemistry whitelist to working directory
+cp /home/lambda/cellranger-3.0.1/cellranger-cs/3.0.1/lib/python/cellranger/barcodes/737K-august-2016.txt \
+./whitelist_v2.txt
+```
+
+```{r}
+# Read in the whitelist
+whitelist_v2 <- fread("./whitelist_v2.txt", header = FALSE)$V1
+```
+
+Now we have everything we need to make the sparse matrix. This function reads in `output.sorted.txt` line by line and processes them. It does not do barcode correction for now, so the barcode must exactly match those in the whitelist if one is provided. It took 5 to 6 minutes to construct the sparse matrix in the hgmm6k dataset, which has over 280 million lines in `output.sorted.txt`, which is over 9GB. Here the data set is smaller, so it's not taking as long.
+```{r}
+res_mat <- make_sparse_matrix("./out_hgmm1k/output.sorted.txt",
+                              genes = genes, est_ncells = 1500,
+                              est_ngenes = nrow(tr2g),
+                              whitelist = whitelist_v2)
+```
+
+## Explore the data
+```{r}
+library(Seurat)
+library(tidyverse)
+library(parallel)
+```
+
+### Filter data
+Cool, so now we have the sparse matrix. What does it look like?
+```{r}
+dim(res_mat)
+```
+
+That's way more cells than we expect, which is about 1000. So what's going on?
+
+How many UMIs per barcode?
+```{r}
+tot_counts <- colSums(res_mat)
+summary(tot_counts)
+```
+
+The vast majority of "cells" have only a few UMI detected. Thoses are likely to be spurious. In Seurat's vignettes, a low cutoff is usually set to the total number of UMIs in a cell, and that depends on the sequencing depth.
+
+```{r}
+bcs_use <- tot_counts > 500
+tot_counts_filtered <- tot_counts[bcs_use]
+hist(tot_counts_filtered, breaks = 100, main = "Histogram of nUMI")
+```
+
+```{r}
+# Filter the matrix
+res_mat <- res_mat[,bcs_use]
+dim(res_mat)
+```
+Now this is a more reasonable number of cells.
+
+### Cell species
+How many cells are from humans and how many from mice? The number of cells with mixed species indicates doublet rate.
+```{r}
+gene_species <- ifelse(str_detect(rownames(res_mat), "^ENSMUSG"), "mouse", "human")
+mouse_inds <- gene_species == "mouse"
+human_inds <- gene_species == "human"
+# mark cells as mouse or human
+cell_species <- tibble(n_mouse_umi = Matrix::colSums(res_mat[mouse_inds,]),
+                       n_human_umi = Matrix::colSums(res_mat[human_inds,]),
+                       tot_umi = Matrix::colSums(res_mat),
+                       prop_mouse = n_mouse_umi / tot_umi,
+                       prop_human = n_human_umi / tot_umi)
+```
+
+```{r}
+# Classify species based on proportion of UMI
+cell_species <- cell_species %>% 
+  mutate(species = case_when(
+    prop_mouse > 0.9 ~ "mouse",
+    prop_human > 0.9 ~ "human",
+    TRUE ~ "mixed"
+  ))
+```
+
+```{r}
+ggplot(cell_species, aes(n_human_umi, n_mouse_umi, color = species)) +
+  geom_point(size = 0.5) +
+  theme_bw()
+```
+
+Great, looks like the vast majority of cells are not mixed.
+```{r}
+cell_species %>% 
+  count(species) %>% 
+  mutate(proportion = n / ncol(res_mat))
+```
+Great, only about 0.4% of cells here are doublets, which is lower than the ~1% 10x lists. However, doublets can still be formed with cells from the same species.
+
+### Seurat exploration
+```{r}
+seu <- CreateSeuratObject(res_mat, min.cells = 3) %>% 
+  NormalizeData() %>% 
+  ScaleData() %>% 
+  FindVariableFeatures()
+```
+
+```{r}
+# Add species to meta data
+seu <- AddMetaData(seu, metadata = cell_species$species, col.name = "species")
+```
+
+```{r}
+VlnPlot(seu, c("nCount_RNA", "nFeature_RNA"), group.by = "species")
+```
+
+```{r}
+seu <- RunPCA(seu, verbose = FALSE, npcs = 30)
+ElbowPlot(seu, ndims = 30)
+```
+
+```{r}
+DimPlot(seu, reduction = "pca", pt.size = 0.5, group.by = "species")
+```
+
+The first PC separates species, as expected.
+```{r}
+seu <- RunTSNE(seu, dims = 1:20, check_duplicates = FALSE)
+DimPlot(seu, reduction = "tsne", pt.size = 0.5, group.by = "species")
+```
+
+The species separate, as expected.
+```{r}
+sessionInfo()
+```
