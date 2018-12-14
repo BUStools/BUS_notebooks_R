@@ -1,6 +1,6 @@
 .Rproj.user
 .Rhistory
-.RData
+*.RData
 .Ruserdata
 .fastq
 *.Rproj
@@ -12,3 +12,5 @@
 *.sorted
 *.tar
 *.json
+*.rdb
+*.rdx
