@@ -19,19 +19,19 @@ In this vignette, we process fastq data from scRNA-seq (10x v2 chemistry) to mak
 
 ## Download data
 The data set we are using here is 1k 1:1 Mixture of Fresh Frozen Human (HEK293T) and Mouse (NIH3T3) Cells from the 10x website. First, we download the fastq files (6.34 GB).
-```{r, eval=FALSE}
+```{r, cache=TRUE}
 download.file("http://cf.10xgenomics.com/samples/cell-exp/2.1.0/hgmm_1k/hgmm_1k_fastqs.tar", destfile = "./data/hgmm_1k_fastqs.tar", quiet = TRUE)
 ```
 
 Then untar this file
-```{bash, eval=FALSE}
+```{bash, cache=TRUE}
 cd ./data
 tar -xvf ./hgmm_1k_fastqs.tar
 ```
 
 ## Build the kallisto index
 Here we use [kallisto](https://pachterlab.github.io/kallisto/about) (see this link for install instructions) to pseudoalign the reads to the transcriptome and then to create the `bus` file to be converted to a sparse matrix. The first step is to build an index of the transcriptome. This data set has both human and mouse cells, so we need both human and mouse transcriptomes.
-```{r, eval=FALSE}
+```{r, cache=TRUE}
 # Human transcriptome
 download.file("ftp://ftp.ensembl.org/pub/release-94/fasta/homo_sapiens/cdna/Homo_sapiens.GRCh38.cdna.all.fa.gz", "./data/hs_cdna.fa.gz", quiet = TRUE)
 # Mouse transcriptome
@@ -42,19 +42,19 @@ download.file("ftp://ftp.ensembl.org/pub/release-94/fasta/mus_musculus/cdna/Mus_
 kallisto version
 ```
 Actually, we don't need to unzip the fasta files 
-```{bash, eval=FALSE}
+```{bash, cache=TRUE}
 kallisto index -i ./output/hs_mm_tr_index.idx ./data/hs_cdna.fa.gz ./data/mm_cdna.fa.gz
 ```
 
 ## Run kallisto bus
 Here we will generate the bus file. These are the technologies supported by `kallisto bus`:
 ```{r}
-system("kallisto bus --list")
+system("kallisto bus --list", intern = TRUE)
 ```
 
 Here we have 8 samples. Each sample has 3 files: `I1` means sample index, `R1` means barcode and UMI, and `R2` means the piece of cDNA. The `-i` argument specifies the index file we just built. The `-o` argument specifies the output directory. The `-x` argument specifies the sequencing technology used to generate this data set. The `-t` argument specifies the number of threads used. 
 
-```{bash, eval=FALSE}
+```{bash, cache=TRUE}
 cd ./data
 kallisto bus -i ../output/hs_mm_tr_index.idx -o ../output/out_hgmm1k -x 10xv2 -t8 \
 ./fastqs/hgmm_1k_S1_L001_R1_001.fastq.gz ./fastqs/hgmm_1k_S1_L001_R2_001.fastq.gz \
@@ -75,7 +75,7 @@ list.files("./output/out_hgmm1k/")
 ## Running `BUStools`
 The `output.bus` file is a binary. In order to make R parse it, we need to convert it into a sorted text file. There's a command line tool [`bustools`](https://github.com/BUStools/bustools) for this.
 
-```{bash, eval=FALSE}
+```{bash, cache=TRUE}
 # Add where I installed bustools to PATH
 export PATH=$PATH:/home/lambda/mylibs/bin/
 # Sort
@@ -131,7 +131,7 @@ res_mat <- make_sparse_matrix("./output/out_hgmm1k/output.sorted.txt",
 ```
 
 ## Explore the data
-```{r}
+```{r, message=FALSE}
 library(Seurat)
 library(tidyverse)
 library(parallel)
@@ -238,6 +238,3 @@ DimPlot(seu, reduction = "tsne", pt.size = 0.5, group.by = "species")
 ```
 
 The species separate, as expected.
-```{r}
-sessionInfo()
-```
