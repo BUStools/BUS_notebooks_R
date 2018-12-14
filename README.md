@@ -4,5 +4,5 @@ This repository has example notebooks that demonstrate how to go from fastq file
 
 These are the notebooks:
 
-1. [10x v2 chemistry - 1k 1:1 Mixture of Fresh Frozen Human (HEK293T) and Mouse (NIH3T3) Cells](https://github.com/lambdamoses/BUStoolsR_notebooks/blob/master/analysis/10xv2.Rmd)
+1. [10x v2 chemistry - 1k 1:1 Mixture of Fresh Frozen Human (HEK293T) and Mouse (NIH3T3) Cells](https://lambdamoses.github.io/BUStoolsR_notebooks/10xv2.html)
 2. 10x v3 chemistry - 1k 1:1 Mixture of Fresh Frozen Human (HEK293T) and Mouse (NIH3T3) Cells (coming soon)
