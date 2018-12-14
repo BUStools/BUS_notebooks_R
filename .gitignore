@@ -14,3 +14,4 @@
 *.json
 *.rdb
 *.rdx
+analysis/*_cache/
