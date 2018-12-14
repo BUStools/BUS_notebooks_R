@@ -86,7 +86,7 @@ bustools text -o ./output/out_hgmm1k/output.sorted.txt ./output/out_hgmm1k/outpu
 
 ## Mapping transcripts to genes
 ```{r}
-library(BUStoolsR)
+library(BUSpaRse)
 ```
 
 For the sparse matrix, we are interested in how many UMIs per gene per cell, rather than per transcript. Remember in the output of `kallisto bus`, there's the file `transcripts.txt`. Those are the transcripts in the transcriptome index. Now we'll only keep the transcripts present there and make sure that the transcripts in `tr2g` are in the same order as those in the index. This function might be a bit slow; what's slow is the biomart query, not processing data frames. 
