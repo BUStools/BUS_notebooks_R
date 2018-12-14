@@ -444,7 +444,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/lambdamoses/BUStoolsR_notebooks/tree/1fc3e91f1f693eef956c8117a016e06851a470f8" target="_blank">1fc3e91</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/lambdamoses/BUStoolsR_notebooks/tree/fd3d5ae03b7336d210a1e59af3b2b99f20a6c787" target="_blank">fd3d5ae</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -485,6 +485,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/lambdamoses/BUStoolsR_notebooks/blob/fd3d5ae03b7336d210a1e59af3b2b99f20a6c787/analysis/10xv2.Rmd" target="_blank">fd3d5ae</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2018-12-14
+</td>
+<td style="text-align:left;">
+Don’t collapse output
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/lambdamoses/BUStoolsR_notebooks/2da3b350a1686dc06961608b49e193f1995d74fa/docs/10xv2.html" target="_blank">2da3b35</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2018-12-14
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -540,8 +574,8 @@ tar -xvf ./hgmm_1k_fastqs.tar</code></pre>
 download.file(&quot;ftp://ftp.ensembl.org/pub/release-94/fasta/homo_sapiens/cdna/Homo_sapiens.GRCh38.cdna.all.fa.gz&quot;, &quot;./data/hs_cdna.fa.gz&quot;, quiet = TRUE)
 # Mouse transcriptome
 download.file(&quot;ftp://ftp.ensembl.org/pub/release-94/fasta/mus_musculus/cdna/Mus_musculus.GRCm38.cdna.all.fa.gz&quot;, &quot;./data/mm_cdna.fa.gz&quot;, quiet = TRUE)</code></pre>
-<pre class="bash"><code>kallisto version
-#&gt; kallisto, version 0.45.0</code></pre>
+<pre class="bash"><code>kallisto version</code></pre>
+<pre><code>#&gt; kallisto, version 0.45.0</code></pre>
 <p>Actually, we don’t need to unzip the fasta files</p>
 <pre class="bash"><code>kallisto index -i ./output/hs_mm_tr_index.idx ./data/hs_cdna.fa.gz ./data/mm_cdna.fa.gz</code></pre>
 </div>
@@ -561,8 +595,8 @@ kallisto bus -i ../output/hs_mm_tr_index.idx -o ../output/out_hgmm1k -x 10xv2 -t
 ./fastqs/hgmm_1k_S1_L007_R1_001.fastq.gz ./fastqs/hgmm_1k_S1_L007_R2_001.fastq.gz \
 ./fastqs/hgmm_1k_S1_L008_R1_001.fastq.gz ./fastqs/hgmm_1k_S1_L008_R2_001.fastq.gz</code></pre>
 <p>See what are the outputs</p>
-<pre class="r"><code>list.files(&quot;./output/out_hgmm1k/&quot;)
-#&gt; [1] &quot;matrix.ec&quot;         &quot;output.bus&quot;        &quot;output.sorted&quot;    
+<pre class="r"><code>list.files(&quot;./output/out_hgmm1k/&quot;)</code></pre>
+<pre><code>#&gt; [1] &quot;matrix.ec&quot;         &quot;output.bus&quot;        &quot;output.sorted&quot;    
 #&gt; [4] &quot;output.sorted.txt&quot; &quot;run_info.json&quot;     &quot;transcripts.txt&quot;</code></pre>
 </div>
 <div id="running-bustools" class="section level2">
@@ -602,8 +636,8 @@ whitelist_v2 &lt;- fread(&quot;./data/whitelist_v2.txt&quot;, header = FALSE)$V1
 <pre class="r"><code>res_mat &lt;- make_sparse_matrix(&quot;./output/out_hgmm1k/output.sorted.txt&quot;,
                               genes = genes, est_ncells = 1500,
                               est_ngenes = nrow(tr2g),
-                              whitelist = whitelist_v2)
-#&gt; Reading data
+                              whitelist = whitelist_v2)</code></pre>
+<pre><code>#&gt; Reading data
 #&gt; Read 5 million lines
 #&gt; Read 10 million lines
 #&gt; Read 15 million lines
@@ -617,46 +651,76 @@ whitelist_v2 &lt;- fread(&quot;./data/whitelist_v2.txt&quot;, header = FALSE)$V1
 <div id="explore-the-data" class="section level2">
 <h2>Explore the data</h2>
 <pre class="r"><code>library(Seurat)
-library(tidyverse)
-#&gt; ── Attaching packages ────────────────────────────────────────────── tidyverse 1.2.1 ──
-#&gt; ✔ ggplot2 3.1.0     ✔ purrr   0.2.5
+library(tidyverse)</code></pre>
+<pre><code>#&gt; ── Attaching packages ────────────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>#&gt; ✔ ggplot2 3.1.0     ✔ purrr   0.2.5
 #&gt; ✔ tibble  1.4.2     ✔ dplyr   0.7.8
 #&gt; ✔ tidyr   0.8.2     ✔ stringr 1.3.1
-#&gt; ✔ readr   1.3.0     ✔ forcats 0.3.0
-#&gt; ── Conflicts ───────────────────────────────────────────────── tidyverse_conflicts() ──
+#&gt; ✔ readr   1.3.0     ✔ forcats 0.3.0</code></pre>
+<pre><code>#&gt; ── Conflicts ───────────────────────────────────────────────── tidyverse_conflicts() ──
 #&gt; ✖ dplyr::between()   masks data.table::between()
 #&gt; ✖ dplyr::filter()    masks stats::filter()
 #&gt; ✖ dplyr::first()     masks data.table::first()
 #&gt; ✖ dplyr::lag()       masks stats::lag()
 #&gt; ✖ dplyr::last()      masks data.table::last()
-#&gt; ✖ purrr::transpose() masks data.table::transpose()
-library(parallel)
-library(Matrix)
-#&gt; 
-#&gt; Attaching package: &#39;Matrix&#39;
-#&gt; The following object is masked from &#39;package:tidyr&#39;:
+#&gt; ✖ purrr::transpose() masks data.table::transpose()</code></pre>
+<pre class="r"><code>library(parallel)
+library(Matrix)</code></pre>
+<pre><code>#&gt; 
+#&gt; Attaching package: &#39;Matrix&#39;</code></pre>
+<pre><code>#&gt; The following object is masked from &#39;package:tidyr&#39;:
 #&gt; 
 #&gt;     expand</code></pre>
 <div id="filter-data" class="section level3">
 <h3>Filter data</h3>
 <p>Cool, so now we have the sparse matrix. What does it look like?</p>
-<pre class="r"><code>dim(res_mat)
-#&gt; [1]  51306 353957</code></pre>
+<pre class="r"><code>dim(res_mat)</code></pre>
+<pre><code>#&gt; [1]  51306 353957</code></pre>
 <p>That’s way more cells than we expect, which is about 1000. So what’s going on?</p>
 <p>How many UMIs per barcode?</p>
 <pre class="r"><code>tot_counts &lt;- colSums(res_mat)
-summary(tot_counts)
-#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+summary(tot_counts)</code></pre>
+<pre><code>#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 #&gt;     1.0     1.0     2.0   101.8    11.0 92910.0</code></pre>
 <p>The vast majority of “cells” have only a few UMI detected. Those are likely to be spurious. In Seurat’s vignettes, a low cutoff is usually set to the total number of UMIs in a cell, and that depends on the sequencing depth.</p>
 <pre class="r"><code>bcs_use &lt;- tot_counts &gt; 500
 tot_counts_filtered &lt;- tot_counts[bcs_use]
 hist(tot_counts_filtered, breaks = 100, main = &quot;Histogram of nUMI&quot;)</code></pre>
 <p><img src="figure/10xv2.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-20-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lambdamoses/BUStoolsR_notebooks/blob/2da3b350a1686dc06961608b49e193f1995d74fa/docs/figure/10xv2.Rmd/unnamed-chunk-20-1.png" target="_blank">2da3b35</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2018-12-14
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code># Filter the matrix
 res_mat &lt;- res_mat[,bcs_use]
-dim(res_mat)
-#&gt; [1] 51306  1176</code></pre>
+dim(res_mat)</code></pre>
+<pre><code>#&gt; [1] 51306  1176</code></pre>
 <p>Now this is a more reasonable number of cells.</p>
 </div>
 <div id="cell-species" class="section level3">
@@ -682,11 +746,41 @@ cell_species &lt;- cell_species %&gt;%
   geom_point(size = 0.5) +
   theme_bw()</code></pre>
 <p><img src="figure/10xv2.Rmd/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-24-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lambdamoses/BUStoolsR_notebooks/blob/2da3b350a1686dc06961608b49e193f1995d74fa/docs/figure/10xv2.Rmd/unnamed-chunk-24-1.png" target="_blank">2da3b35</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2018-12-14
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>Great, looks like the vast majority of cells are not mixed.</p>
 <pre class="r"><code>cell_species %&gt;% 
   count(species) %&gt;% 
-  mutate(proportion = n / ncol(res_mat))
-#&gt; # A tibble: 3 x 3
+  mutate(proportion = n / ncol(res_mat))</code></pre>
+<pre><code>#&gt; # A tibble: 3 x 3
 #&gt;   species     n proportion
 #&gt;   &lt;chr&gt;   &lt;int&gt;      &lt;dbl&gt;
 #&gt; 1 human     603    0.513  
@@ -704,18 +798,138 @@ cell_species &lt;- cell_species %&gt;%
 seu &lt;- AddMetaData(seu, metadata = cell_species$species, col.name = &quot;species&quot;)</code></pre>
 <pre class="r"><code>VlnPlot(seu, c(&quot;nCount_RNA&quot;, &quot;nFeature_RNA&quot;), group.by = &quot;species&quot;)</code></pre>
 <p><img src="figure/10xv2.Rmd/unnamed-chunk-28-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-28-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lambdamoses/BUStoolsR_notebooks/blob/2da3b350a1686dc06961608b49e193f1995d74fa/docs/figure/10xv2.Rmd/unnamed-chunk-28-1.png" target="_blank">2da3b35</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2018-12-14
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>seu &lt;- RunPCA(seu, verbose = FALSE, npcs = 30)
 ElbowPlot(seu, ndims = 30)</code></pre>
 <p><img src="figure/10xv2.Rmd/unnamed-chunk-29-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-29-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lambdamoses/BUStoolsR_notebooks/blob/2da3b350a1686dc06961608b49e193f1995d74fa/docs/figure/10xv2.Rmd/unnamed-chunk-29-1.png" target="_blank">2da3b35</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2018-12-14
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>DimPlot(seu, reduction = &quot;pca&quot;, pt.size = 0.5, group.by = &quot;species&quot;)</code></pre>
 <p><img src="figure/10xv2.Rmd/unnamed-chunk-30-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-30-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lambdamoses/BUStoolsR_notebooks/blob/2da3b350a1686dc06961608b49e193f1995d74fa/docs/figure/10xv2.Rmd/unnamed-chunk-30-1.png" target="_blank">2da3b35</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2018-12-14
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>The first PC separates species, as expected.</p>
 <pre class="r"><code>seu &lt;- RunTSNE(seu, dims = 1:20, check_duplicates = FALSE)
 DimPlot(seu, reduction = &quot;tsne&quot;, pt.size = 0.5, group.by = &quot;species&quot;)</code></pre>
 <p><img src="figure/10xv2.Rmd/unnamed-chunk-31-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-31-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lambdamoses/BUStoolsR_notebooks/blob/2da3b350a1686dc06961608b49e193f1995d74fa/docs/figure/10xv2.Rmd/unnamed-chunk-31-1.png" target="_blank">2da3b35</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2018-12-14
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>The species separate, as expected.</p>
-<pre class="r"><code>sessionInfo()
-#&gt; R version 3.5.1 (2018-07-02)
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>#&gt; R version 3.5.1 (2018-07-02)
 #&gt; Platform: x86_64-redhat-linux-gnu (64-bit)
 #&gt; Running under: CentOS Linux 7 (Core)
 #&gt; 
@@ -786,8 +1000,8 @@ DimPlot(seu, reduction = &quot;tsne&quot;, pt.size = 0.5, group.by = &quot;speci
 </div>
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
-<pre class="r"><code>sessionInfo()
-#&gt; R version 3.5.1 (2018-07-02)
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>#&gt; R version 3.5.1 (2018-07-02)
 #&gt; Platform: x86_64-redhat-linux-gnu (64-bit)
 #&gt; Running under: CentOS Linux 7 (Core)
 #&gt; 
