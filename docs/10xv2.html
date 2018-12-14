@@ -444,7 +444,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/lambdamoses/BUStoolsR_notebooks/tree/fd3d5ae03b7336d210a1e59af3b2b99f20a6c787" target="_blank">fd3d5ae</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/lambdamoses/BUStoolsR_notebooks/tree/d288e19e9b36268288537c66f056598990d32062" target="_blank">d288e19</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -485,6 +485,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/lambdamoses/BUStoolsR_notebooks/blob/d288e19e9b36268288537c66f056598990d32062/analysis/10xv2.Rmd" target="_blank">d288e19</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2018-12-14
+</td>
+<td style="text-align:left;">
+Cache rather than skip evaluation
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/lambdamoses/BUStoolsR_notebooks/30c9aa31c60fd01ec97934196bdcaad38e1f920e/docs/10xv2.html" target="_blank">30c9aa3</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2018-12-14
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -566,6 +600,31 @@ Initial commit, already with 10xv2 notebook
 <p>Then untar this file</p>
 <pre class="bash"><code>cd ./data
 tar -xvf ./hgmm_1k_fastqs.tar</code></pre>
+<pre><code>#&gt; fastqs/
+#&gt; fastqs/hgmm_1k_S1_L001_I1_001.fastq.gz
+#&gt; fastqs/hgmm_1k_S1_L001_R1_001.fastq.gz
+#&gt; fastqs/hgmm_1k_S1_L001_R2_001.fastq.gz
+#&gt; fastqs/hgmm_1k_S1_L002_I1_001.fastq.gz
+#&gt; fastqs/hgmm_1k_S1_L002_R1_001.fastq.gz
+#&gt; fastqs/hgmm_1k_S1_L002_R2_001.fastq.gz
+#&gt; fastqs/hgmm_1k_S1_L003_I1_001.fastq.gz
+#&gt; fastqs/hgmm_1k_S1_L003_R1_001.fastq.gz
+#&gt; fastqs/hgmm_1k_S1_L003_R2_001.fastq.gz
+#&gt; fastqs/hgmm_1k_S1_L004_I1_001.fastq.gz
+#&gt; fastqs/hgmm_1k_S1_L004_R1_001.fastq.gz
+#&gt; fastqs/hgmm_1k_S1_L004_R2_001.fastq.gz
+#&gt; fastqs/hgmm_1k_S1_L005_I1_001.fastq.gz
+#&gt; fastqs/hgmm_1k_S1_L005_R1_001.fastq.gz
+#&gt; fastqs/hgmm_1k_S1_L005_R2_001.fastq.gz
+#&gt; fastqs/hgmm_1k_S1_L006_I1_001.fastq.gz
+#&gt; fastqs/hgmm_1k_S1_L006_R1_001.fastq.gz
+#&gt; fastqs/hgmm_1k_S1_L006_R2_001.fastq.gz
+#&gt; fastqs/hgmm_1k_S1_L007_I1_001.fastq.gz
+#&gt; fastqs/hgmm_1k_S1_L007_R1_001.fastq.gz
+#&gt; fastqs/hgmm_1k_S1_L007_R2_001.fastq.gz
+#&gt; fastqs/hgmm_1k_S1_L008_I1_001.fastq.gz
+#&gt; fastqs/hgmm_1k_S1_L008_R1_001.fastq.gz
+#&gt; fastqs/hgmm_1k_S1_L008_R2_001.fastq.gz</code></pre>
 </div>
 <div id="build-the-kallisto-index" class="section level2">
 <h2>Build the kallisto index</h2>
@@ -578,11 +637,39 @@ download.file(&quot;ftp://ftp.ensembl.org/pub/release-94/fasta/mus_musculus/cdna
 <pre><code>#&gt; kallisto, version 0.45.0</code></pre>
 <p>Actually, we don’t need to unzip the fasta files</p>
 <pre class="bash"><code>kallisto index -i ./output/hs_mm_tr_index.idx ./data/hs_cdna.fa.gz ./data/mm_cdna.fa.gz</code></pre>
+<pre><code>#&gt; 
+#&gt; [build] loading fasta file ./data/hs_cdna.fa.gz
+#&gt; [build] loading fasta file ./data/mm_cdna.fa.gz
+#&gt; [build] k-mer length: 31
+#&gt; [build] warning: clipped off poly-A tail (longer than 10)
+#&gt;         from 2071 target sequences
+#&gt; [build] warning: replaced 8 non-ACGUT characters in the input sequence
+#&gt;         with pseudorandom nucleotides
+#&gt; [build] counting k-mers ... done.
+#&gt; [build] building target de Bruijn graph ...  done 
+#&gt; [build] creating equivalence classes ...  done
+#&gt; [build] target de Bruijn graph has 2138563 contigs and contains 206125466 k-mers</code></pre>
 </div>
 <div id="run-kallisto-bus" class="section level2">
 <h2>Run kallisto bus</h2>
 <p>Here we will generate the bus file. These are the technologies supported by <code>kallisto bus</code>:</p>
-<pre class="r"><code>system(&quot;kallisto bus --list&quot;)</code></pre>
+<pre class="r"><code>system(&quot;kallisto bus --list&quot;, intern = TRUE)</code></pre>
+<pre><code>#&gt; Warning in system(&quot;kallisto bus --list&quot;, intern = TRUE): running command
+#&gt; &#39;kallisto bus --list&#39; had status 1</code></pre>
+<pre><code>#&gt;  [1] &quot;List of supported single cell technologies&quot;
+#&gt;  [2] &quot;&quot;                                          
+#&gt;  [3] &quot;short name       description&quot;              
+#&gt;  [4] &quot;----------       -----------&quot;              
+#&gt;  [5] &quot;10Xv1            10X chemistry version 1&quot;  
+#&gt;  [6] &quot;10Xv2            10X chemistry verison 2&quot;  
+#&gt;  [7] &quot;DropSeq          DropSeq&quot;                  
+#&gt;  [8] &quot;inDrop           inDrop&quot;                   
+#&gt;  [9] &quot;CELSeq           CEL-Seq&quot;                  
+#&gt; [10] &quot;CELSeq2          CEL-Seq version 2&quot;        
+#&gt; [11] &quot;SCRBSeq          SCRB-Seq&quot;                 
+#&gt; [12] &quot;&quot;                                          
+#&gt; attr(,&quot;status&quot;)
+#&gt; [1] 1</code></pre>
 <p>Here we have 8 samples. Each sample has 3 files: <code>I1</code> means sample index, <code>R1</code> means barcode and UMI, and <code>R2</code> means the piece of cDNA. The <code>-i</code> argument specifies the index file we just built. The <code>-o</code> argument specifies the output directory. The <code>-x</code> argument specifies the sequencing technology used to generate this data set. The <code>-t</code> argument specifies the number of threads used.</p>
 <pre class="bash"><code>cd ./data
 kallisto bus -i ../output/hs_mm_tr_index.idx -o ../output/out_hgmm1k -x 10xv2 -t8 \
@@ -594,6 +681,29 @@ kallisto bus -i ../output/hs_mm_tr_index.idx -o ../output/out_hgmm1k -x 10xv2 -t
 ./fastqs/hgmm_1k_S1_L006_R1_001.fastq.gz ./fastqs/hgmm_1k_S1_L006_R2_001.fastq.gz \
 ./fastqs/hgmm_1k_S1_L007_R1_001.fastq.gz ./fastqs/hgmm_1k_S1_L007_R2_001.fastq.gz \
 ./fastqs/hgmm_1k_S1_L008_R1_001.fastq.gz ./fastqs/hgmm_1k_S1_L008_R2_001.fastq.gz</code></pre>
+<pre><code>#&gt; 
+#&gt; [index] k-mer length: 31
+#&gt; [index] number of targets: 302,896
+#&gt; [index] number of k-mers: 206,125,466
+#&gt; [index] number of equivalence classes: 1,252,306
+#&gt; [quant] will process sample 1: ./fastqs/hgmm_1k_S1_L001_R1_001.fastq.gz
+#&gt;                                ./fastqs/hgmm_1k_S1_L001_R2_001.fastq.gz
+#&gt; [quant] will process sample 2: ./fastqs/hgmm_1k_S1_L002_R1_001.fastq.gz
+#&gt;                                ./fastqs/hgmm_1k_S1_L002_R2_001.fastq.gz
+#&gt; [quant] will process sample 3: ./fastqs/hgmm_1k_S1_L003_R1_001.fastq.gz
+#&gt;                                ./fastqs/hgmm_1k_S1_L003_R2_001.fastq.gz
+#&gt; [quant] will process sample 4: ./fastqs/hgmm_1k_S1_L004_R1_001.fastq.gz
+#&gt;                                ./fastqs/hgmm_1k_S1_L004_R2_001.fastq.gz
+#&gt; [quant] will process sample 5: ./fastqs/hgmm_1k_S1_L005_R1_001.fastq.gz
+#&gt;                                ./fastqs/hgmm_1k_S1_L005_R2_001.fastq.gz
+#&gt; [quant] will process sample 6: ./fastqs/hgmm_1k_S1_L006_R1_001.fastq.gz
+#&gt;                                ./fastqs/hgmm_1k_S1_L006_R2_001.fastq.gz
+#&gt; [quant] will process sample 7: ./fastqs/hgmm_1k_S1_L007_R1_001.fastq.gz
+#&gt;                                ./fastqs/hgmm_1k_S1_L007_R2_001.fastq.gz
+#&gt; [quant] will process sample 8: ./fastqs/hgmm_1k_S1_L008_R1_001.fastq.gz
+#&gt;                                ./fastqs/hgmm_1k_S1_L008_R2_001.fastq.gz
+#&gt; [quant] finding pseudoalignments for the reads ... done
+#&gt; [quant] processed 63,252,296 reads, 52,229,344 reads pseudoaligned</code></pre>
 <p>See what are the outputs</p>
 <pre class="r"><code>list.files(&quot;./output/out_hgmm1k/&quot;)</code></pre>
 <pre><code>#&gt; [1] &quot;matrix.ec&quot;         &quot;output.bus&quot;        &quot;output.sorted&quot;    
@@ -608,6 +718,9 @@ export PATH=$PATH:/home/lambda/mylibs/bin/
 bustools sort -o ./output/out_hgmm1k/output.sorted -t8 ./output/out_hgmm1k/output.bus
 # Convert sorted file to text
 bustools text -o ./output/out_hgmm1k/output.sorted.txt ./output/out_hgmm1k/output.sorted</code></pre>
+<pre><code>#&gt; Read in 52229344 number of busrecords
+#&gt; All sorted
+#&gt; Read in 43769910 number of busrecords</code></pre>
 </div>
 <div id="mapping-transcripts-to-genes" class="section level2">
 <h2>Mapping transcripts to genes</h2>
@@ -651,26 +764,9 @@ whitelist_v2 &lt;- fread(&quot;./data/whitelist_v2.txt&quot;, header = FALSE)$V1
 <div id="explore-the-data" class="section level2">
 <h2>Explore the data</h2>
 <pre class="r"><code>library(Seurat)
-library(tidyverse)</code></pre>
-<pre><code>#&gt; ── Attaching packages ────────────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
-<pre><code>#&gt; ✔ ggplot2 3.1.0     ✔ purrr   0.2.5
-#&gt; ✔ tibble  1.4.2     ✔ dplyr   0.7.8
-#&gt; ✔ tidyr   0.8.2     ✔ stringr 1.3.1
-#&gt; ✔ readr   1.3.0     ✔ forcats 0.3.0</code></pre>
-<pre><code>#&gt; ── Conflicts ───────────────────────────────────────────────── tidyverse_conflicts() ──
-#&gt; ✖ dplyr::between()   masks data.table::between()
-#&gt; ✖ dplyr::filter()    masks stats::filter()
-#&gt; ✖ dplyr::first()     masks data.table::first()
-#&gt; ✖ dplyr::lag()       masks stats::lag()
-#&gt; ✖ dplyr::last()      masks data.table::last()
-#&gt; ✖ purrr::transpose() masks data.table::transpose()</code></pre>
-<pre class="r"><code>library(parallel)
+library(tidyverse)
+library(parallel)
 library(Matrix)</code></pre>
-<pre><code>#&gt; 
-#&gt; Attaching package: &#39;Matrix&#39;</code></pre>
-<pre><code>#&gt; The following object is masked from &#39;package:tidyr&#39;:
-#&gt; 
-#&gt;     expand</code></pre>
 <div id="filter-data" class="section level3">
 <h3>Filter data</h3>
 <p>Cool, so now we have the sparse matrix. What does it look like?</p>
@@ -928,74 +1024,6 @@ Lambda Moses
 </table>
 <p></details></p>
 <p>The species separate, as expected.</p>
-<pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>#&gt; R version 3.5.1 (2018-07-02)
-#&gt; Platform: x86_64-redhat-linux-gnu (64-bit)
-#&gt; Running under: CentOS Linux 7 (Core)
-#&gt; 
-#&gt; Matrix products: default
-#&gt; BLAS/LAPACK: /usr/lib64/R/lib/libRblas.so
-#&gt; 
-#&gt; locale:
-#&gt;  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
-#&gt;  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
-#&gt;  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
-#&gt;  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
-#&gt;  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-#&gt; [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
-#&gt; 
-#&gt; attached base packages:
-#&gt; [1] parallel  stats     graphics  grDevices utils     datasets  methods  
-#&gt; [8] base     
-#&gt; 
-#&gt; other attached packages:
-#&gt;  [1] bindrcpp_0.2.2    Matrix_1.2-15     forcats_0.3.0    
-#&gt;  [4] stringr_1.3.1     dplyr_0.7.8       purrr_0.2.5      
-#&gt;  [7] readr_1.3.0       tidyr_0.8.2       tibble_1.4.2     
-#&gt; [10] ggplot2_3.1.0     tidyverse_1.2.1   Seurat_3.0.0.9000
-#&gt; [13] data.table_1.11.8 BUStoolsR_0.99.0 
-#&gt; 
-#&gt; loaded via a namespace (and not attached):
-#&gt;   [1] Rtsne_0.15           colorspace_1.3-2     ggridges_0.5.1      
-#&gt;   [4] rprojroot_1.3-2      rstudioapi_0.8       listenv_0.7.0       
-#&gt;   [7] npsurv_0.4-0         ggrepel_0.8.0        bit64_0.9-7         
-#&gt;  [10] fansi_0.4.0          AnnotationDbi_1.42.1 lubridate_1.7.4     
-#&gt;  [13] xml2_1.2.0           codetools_0.2-15     splines_3.5.1       
-#&gt;  [16] R.methodsS3_1.7.1    lsei_1.2-0           knitr_1.21          
-#&gt;  [19] zeallot_0.1.0        jsonlite_1.6         workflowr_1.1.1     
-#&gt;  [22] broom_0.5.1          ica_1.0-2            cluster_2.0.7-1     
-#&gt;  [25] png_0.1-7            R.oo_1.22.0          compiler_3.5.1      
-#&gt;  [28] httr_1.4.0           backports_1.1.2      assertthat_0.2.0    
-#&gt;  [31] lazyeval_0.2.1       cli_1.0.1            htmltools_0.3.6     
-#&gt;  [34] prettyunits_1.0.2    tools_3.5.1          rsvd_1.0.0          
-#&gt;  [37] igraph_1.2.2         gtable_0.2.0         glue_1.3.0          
-#&gt;  [40] RANN_2.6             Rcpp_1.0.0           Biobase_2.42.0      
-#&gt;  [43] cellranger_1.1.0     gdata_2.18.0         nlme_3.1-137        
-#&gt;  [46] gbRd_0.4-11          lmtest_0.9-36        xfun_0.4            
-#&gt;  [49] globals_0.12.4       rvest_0.3.2          irlba_2.3.2         
-#&gt;  [52] gtools_3.8.1         XML_3.98-1.16        future_1.10.0       
-#&gt;  [55] MASS_7.3-51.1        zoo_1.8-4            scales_1.0.0        
-#&gt;  [58] hms_0.4.2            RColorBrewer_1.1-2   yaml_2.2.0          
-#&gt;  [61] curl_3.2             memoise_1.1.0        reticulate_1.10     
-#&gt;  [64] pbapply_1.3-4        biomaRt_2.38.0       stringi_1.2.4       
-#&gt;  [67] RSQLite_2.1.1        S4Vectors_0.20.1     caTools_1.17.1.1    
-#&gt;  [70] BiocGenerics_0.28.0  bibtex_0.4.2         Rdpack_0.10-1       
-#&gt;  [73] SDMTools_1.1-221     rlang_0.3.0.1        pkgconfig_2.0.2     
-#&gt;  [76] bitops_1.0-6         evaluate_0.12        lattice_0.20-38     
-#&gt;  [79] ROCR_1.0-7           bindr_0.1.1          labeling_0.3        
-#&gt;  [82] htmlwidgets_1.3      cowplot_0.9.3        bit_1.1-14          
-#&gt;  [85] tidyselect_0.2.5     plyr_1.8.4           magrittr_1.5        
-#&gt;  [88] R6_2.3.0             IRanges_2.16.0       gplots_3.0.1        
-#&gt;  [91] generics_0.0.2       DBI_1.0.0            withr_2.1.2         
-#&gt;  [94] pillar_1.3.0         haven_2.0.0          whisker_0.3-2       
-#&gt;  [97] fitdistrplus_1.0-11  survival_2.43-3      RCurl_1.95-4.11     
-#&gt; [100] future.apply_1.0.1   tsne_0.1-3           modelr_0.1.2        
-#&gt; [103] crayon_1.3.4         utf8_1.1.4           KernSmooth_2.23-15  
-#&gt; [106] plotly_4.8.0         rmarkdown_1.11       progress_1.2.0      
-#&gt; [109] readxl_1.1.0         grid_3.5.1           blob_1.1.1          
-#&gt; [112] git2r_0.23.0         metap_1.0            digest_0.6.18       
-#&gt; [115] R.utils_2.7.0        stats4_3.5.1         munsell_0.5.0       
-#&gt; [118] viridisLite_0.3.0</code></pre>
 </div>
 </div>
 <div id="session-information" class="section level2">
