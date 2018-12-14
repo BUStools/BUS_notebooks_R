@@ -1,5 +1,8 @@
-# BUStoolsR_notebooks
+# BUStoolsR notebooks
 
-A [workflowr][] project.
+This repository has example notebooks that demonstrate how to go from fastq files to sparse matrices for scRNA-seq data from start to end. To run the notebooks, please install [kallisto](https://pachterlab.github.io/kallisto/starting), [bustools](https://github.com/BUStools/bustools), and the [BUStoolsR](https://github.com/lambdamoses/BUStoolsR) R package. 
 
-[workflowr]: https://github.com/jdblischak/workflowr
+These are the notebooks:
+
+1. [10x v2 chemistry - 1k 1:1 Mixture of Fresh Frozen Human (HEK293T) and Mouse (NIH3T3) Cells](https://github.com/lambdamoses/BUStoolsR_notebooks/blob/master/analysis/10xv2.Rmd)
+2. 10x v3 chemistry - 1k 1:1 Mixture of Fresh Frozen Human (HEK293T) and Mouse (NIH3T3) Cells (coming soon)

@@ -5,4 +5,4 @@ output:
     toc: false
 ---
 
-Describe your project.
+Example notebooks that converts output of `kallisto bus` into sparse matrix that can be used in downstream analyses such as with Seurat.
