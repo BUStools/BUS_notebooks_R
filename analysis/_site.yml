@@ -1,7 +1,7 @@
-name: "BUStoolsR_notebooks"
+name: "BUS Notebooks R"
 output_dir: "../docs"
 navbar:
-  title: "BUStoolsR_notebooks"
+  title: "BUS Notebooks R"
   left:
     - text: "Home"
       href: index.html
@@ -11,7 +11,7 @@ navbar:
       href: license.html
   right:
     - icon: fa-github
-      href: https://github.com/lambdamoses/BUStoolsR_notebooks
+      href: https://bustools.github.io/BUS_notebooks_R/index.html
 output:
   workflowr::wflow_html:
     toc: true
