@@ -10,7 +10,9 @@ if (!require(devtools)) install.packages("devtools")
 devtools::install_github("BUStools/BUSpaRse")
 ```
 
-This is work in progress. I'm trying to get this package to Bioconductor.
+This is work in progress. The package will be available on Bioconductor shortly.
+
+Installation note: This package contains compiled code. MacOS users using R 3.5 should download and install Clang 6.0 and gfortran 6.1 compilers from [this webpage](https://cran.r-project.org/bin/macosx/tools/). R 3.5 no longer works with Clang 4, which was used for R 3.4.
 
 ## Notebooks
 
