@@ -444,7 +444,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/1cc5f8aba8a28e85243c352412fd767eb0c641ba" target="_blank">1cc5f8a</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/ca1d6ce5bd620c25609b92c6d098229c1b713bb6" target="_blank">ca1d6ce</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -464,9 +464,6 @@ Ignored files:
     Ignored:    output/hs_mm_tr_index.idx
     Ignored:    output/out_hgmm1k/
     Ignored:    output/out_hgmm1k_v3/
-
-Unstaged changes:
-    Modified:   analysis/_site.yml
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -495,6 +492,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/ca1d6ce5bd620c25609b92c6d098229c1b713bb6/analysis/10xv3.Rmd" target="_blank">ca1d6ce</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2018-12-14
+</td>
+<td style="text-align:left;">
+Clean up
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/BUStools/BUS_notebooks_R/6276894f775df80018e05467e79c54a750722e4f/docs/10xv3.html" target="_blank">6276894</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2018-12-14
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 html
@@ -584,9 +615,9 @@ tar -xvf ./hgmm_1k_v3_fastqs.tar</code></pre>
 #&gt; hgmm_1k_v3_fastqs/hgmm_1k_v3_S1_L002_R2_001.fastq.gz
 #&gt; hgmm_1k_v3_fastqs/hgmm_1k_v3_S1_L001_I1_001.fastq.gz</code></pre>
 </div>
-<div id="installing-devel-branch-of-kallisto" class="section level2">
-<h2>Installing devel branch of kallisto</h2>
-<p>Here we use <a href="https://pachterlab.github.io/kallisto/starting"><code>kallistto</code></a> to pseudoalign the reads to the transcriptome and then to create the <code>bus</code> file to be converted to a sparse matrix.</p>
+<div id="install-devel-branch-of-kallisto" class="section level2">
+<h2>Install devel branch of kallisto</h2>
+<p>Here we use <a href="https://pachterlab.github.io/kallisto/starting"><code>kallisto</code></a> to pseudoalign the reads to the transcriptome and then to create the <code>bus</code> file to be converted to a sparse matrix.</p>
 <p>Note that for 10x v3 chemistry, we need the development branch of <code>kallisto</code>; 10xv3 is not supported by the current release version. See <a href="https://pachterlab.github.io/kallisto/source">this link</a> for an instruction to build <code>kallisto</code> from source. I will also demonstrate how to install the development version here:</p>
 <pre class="bash"><code>cd ~
 git clone https://github.com/pachterlab/kallisto.git
@@ -607,7 +638,7 @@ cmake -DCMAKE_INSTALL_PREFIX=&lt;where you want the kallisto binary to be&gt; ..
 make
 make install</code></pre>
 <p>Note that if you installed the development version of <code>kallisto</code> in your personal directory (if you don’t have root privilege), you need to add the directory with the binary of the development version to the environment variable <code>PATH</code> and add the directory containing any dynamic library dependency to the environment variable <code>LD_LIBRARY_PATH</code> (e.g. <code>~/anaconda3/lib</code>, if you used <code>conda</code> to install the package). If you see error like <code>unable to load dynamic library, libhdf5.so.103 not found</code>, while you are sure that you have installed <code>hdf5</code>, then you should find <code>libhdf5.so.103</code> and add the directory containing it to <code>LD_LIBRARY_PATH</code>.</p>
-<p>How to add something to a variable in <code>bash</code>? I know, this can be quite scary to us biologists, and to be honest, if you’re scared, you are not alone. I’m still scared by it. OK, for example, this way, in each <code>bash</code> chunk in RStudio:</p>
+<p>How to add something to a variable in <code>bash</code>? For example, in each <code>bash</code> chunk in RStudio:</p>
 <pre class="bash"><code>export PATH=$PATH:/home/lambda/mylibs/bin
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/lambda/miniconda3/lib
 # Other bash commands...</code></pre>
@@ -616,10 +647,10 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/lambda/miniconda3/lib
 <p>A way to work around this is to create a file in your home directory called <code>.Renviron</code>, such as in Linux terminal, with <code>vim .Renviron</code>. Alternatively, you can use in R <code>file.create(&quot;~/.Renviron&quot;)</code>, and then open that file in RStudio to edit it. Then add all the paths to command line tools you want R to find there. Then restart the R session; the <code>.Renviron</code> file is sourced when R starts up. Below is the content of my <code>.Renviron</code>:</p>
 <pre class="bash"><code>PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/home/lambda/mylibs/bin
 LD_LIBRARY_PATH=/home/lambda/mylibs/lib:/home/lambda/mylibs/lib64:/usr/lib:/usr/lib64:/home/lambda/miniconda3/lib</code></pre>
-<p>You can see the numerous paths in my personal directory added to the environment variables. Perhaps there’s a better way, but so far, this works.</p>
+<p>You can see the numerous paths in my personal directory added to the environment variables. Perhaps there’s a better way, but so far, this works. The default version of <code>kallisto</code> in the server of our group is the release version, so for the rest of the notebook, the path <code>~/mylibs/bin</code> signifies the devel version.</p>
 </div>
 <div id="build-the-kallisto-index" class="section level2">
-<h2>Build the kallisto index</h2>
+<h2>Build the <code>kallisto</code> index</h2>
 <p>The first step of the <code>kallisto</code> pipeline is to build an index of the transcriptome. This data set has both human and mouse cells, so we need both human and mouse transcriptomes.</p>
 <pre class="r"><code># Human transcriptome
 download.file(&quot;ftp://ftp.ensembl.org/pub/release-94/fasta/homo_sapiens/cdna/Homo_sapiens.GRCh38.cdna.all.fa.gz&quot;, &quot;./data/hs_cdna.fa.gz&quot;, quiet = TRUE)
@@ -643,7 +674,7 @@ download.file(&quot;ftp://ftp.ensembl.org/pub/release-94/fasta/mus_musculus/cdna
 #&gt; [build] target de Bruijn graph has 2138563 contigs and contains 206125466 k-mers</code></pre>
 </div>
 <div id="run-kallisto-bus" class="section level2">
-<h2>Run kallisto bus</h2>
+<h2>Run <code>kallisto bus</code></h2>
 <p>Here we will generate the bus file. These are the technologies supported by <code>kallisto bus</code>:</p>
 <pre class="r"><code>system(&quot;~/mylibs/bin/kallisto bus --list&quot;, intern = TRUE)</code></pre>
 <pre><code>#&gt; Warning in system(&quot;~/mylibs/bin/kallisto bus --list&quot;, intern = TRUE):
@@ -688,8 +719,8 @@ download.file(&quot;ftp://ftp.ensembl.org/pub/release-94/fasta/mus_musculus/cdna
 <pre><code>#&gt; [1] &quot;matrix.ec&quot;         &quot;output.bus&quot;        &quot;output.sorted&quot;    
 #&gt; [4] &quot;output.sorted.txt&quot; &quot;run_info.json&quot;     &quot;transcripts.txt&quot;</code></pre>
 </div>
-<div id="running-bustools" class="section level2">
-<h2>Running <code>BUStools</code></h2>
+<div id="run-bustools" class="section level2">
+<h2>Run <code>BUStools</code></h2>
 <p>The <code>output.bus</code> file is a binary. In order to make R parse it, we need to convert it into a sorted text file. There’s a command line tool <a href="https://github.com/BUStools/bustools"><code>bustools</code></a> for this.</p>
 <pre class="bash"><code># Sort
 bustools sort -o ./output/out_hgmm1k_v3/output.sorted -t8 ./output/out_hgmm1k_v3/output.bus
@@ -699,8 +730,8 @@ bustools text -o ./output/out_hgmm1k_v3/output.sorted.txt ./output/out_hgmm1k_v3
 #&gt; All sorted
 #&gt; Read in 37838046 number of busrecords</code></pre>
 </div>
-<div id="mapping-transcripts-to-genes" class="section level2">
-<h2>Mapping transcripts to genes</h2>
+<div id="map-transcripts-to-genes" class="section level2">
+<h2>Map transcripts to genes</h2>
 <pre class="r"><code>library(BUSpaRse)</code></pre>
 <p>For the sparse matrix, we are interested in how many UMIs per gene per cell, rather than per transcript. Remember in the output of <code>kallisto bus</code>, there’s the file <code>transcripts.txt</code>. Those are the transcripts in the transcriptome index. Now we’ll only keep the transcripts present there and make sure that the transcripts in <code>tr2g</code> are in the same order as those in the index. This function might be a bit slow; what’s slow is the biomart query, not processing data frames.</p>
 <p>Note that the function <code>transcript2gene</code> only works for organisms that have gene and transcript IDs in Ensembl, since behind the scene, it’s using biomart to query Ensembl.</p>
@@ -715,8 +746,8 @@ bustools text -o ./output/out_hgmm1k_v3/output.sorted.txt ./output/out_hgmm1k_v3
 #&gt; 5: ENST00000390583.1 ENSG00000211923.1
 #&gt; 6: ENST00000390577.1 ENSG00000211917.1</code></pre>
 </div>
-<div id="mapping-ecs-to-genes" class="section level2">
-<h2>Mapping ECs to genes</h2>
+<div id="map-ecs-to-genes" class="section level2">
+<h2>Map ECs to genes</h2>
 <p>The 3rd column in the <code>output.sorted.txt</code> is the equivalence class index of each UMI for each cell barcode. Equivalence class (EC) means the set of transcripts in the transcriptome that the read is compatible to. While in most cases, an EC only has transcripts for the same gene, there are some ECs that have transcripts for different genes. The file in the <code>kallisto bus</code> output, <code>matrix.ec</code>, maps the EC index in <code>output.sorted.txt</code> to sets of line numbers in the transcriptome assembly. That’s why we ensured that the <code>tr2g</code> data frame has the same order as the transcripts in the index.</p>
 <pre class="r"><code>genes &lt;- EC2gene(tr2g, &quot;./output/out_hgmm1k_v3&quot;, ncores = 10, verbose = FALSE)</code></pre>
 <p>Now for each EC, we have a set of genes the EC is compatible to.</p>
@@ -765,8 +796,8 @@ bustools text -o ./output/out_hgmm1k_v3/output.sorted.txt ./output/out_hgmm1k_v3
 #&gt; [[6]]
 #&gt; [1] &quot;ENSG00000077044.10&quot; &quot;ENSG00000187715.13&quot; &quot;ENSG00000165233.17&quot;</code></pre>
 </div>
-<div id="making-the-sparse-matrix" class="section level2">
-<h2>Making the sparse matrix</h2>
+<div id="make-the-sparse-matrix" class="section level2">
+<h2>Make the sparse matrix</h2>
 <pre class="r"><code>library(data.table)</code></pre>
 <p>For 10x, we do have a file with all valid cell barcodes that comes with CellRanger.</p>
 <pre class="bash"><code># Copy v3 chemistry whitelist to working directory

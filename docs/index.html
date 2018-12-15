@@ -327,7 +327,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/1cc5f8aba8a28e85243c352412fd767eb0c641ba" target="_blank">1cc5f8a</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/ca1d6ce5bd620c25609b92c6d098229c1b713bb6" target="_blank">ca1d6ce</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -347,9 +347,6 @@ Ignored files:
     Ignored:    output/hs_mm_tr_index.idx
     Ignored:    output/out_hgmm1k/
     Ignored:    output/out_hgmm1k_v3/
-
-Unstaged changes:
-    Modified:   analysis/_site.yml
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -378,6 +375,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/ca1d6ce5bd620c25609b92c6d098229c1b713bb6/analysis/index.Rmd" target="_blank">ca1d6ce</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2018-12-14
+</td>
+<td style="text-align:left;">
+Clean up
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/BUStools/BUS_notebooks_R/6276894f775df80018e05467e79c54a750722e4f/docs/index.html" target="_blank">6276894</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2018-12-14
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 html
@@ -661,7 +692,8 @@ Start workflowr project.
 <p>You can install BUSpaRse with:</p>
 <pre class="r"><code>if (!require(devtools)) install.packages(&quot;devtools&quot;)
 devtools::install_github(&quot;BUStools/BUSpaRse&quot;)</code></pre>
-<p>This is work in progress. I’m trying to get this package to Bioconductor.</p>
+<p>This is work in progress. This package will be on Bioconductor soon.</p>
+<p>Installation note: This package contains compiled code. MacOS users using R 3.5 should download and install Clang 6.0 and gfortran 6.1 compilers from <a href="https://cran.r-project.org/bin/macosx/tools/">this webpage</a>. R 3.5 no longer works with Clang 4, which was used for R 3.4.</p>
 </div>
 <div id="notebooks" class="section level2">
 <h2>Notebooks</h2>
