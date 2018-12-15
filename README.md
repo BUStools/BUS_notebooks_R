@@ -15,4 +15,4 @@ This is work in progress. I'm trying to get this package to Bioconductor.
 ## Notebooks
 
 1. [10x v2 chemistry - 1k 1:1 Mixture of Fresh Frozen Human (HEK293T) and Mouse (NIH3T3) Cells](https://bustools.github.io/BUS_notebooks_R/10xv2.html)
-2. 10x v3 chemistry - 1k 1:1 Mixture of Fresh Frozen Human (HEK293T) and Mouse (NIH3T3) Cells (coming soon)
+2. [10x v3 chemistry - 1k 1:1 Mixture of Fresh Frozen Human (HEK293T) and Mouse (NIH3T3) Cells](https://bustools.github.io/BUS_notebooks_R/10xv3.html)

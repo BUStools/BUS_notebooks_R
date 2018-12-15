@@ -2,11 +2,7 @@
 title: "Processing kallisto bus Output (10x v2 chemistry)"
 author: "Lambda Moses"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Processing kallisto-bus Output (10x v2 chemistry)}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+output: html_document
 ---
 
 ```{r setup, include = FALSE}
@@ -97,6 +93,10 @@ tr2g <- transcript2gene(c("Homo sapiens", "Mus musculus"),
                         kallisto_out_path = "./output/out_hgmm1k")
 ```
 
+```{r}
+head(tr2g)
+```
+
 ## Mapping ECs to genes
 The 3rd column in the `output.sorted.txt` is the equivalence class index of each UMI for each cell barcode. Equivalence class (EC) means the set of transcripts in the transcriptome that the read is compatible to. While in most cases, an EC only has transcripts for the same gene, there are some ECs that have transcripts for different genes. The file in the `kallisto bus` output, `matrix.ec`, maps the EC index in `output.sorted.txt` to sets of line numbers in the transcriptome assembly. That's why we ensured that the `tr2g` data frame has the same order as the transcripts in the index.
 ```{r}
@@ -104,6 +104,14 @@ genes <- EC2gene(tr2g, "./output/out_hgmm1k", ncores = 10, verbose = FALSE)
 ```
 
 Now for each EC, we have a set of genes the EC is compatible to.
+
+```{r}
+head(genes)
+```
+
+```{r}
+tail(genes)
+```
 
 ## Making the sparse matrix
 ```{r}
@@ -120,12 +128,17 @@ cp /home/lambda/cellranger-3.0.1/cellranger-cs/3.0.1/lib/python/cellranger/barco
 ```{r}
 # Read in the whitelist
 whitelist_v2 <- fread("./data/whitelist_v2.txt", header = FALSE)$V1
+length(whitelist_v2)
 ```
 
+There about about 737K valid cell barcodes.
+
 Now we have everything we need to make the sparse matrix. This function reads in `output.sorted.txt` line by line and processes them. It does not do barcode correction for now, so the barcode must exactly match those in the whitelist if one is provided. It took 5 to 6 minutes to construct the sparse matrix in the hgmm6k dataset, which has over 280 million lines in `output.sorted.txt`, which is over 9GB. Here the data set is smaller, so it's not taking as long.
+
+Note that the arguments `est_ncells` (estimated number of cells) and `est_ngenes` (estimated number of genes) are important. With the estimate, this function reserves memory for the data to be added into, reducing the need of reallocation, which will slow the function down. Since the vast majority of "cells" you get in this sparse matrix are empty droplets rather than cells, please put at least 200 times more "cells" than you actually expect in `est_ncells`.
 ```{r}
 res_mat <- make_sparse_matrix("./output/out_hgmm1k/output.sorted.txt",
-                              genes = genes, est_ncells = 1500,
+                              genes = genes, est_ncells = 3e5,
                               est_ngenes = nrow(tr2g),
                               whitelist = whitelist_v2)
 ```
@@ -203,9 +216,10 @@ cell_species %>%
   count(species) %>% 
   mutate(proportion = n / ncol(res_mat))
 ```
-Great, only about 0.4% of cells here are doublets, which is lower than the ~1% 10x lists. However, doublets can still be formed with cells from the same species.
+Great, only about 0.4% of cells here are doublets, which is lower than the ~1% 10x lists. Doublet rate tends to be lower when cell concentration is lower. However, doublets can still be formed with cells from the same species.
 
 ### Seurat exploration
+Note: [Seurat 3.0](https://github.com/satijalab/seurat/tree/release/3.0), which is not yet oon CRAN, is used in this notebook.
 ```{r}
 seu <- CreateSeuratObject(res_mat, min.cells = 3) %>% 
   NormalizeData(verbose = FALSE) %>% 
