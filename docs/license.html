@@ -292,7 +292,7 @@ $(document).ready(function () {
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/jdblischak/workflowr">
+  <a href="https://github.com/lambdamoses/BUStoolsR_notebooks">
     <span class="fa fa-github"></span>
      
   </a>
@@ -327,22 +327,29 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/lambdamoses/BUStoolsR_notebooks/tree/1fc3e91f1f693eef956c8117a016e06851a470f8" target="_blank">1fc3e91</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/db70187594c25264592142e5cd44901a6f8cc795" target="_blank">db70187</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    BUSpaRse_notebooks.Rproj
+    Ignored:    analysis/10xv2_cache/
+    Ignored:    analysis/10xv3_cache/
     Ignored:    data/fastqs/
     Ignored:    data/hgmm_1k_fastqs.tar
+    Ignored:    data/hgmm_1k_v3_fastqs.tar
+    Ignored:    data/hgmm_1k_v3_fastqs/
     Ignored:    data/hs_cdna.fa.gz
     Ignored:    data/mm_cdna.fa.gz
     Ignored:    data/whitelist_v2.txt
+    Ignored:    data/whitelist_v3.txt.gz
     Ignored:    output/hs_mm_tr_index.idx
     Ignored:    output/out_hgmm1k/
+    Ignored:    output/out_hgmm1k_v3/
 
 Untracked files:
-    Untracked:  docs/figure/
+    Untracked:  analysis/10xv3.Rmd
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -376,7 +383,41 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
-<a href="https://github.com/lambdamoses/BUStoolsR_notebooks/blob/55164fbe7044288051548c1add01a1e2eb038c52/analysis/license.Rmd" target="_blank">55164fb</a>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/ede5b9aa5a04e66ba4c1a4c57e3a1ecaeffdae11/analysis/license.Rmd" target="_blank">ede5b9a</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2018-12-14
+</td>
+<td style="text-align:left;">
+Changed to BSD-2 license to be compatible with other notebooks for BUStools
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/BUStools/BUS_notebooks_R/2da3b350a1686dc06961608b49e193f1995d74fa/docs/license.html" target="_blank">2da3b35</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2018-12-14
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/55164fbe7044288051548c1add01a1e2eb038c52/analysis/license.Rmd" target="_blank">55164fb</a>
 </td>
 <td style="text-align:left;">
 Lambda Moses
@@ -393,12 +434,15 @@ Start workflowr project.
 </ul>
 <p></details></p>
 <hr />
-<div id="mit-license" class="section level1">
-<h1>MIT License</h1>
-<p>Copyright (c) 2018 Lambda Moses</p>
-<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
-<p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
-<p>THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+<div id="bsd-2-clause-license" class="section level1">
+<h1>BSD 2-Clause License</h1>
+<p>Copyright (c) 2018, BUStools All rights reserved.</p>
+<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
+<ul>
+<li><p>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</p></li>
+<li><p>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</p></li>
+</ul>
+<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS” AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
