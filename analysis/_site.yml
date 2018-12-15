@@ -11,7 +11,7 @@ navbar:
       href: license.html
   right:
     - icon: fa-github
-      href: https://bustools.github.io/BUS_notebooks_R/index.html
+      href: https://github.com/BUStools/BUS_notebooks_R
 output:
   workflowr::wflow_html:
     toc: true
