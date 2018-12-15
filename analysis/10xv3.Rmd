@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 In this vignette, we process fastq data from scRNA-seq (10x v3 chemistry) to make a sparse matrix that can be used in downstream analysis. In this vignette, we will start that standard downstream analysis with `Seurat`.
 
 ## Download data
-The data set we are using here is 1k 1:1 Mixture of Fresh Frozen Human (HEK293T) and Mouse (NIH3T3) Cells from the 10x website. First, we download the fastq files (6.34 GB).
+The data set we are using here is 1k 1:1 Mixture of Fresh Frozen Human (HEK293T) and Mouse (NIH3T3) Cells from the 10x website. First, we download the fastq files (4.54 GB).
 ```{r, cache=TRUE}
 download.file("http://cf.10xgenomics.com/samples/cell-exp/3.0.0/hgmm_1k_v3/hgmm_1k_v3_fastqs.tar", destfile = "./data/hgmm_1k_v3_fastqs.tar", quiet = TRUE)
 ```
