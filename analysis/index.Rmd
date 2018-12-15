@@ -22,4 +22,6 @@ This is work in progress. I'm trying to get this package to Bioconductor.
 1. [10x v2 chemistry - 1k 1:1 Mixture of Fresh Frozen Human (HEK293T) and Mouse (NIH3T3) Cells](10xv2.html)
 2. [10x v3 chemistry - 1k 1:1 Mixture of Fresh Frozen Human (HEK293T) and Mouse (NIH3T3) Cells](10xv3.html)
 
+Notebooks for Drop-seq and CEL-seq2 are coming soom.
+
 If you have problems with the notebooks, or have questions about them, please go to the [GitHub repo of this website](https://bustools.github.io/BUS_notebooks_R/index.html).
