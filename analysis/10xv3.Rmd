@@ -25,8 +25,8 @@ cd ./data
 tar -xvf ./hgmm_1k_v3_fastqs.tar
 ```
 
-## Installing devel branch of kallisto
-Here we use [`kallistto`](https://pachterlab.github.io/kallisto/starting) to pseudoalign the reads to the transcriptome and then to create the `bus` file to be converted to a sparse matrix. 
+## Install devel branch of kallisto
+Here we use [`kallisto`](https://pachterlab.github.io/kallisto/starting) to pseudoalign the reads to the transcriptome and then to create the `bus` file to be converted to a sparse matrix. 
 
 Note that for 10x v3 chemistry, we need the development branch of `kallisto`; 10xv3 is not supported by the current release version. See [this link](https://pachterlab.github.io/kallisto/source) for an instruction to build `kallisto` from source. I will also demonstrate how to install the development version here:
 
@@ -53,7 +53,7 @@ make install
 
 Note that if you installed the development version of `kallisto` in your personal directory (if you don't have root privilege), you need to add the directory with the binary of the development version to the environment variable `PATH` and add the directory containing any dynamic library dependency to the environment variable `LD_LIBRARY_PATH` (e.g. `~/anaconda3/lib`, if you used `conda` to install the package). If you see error like `unable to load dynamic library, libhdf5.so.103 not found`, while you are sure that you have installed `hdf5`, then you should find `libhdf5.so.103` and add the directory containing it to `LD_LIBRARY_PATH`.
 
-How to add something to a variable in `bash`? I know, this can be quite scary to us biologists, and to be honest, if you're scared, you are not alone. I'm still scared by it. OK, for example, this way, in each `bash` chunk in RStudio:
+How to add something to a variable in `bash`? For example, in each `bash` chunk in RStudio:
 
 ```{bash, eval = FALSE}
 export PATH=$PATH:/home/lambda/mylibs/bin
@@ -71,9 +71,9 @@ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/home/lambda/mylibs/bin
 LD_LIBRARY_PATH=/home/lambda/mylibs/lib:/home/lambda/mylibs/lib64:/usr/lib:/usr/lib64:/home/lambda/miniconda3/lib
 ```
 
-You can see the numerous paths in my personal directory added to the environment variables. Perhaps there's a better way, but so far, this works.
+You can see the numerous paths in my personal directory added to the environment variables. Perhaps there's a better way, but so far, this works. The default version of `kallisto` in the server of our group is the release version, so for the rest of the notebook, the path `~/mylibs/bin` signifies the devel version.
 
-## Build the kallisto index
+## Build the `kallisto` index
 The first step of the `kallisto` pipeline is to build an index of the transcriptome. This data set has both human and mouse cells, so we need both human and mouse transcriptomes.
 ```{r, cache=TRUE}
 # Human transcriptome
@@ -90,7 +90,7 @@ Actually, we don't need to unzip the fasta files
 ~/mylibs/bin/kallisto index -i ./output/hs_mm_tr_index.idx ./data/hs_cdna.fa.gz ./data/mm_cdna.fa.gz
 ```
 
-## Run kallisto bus
+## Run `kallisto bus`
 Here we will generate the bus file. These are the technologies supported by `kallisto bus`:
 ```{r}
 system("~/mylibs/bin/kallisto bus --list", intern = TRUE)
@@ -113,7 +113,7 @@ See what are the outputs
 list.files("./output/out_hgmm1k_v3/")
 ```
 
-## Running `BUStools`
+## Run `BUStools`
 The `output.bus` file is a binary. In order to make R parse it, we need to convert it into a sorted text file. There's a command line tool [`bustools`](https://github.com/BUStools/bustools) for this.
 
 ```{bash, cache=TRUE}
@@ -123,7 +123,7 @@ bustools sort -o ./output/out_hgmm1k_v3/output.sorted -t8 ./output/out_hgmm1k_v3
 bustools text -o ./output/out_hgmm1k_v3/output.sorted.txt ./output/out_hgmm1k_v3/output.sorted
 ```
 
-## Mapping transcripts to genes
+## Map transcripts to genes
 ```{r}
 library(BUSpaRse)
 ```
@@ -140,7 +140,7 @@ tr2g <- transcript2gene(c("Homo sapiens", "Mus musculus"),
 head(tr2g)
 ```
 
-## Mapping ECs to genes
+## Map ECs to genes
 The 3rd column in the `output.sorted.txt` is the equivalence class index of each UMI for each cell barcode. Equivalence class (EC) means the set of transcripts in the transcriptome that the read is compatible to. While in most cases, an EC only has transcripts for the same gene, there are some ECs that have transcripts for different genes. The file in the `kallisto bus` output, `matrix.ec`, maps the EC index in `output.sorted.txt` to sets of line numbers in the transcriptome assembly. That's why we ensured that the `tr2g` data frame has the same order as the transcripts in the index.
 ```{r}
 genes <- EC2gene(tr2g, "./output/out_hgmm1k_v3", ncores = 10, verbose = FALSE)
@@ -156,7 +156,7 @@ head(genes)
 tail(genes)
 ```
 
-## Making the sparse matrix
+## Make the sparse matrix
 ```{r}
 library(data.table)
 ```

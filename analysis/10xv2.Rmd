@@ -25,7 +25,7 @@ cd ./data
 tar -xvf ./hgmm_1k_fastqs.tar
 ```
 
-## Build the kallisto index
+## Build the `kallisto` index
 Here we use [kallisto](https://pachterlab.github.io/kallisto/about) (see this link for install instructions) to pseudoalign the reads to the transcriptome and then to create the `bus` file to be converted to a sparse matrix. The first step is to build an index of the transcriptome. This data set has both human and mouse cells, so we need both human and mouse transcriptomes.
 ```{r, cache=TRUE}
 # Human transcriptome
@@ -42,7 +42,7 @@ Actually, we don't need to unzip the fasta files
 kallisto index -i ./output/hs_mm_tr_index.idx ./data/hs_cdna.fa.gz ./data/mm_cdna.fa.gz
 ```
 
-## Run kallisto bus
+## Run `kallisto bus`
 Here we will generate the bus file. These are the technologies supported by `kallisto bus`:
 ```{r}
 system("kallisto bus --list", intern = TRUE)
@@ -68,7 +68,7 @@ See what are the outputs
 list.files("./output/out_hgmm1k/")
 ```
 
-## Running `BUStools`
+## Run `BUStools`
 The `output.bus` file is a binary. In order to make R parse it, we need to convert it into a sorted text file. There's a command line tool [`bustools`](https://github.com/BUStools/bustools) for this.
 
 ```{bash, cache=TRUE}
@@ -80,7 +80,7 @@ bustools sort -o ./output/out_hgmm1k/output.sorted -t8 ./output/out_hgmm1k/outpu
 bustools text -o ./output/out_hgmm1k/output.sorted.txt ./output/out_hgmm1k/output.sorted
 ```
 
-## Mapping transcripts to genes
+## Map transcripts to genes
 ```{r}
 library(BUSpaRse)
 ```
@@ -97,7 +97,7 @@ tr2g <- transcript2gene(c("Homo sapiens", "Mus musculus"),
 head(tr2g)
 ```
 
-## Mapping ECs to genes
+## Map ECs to genes
 The 3rd column in the `output.sorted.txt` is the equivalence class index of each UMI for each cell barcode. Equivalence class (EC) means the set of transcripts in the transcriptome that the read is compatible to. While in most cases, an EC only has transcripts for the same gene, there are some ECs that have transcripts for different genes. The file in the `kallisto bus` output, `matrix.ec`, maps the EC index in `output.sorted.txt` to sets of line numbers in the transcriptome assembly. That's why we ensured that the `tr2g` data frame has the same order as the transcripts in the index.
 ```{r}
 genes <- EC2gene(tr2g, "./output/out_hgmm1k", ncores = 10, verbose = FALSE)
@@ -113,7 +113,7 @@ head(genes)
 tail(genes)
 ```
 
-## Making the sparse matrix
+## Make the sparse matrix
 ```{r}
 library(data.table)
 ```
