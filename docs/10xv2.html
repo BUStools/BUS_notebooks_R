@@ -11,7 +11,7 @@
 
 <meta name="author" content="Lambda Moses" />
 
-<meta name="date" content="2018-12-14" />
+<meta name="date" content="2018-12-19" />
 
 <title>Processing kallisto bus Output (10x v2 chemistry)</title>
 
@@ -415,12 +415,12 @@ div.section {
 
 <h1 class="title toc-ignore">Processing kallisto bus Output (10x v2 chemistry)</h1>
 <h4 class="author"><em>Lambda Moses</em></h4>
-<h4 class="date"><em>2018-12-14</em></h4>
+<h4 class="date"><em>2018-12-19</em></h4>
 
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-12-14</p>
+<p><strong>Last updated:</strong> 2018-12-19</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -444,7 +444,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/ca1d6ce5bd620c25609b92c6d098229c1b713bb6" target="_blank">ca1d6ce</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/9731fd60718b738ccfc163b04bffe95981fdce6c" target="_blank">9731fd6</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -454,6 +454,7 @@ Ignored files:
     Ignored:    analysis/10xv2_cache/
     Ignored:    analysis/10xv3_cache/
     Ignored:    data/fastqs/
+    Ignored:    data/hgmm_100_fastqs.tar
     Ignored:    data/hgmm_1k_fastqs.tar
     Ignored:    data/hgmm_1k_v3_fastqs.tar
     Ignored:    data/hgmm_1k_v3_fastqs/
@@ -462,6 +463,7 @@ Ignored files:
     Ignored:    data/whitelist_v2.txt
     Ignored:    data/whitelist_v3.txt.gz
     Ignored:    output/hs_mm_tr_index.idx
+    Ignored:    output/out_hgmm100/
     Ignored:    output/out_hgmm1k/
     Ignored:    output/out_hgmm1k_v3/
 
@@ -492,6 +494,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/BUStools/BUS_notebooks_R/85a5770b53befbfc968af9e488b546e123a8eab6/docs/10xv2.html" target="_blank">85a5770</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2018-12-14
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -855,6 +874,8 @@ bustools text -o ./output/out_hgmm1k/output.sorted.txt ./output/out_hgmm1k/outpu
 <p>Note that the function <code>transcript2gene</code> only works for organisms that have gene and transcript IDs in Ensembl, since behind the scene, it’s using biomart to query Ensembl.</p>
 <pre class="r"><code>tr2g &lt;- transcript2gene(c(&quot;Homo sapiens&quot;, &quot;Mus musculus&quot;),
                         kallisto_out_path = &quot;./output/out_hgmm1k&quot;)</code></pre>
+<pre><code>#&gt; Retrieving data from biomart
+#&gt; Sorting</code></pre>
 <pre class="r"><code>head(tr2g)</code></pre>
 <pre><code>#&gt;           transcript              gene
 #&gt; 1: ENST00000434970.2 ENSG00000237235.2
@@ -987,7 +1008,7 @@ cp /home/lambda/cellranger-3.0.1/cellranger-cs/3.0.1/lib/python/cellranger/barco
 whitelist_v2 &lt;- fread(&quot;./data/whitelist_v2.txt&quot;, header = FALSE)$V1
 length(whitelist_v2)</code></pre>
 <pre><code>#&gt; [1] 737280</code></pre>
-<p>There about about 737K valid cell barcodes.</p>
+<p>There about 737K valid cell barcodes.</p>
 <p>Now we have everything we need to make the sparse matrix. This function reads in <code>output.sorted.txt</code> line by line and processes them. It does not do barcode correction for now, so the barcode must exactly match those in the whitelist if one is provided. It took 5 to 6 minutes to construct the sparse matrix in the hgmm6k dataset, which has over 280 million lines in <code>output.sorted.txt</code>, which is over 9GB. Here the data set is smaller, so it’s not taking as long.</p>
 <p>Note that the arguments <code>est_ncells</code> (estimated number of cells) and <code>est_ngenes</code> (estimated number of genes) are important. With the estimate, this function reserves memory for the data to be added into, reducing the need of reallocation, which will slow the function down. Since the vast majority of “cells” you get in this sparse matrix are empty droplets rather than cells, please put at least 200 times more “cells” than you actually expect in <code>est_ncells</code>.</p>
 <pre class="r"><code>res_mat &lt;- make_sparse_matrix(&quot;./output/out_hgmm1k/output.sorted.txt&quot;,
@@ -1015,13 +1036,13 @@ library(Matrix)</code></pre>
 <h3>Filter data</h3>
 <p>Cool, so now we have the sparse matrix. What does it look like?</p>
 <pre class="r"><code>dim(res_mat)</code></pre>
-<pre><code>#&gt; [1]  51306 353957</code></pre>
+<pre><code>#&gt; [1]  51321 348502</code></pre>
 <p>That’s way more cells than we expect, which is about 1000. So what’s going on?</p>
 <p>How many UMIs per barcode?</p>
 <pre class="r"><code>tot_counts &lt;- colSums(res_mat)
 summary(tot_counts)</code></pre>
-<pre><code>#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-#&gt;     1.0     1.0     2.0   101.8    11.0 92910.0</code></pre>
+<pre><code>#&gt;     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+#&gt;     1.00     1.00     2.00    99.44    12.00 89418.00</code></pre>
 <p>The vast majority of “cells” have only a few UMI detected. Those are likely to be spurious. In Seurat’s vignettes, a low cutoff is usually set to the total number of UMIs in a cell, and that depends on the sequencing depth.</p>
 <pre class="r"><code>bcs_use &lt;- tot_counts &gt; 500
 tot_counts_filtered &lt;- tot_counts[bcs_use]
@@ -1060,7 +1081,7 @@ Lambda Moses
 <pre class="r"><code># Filter the matrix
 res_mat &lt;- res_mat[,bcs_use]
 dim(res_mat)</code></pre>
-<pre><code>#&gt; [1] 51306  1176</code></pre>
+<pre><code>#&gt; [1] 51321  1173</code></pre>
 <p>Now this is a more reasonable number of cells.</p>
 </div>
 <div id="cell-species" class="section level3">
@@ -1123,14 +1144,14 @@ Lambda Moses
 <pre><code>#&gt; # A tibble: 3 x 3
 #&gt;   species     n proportion
 #&gt;   &lt;chr&gt;   &lt;int&gt;      &lt;dbl&gt;
-#&gt; 1 human     603    0.513  
-#&gt; 2 mixed       5    0.00425
-#&gt; 3 mouse     568    0.483</code></pre>
+#&gt; 1 human     602     0.513 
+#&gt; 2 mixed      26     0.0222
+#&gt; 3 mouse     545     0.465</code></pre>
 <p>Great, only about 0.4% of cells here are doublets, which is lower than the ~1% 10x lists. Doublet rate tends to be lower when cell concentration is lower. However, doublets can still be formed with cells from the same species.</p>
 </div>
 <div id="seurat-exploration" class="section level3">
 <h3>Seurat exploration</h3>
-<p>Note: <a href="https://github.com/satijalab/seurat/tree/release/3.0">Seurat 3.0</a>, which is not yet oon CRAN, is used in this notebook.</p>
+<p>Note: <a href="https://github.com/satijalab/seurat/tree/release/3.0">Seurat 3.0</a>, which is not yet on CRAN, is used in this notebook.</p>
 <pre class="r"><code>seu &lt;- CreateSeuratObject(res_mat, min.cells = 3) %&gt;% 
   NormalizeData(verbose = FALSE) %&gt;% 
   ScaleData(verbose = FALSE) %&gt;% 
