@@ -11,7 +11,7 @@
 
 <meta name="author" content="Lambda Moses" />
 
-<meta name="date" content="2018-12-14" />
+<meta name="date" content="2019-02-02" />
 
 <title>Processing kallisto bus Output (10x v3 chemistry)</title>
 
@@ -415,12 +415,12 @@ div.section {
 
 <h1 class="title toc-ignore">Processing kallisto bus Output (10x v3 chemistry)</h1>
 <h4 class="author"><em>Lambda Moses</em></h4>
-<h4 class="date"><em>2018-12-14</em></h4>
+<h4 class="date"><em>2019-02-02</em></h4>
 
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-12-14</p>
+<p><strong>Last updated:</strong> 2019-02-02</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -444,7 +444,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/ca1d6ce5bd620c25609b92c6d098229c1b713bb6" target="_blank">ca1d6ce</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/c7ecb569798bcd9bc6bd40eb052540dc65e39d71" target="_blank">c7ecb56</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -454,6 +454,7 @@ Ignored files:
     Ignored:    analysis/10xv2_cache/
     Ignored:    analysis/10xv3_cache/
     Ignored:    data/fastqs/
+    Ignored:    data/hgmm_100_fastqs.tar
     Ignored:    data/hgmm_1k_fastqs.tar
     Ignored:    data/hgmm_1k_v3_fastqs.tar
     Ignored:    data/hgmm_1k_v3_fastqs/
@@ -462,6 +463,7 @@ Ignored files:
     Ignored:    data/whitelist_v2.txt
     Ignored:    data/whitelist_v3.txt.gz
     Ignored:    output/hs_mm_tr_index.idx
+    Ignored:    output/out_hgmm100/
     Ignored:    output/out_hgmm1k/
     Ignored:    output/out_hgmm1k_v3/
 
@@ -492,6 +494,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/BUStools/BUS_notebooks_R/85a5770b53befbfc968af9e488b546e123a8eab6/docs/10xv3.html" target="_blank">85a5770</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2018-12-14
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -599,7 +618,8 @@ Added 10xv3 notebook
 </ul>
 <p></details></p>
 <hr />
-<p>In this vignette, we process fastq data from scRNA-seq (10x v3 chemistry) to make a sparse matrix that can be used in downstream analysis. In this vignette, we will start that standard downstream analysis with <code>Seurat</code>.</p>
+<p>In this vignette, we process fastq data from scRNA-seq (10x v3 chemistry) to make a sparse matrix that can be used in downstream analysis. In this vignette, we will start that standard downstream analysis with <code>Seurat</code>. To download this notebook, please visit the <a href="https://github.com/BUStools/BUS_notebooks_R/blob/master/analysis/10xv3.Rmd">GitHub repo</a>.</p>
+<p>This notebooks uses the R package <code>BUSpaRse</code>, which is not yet on CRAN or Bioconductor. Installation installation of the package is on the <a href="https://github.com/BUStools/BUSpaRse">readme page of its GitHub repo</a>.</p>
 <div id="download-data" class="section level2">
 <h2>Download data</h2>
 <p>The data set we are using here is 1k 1:1 Mixture of Fresh Frozen Human (HEK293T) and Mouse (NIH3T3) Cells from the 10x website. First, we download the fastq files (4.54 GB).</p>
@@ -737,6 +757,8 @@ bustools text -o ./output/out_hgmm1k_v3/output.sorted.txt ./output/out_hgmm1k_v3
 <p>Note that the function <code>transcript2gene</code> only works for organisms that have gene and transcript IDs in Ensembl, since behind the scene, it’s using biomart to query Ensembl.</p>
 <pre class="r"><code>tr2g &lt;- transcript2gene(c(&quot;Homo sapiens&quot;, &quot;Mus musculus&quot;),
                         kallisto_out_path = &quot;./output/out_hgmm1k_v3&quot;)</code></pre>
+<pre><code>#&gt; Retrieving data from biomart
+#&gt; Sorting</code></pre>
 <pre class="r"><code>head(tr2g)</code></pre>
 <pre><code>#&gt;           transcript              gene
 #&gt; 1: ENST00000434970.2 ENSG00000237235.2
@@ -774,8 +796,8 @@ bustools text -o ./output/out_hgmm1k_v3/output.sorted.txt ./output/out_hgmm1k_v3
 #&gt; [1] &quot;ENSG00000196418.12&quot; &quot;ENSG00000178199.13&quot; &quot;ENSG00000011523.13&quot;
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] &quot;ENSMUSG00000005873.5&quot;  &quot;ENSMUSG00000026470.14&quot; &quot;ENSMUSG00000048424.17&quot;
-#&gt; [4] &quot;ENSMUSG00000111009.2&quot; 
+#&gt; [1] &quot;ENSMUSG00000094044.1&quot;  &quot;ENSMUSG00000028188.13&quot; &quot;ENSMUSG00000066621.12&quot;
+#&gt; [4] &quot;ENSMUSG00000115886.1&quot; 
 #&gt; 
 #&gt; [[3]]
 #&gt;  [1] &quot;ENSG00000121413.12&quot; &quot;ENSG00000117115.12&quot; &quot;ENSG00000117475.13&quot;
@@ -801,7 +823,7 @@ bustools text -o ./output/out_hgmm1k_v3/output.sorted.txt ./output/out_hgmm1k_v3
 <pre class="r"><code>library(data.table)</code></pre>
 <p>For 10x, we do have a file with all valid cell barcodes that comes with CellRanger.</p>
 <pre class="bash"><code># Copy v3 chemistry whitelist to working directory
-cp /home/lambda/cellranger-3.0.1/cellranger-cs/3.0.1/lib/python/cellranger/barcodes/3M-february-2018.txt.gz \
+cp ~/cellranger-3.0.1/cellranger-cs/3.0.1/lib/python/cellranger/barcodes/3M-february-2018.txt.gz \
 ./data/whitelist_v3.txt.gz</code></pre>
 <pre class="r"><code># Read in the whitelist
 whitelist_v3 &lt;- fread(&quot;./data/whitelist_v3.txt.gz&quot;, header = FALSE)$V1
@@ -834,7 +856,7 @@ library(Matrix)</code></pre>
 <h3>Filter data</h3>
 <p>Cool, so now we have the sparse matrix. What does it look like?</p>
 <pre class="r"><code>dim(res_mat)</code></pre>
-<pre><code>#&gt; [1]  51135 416343</code></pre>
+<pre><code>#&gt; [1]  51804 416343</code></pre>
 <p>That’s way more cells than we expect, which is about 1000. So what’s going on?</p>
 <p>How many UMIs per barcode?</p>
 <pre class="r"><code>tot_counts &lt;- colSums(res_mat)
@@ -879,7 +901,7 @@ Lambda Moses
 <pre class="r"><code># Filter the matrix
 res_mat &lt;- res_mat[,bcs_use]
 dim(res_mat)</code></pre>
-<pre><code>#&gt; [1] 51135  1076</code></pre>
+<pre><code>#&gt; [1] 51804  1076</code></pre>
 <p>Now this is a more reasonable number of cells.</p>
 </div>
 <div id="cell-species" class="section level3">
@@ -1114,14 +1136,14 @@ Lambda Moses
 #&gt; 
 #&gt; other attached packages:
 #&gt;  [1] bindrcpp_0.2.2    Matrix_1.2-15     forcats_0.3.0    
-#&gt;  [4] stringr_1.3.1     dplyr_0.7.8       purrr_0.2.5      
-#&gt;  [7] readr_1.3.0       tidyr_0.8.2       tibble_1.4.2     
+#&gt;  [4] stringr_1.3.1     dplyr_0.7.8       purrr_0.3.0      
+#&gt;  [7] readr_1.3.1       tidyr_0.8.2       tibble_2.0.1     
 #&gt; [10] ggplot2_3.1.0     tidyverse_1.2.1   Seurat_3.0.0.9000
-#&gt; [13] data.table_1.11.8 BUSpaRse_0.99.0  
+#&gt; [13] data.table_1.12.0 BUSpaRse_0.99.0  
 #&gt; 
 #&gt; loaded via a namespace (and not attached):
-#&gt;   [1] Rtsne_0.15           colorspace_1.3-2     ggridges_0.5.1      
-#&gt;   [4] rprojroot_1.3-2      rstudioapi_0.8       listenv_0.7.0       
+#&gt;   [1] Rtsne_0.15           colorspace_1.4-0     ggridges_0.5.1      
+#&gt;   [4] rprojroot_1.3-2      rstudioapi_0.9.0     listenv_0.7.0       
 #&gt;   [7] npsurv_0.4-0         ggrepel_0.8.0        bit64_0.9-7         
 #&gt;  [10] fansi_0.4.0          AnnotationDbi_1.44.0 lubridate_1.7.4     
 #&gt;  [13] xml2_1.2.0           codetools_0.2-15     splines_3.5.1       
@@ -1133,33 +1155,33 @@ Lambda Moses
 #&gt;  [31] lazyeval_0.2.1       cli_1.0.1            htmltools_0.3.6     
 #&gt;  [34] prettyunits_1.0.2    tools_3.5.1          rsvd_1.0.0          
 #&gt;  [37] igraph_1.2.2         gtable_0.2.0         glue_1.3.0          
-#&gt;  [40] RANN_2.6             Rcpp_1.0.0           Biobase_2.42.0      
-#&gt;  [43] cellranger_1.1.0     gdata_2.18.0         nlme_3.1-137        
-#&gt;  [46] gbRd_0.4-11          lmtest_0.9-36        xfun_0.4            
-#&gt;  [49] globals_0.12.4       rvest_0.3.2          irlba_2.3.2         
-#&gt;  [52] gtools_3.8.1         XML_3.98-1.16        future_1.10.0       
-#&gt;  [55] MASS_7.3-51.1        zoo_1.8-4            scales_1.0.0        
-#&gt;  [58] hms_0.4.2            RColorBrewer_1.1-2   yaml_2.2.0          
-#&gt;  [61] curl_3.2             memoise_1.1.0        reticulate_1.10     
-#&gt;  [64] pbapply_1.3-4        biomaRt_2.38.0       stringi_1.2.4       
-#&gt;  [67] RSQLite_2.1.1        S4Vectors_0.20.1     caTools_1.17.1.1    
-#&gt;  [70] BiocGenerics_0.28.0  bibtex_0.4.2         Rdpack_0.10-1       
-#&gt;  [73] SDMTools_1.1-221     rlang_0.3.0.1        pkgconfig_2.0.2     
-#&gt;  [76] bitops_1.0-6         evaluate_0.12        lattice_0.20-38     
-#&gt;  [79] ROCR_1.0-7           bindr_0.1.1          labeling_0.3        
-#&gt;  [82] htmlwidgets_1.3      cowplot_0.9.3        bit_1.1-14          
-#&gt;  [85] tidyselect_0.2.5     plyr_1.8.4           magrittr_1.5        
-#&gt;  [88] R6_2.3.0             IRanges_2.16.0       gplots_3.0.1        
-#&gt;  [91] generics_0.0.2       DBI_1.0.0            withr_2.1.2         
-#&gt;  [94] pillar_1.3.0         haven_2.0.0          whisker_0.3-2       
-#&gt;  [97] fitdistrplus_1.0-11  survival_2.43-3      RCurl_1.95-4.11     
-#&gt; [100] future.apply_1.0.1   tsne_0.1-3           modelr_0.1.2        
-#&gt; [103] crayon_1.3.4         utf8_1.1.4           KernSmooth_2.23-15  
-#&gt; [106] plotly_4.8.0         rmarkdown_1.11       progress_1.2.0      
-#&gt; [109] readxl_1.1.0         grid_3.5.1           blob_1.1.1          
-#&gt; [112] git2r_0.23.0         metap_1.0            digest_0.6.18       
-#&gt; [115] R.utils_2.7.0        stats4_3.5.1         munsell_0.5.0       
-#&gt; [118] viridisLite_0.3.0</code></pre>
+#&gt;  [40] RANN_2.6.1           Rcpp_1.0.0           Biobase_2.42.0      
+#&gt;  [43] cellranger_1.1.0     gdata_2.18.0         ape_5.2             
+#&gt;  [46] nlme_3.1-137         gbRd_0.4-11          lmtest_0.9-36       
+#&gt;  [49] xfun_0.4             globals_0.12.4       rvest_0.3.2         
+#&gt;  [52] irlba_2.3.2          gtools_3.8.1         XML_3.98-1.16       
+#&gt;  [55] future_1.11.1.1      MASS_7.3-51.1        zoo_1.8-4           
+#&gt;  [58] scales_1.0.0         hms_0.4.2            RColorBrewer_1.1-2  
+#&gt;  [61] yaml_2.2.0           curl_3.3             memoise_1.1.0       
+#&gt;  [64] reticulate_1.10      pbapply_1.3-4        biomaRt_2.38.0      
+#&gt;  [67] stringi_1.2.4        RSQLite_2.1.1        S4Vectors_0.20.1    
+#&gt;  [70] caTools_1.17.1.1     BiocGenerics_0.28.0  bibtex_0.4.2        
+#&gt;  [73] Rdpack_0.10-1        SDMTools_1.1-221     rlang_0.3.1         
+#&gt;  [76] pkgconfig_2.0.2      bitops_1.0-6         evaluate_0.12       
+#&gt;  [79] lattice_0.20-38      ROCR_1.0-7           bindr_0.1.1         
+#&gt;  [82] labeling_0.3         htmlwidgets_1.3      cowplot_0.9.4       
+#&gt;  [85] bit_1.1-14           tidyselect_0.2.5     plyr_1.8.4          
+#&gt;  [88] magrittr_1.5         R6_2.3.0             IRanges_2.16.0      
+#&gt;  [91] gplots_3.0.1.1       generics_0.0.2       DBI_1.0.0           
+#&gt;  [94] withr_2.1.2          pillar_1.3.1         haven_2.0.0         
+#&gt;  [97] whisker_0.3-2        fitdistrplus_1.0-14  survival_2.43-3     
+#&gt; [100] RCurl_1.95-4.11      future.apply_1.1.0   tsne_0.1-3          
+#&gt; [103] modelr_0.1.2         crayon_1.3.4         utf8_1.1.4          
+#&gt; [106] KernSmooth_2.23-15   plotly_4.8.0         rmarkdown_1.11      
+#&gt; [109] progress_1.2.0       readxl_1.1.0         grid_3.5.1          
+#&gt; [112] blob_1.1.1           git2r_0.23.0         metap_1.0           
+#&gt; [115] digest_0.6.18        R.utils_2.7.0        stats4_3.5.1        
+#&gt; [118] munsell_0.5.0        viridisLite_0.3.0</code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using

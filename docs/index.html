@@ -318,7 +318,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-12-14</p>
+<p><strong>Last updated:</strong> 2019-02-02</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -327,7 +327,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/ca1d6ce5bd620c25609b92c6d098229c1b713bb6" target="_blank">ca1d6ce</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/c7ecb569798bcd9bc6bd40eb052540dc65e39d71" target="_blank">c7ecb56</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -337,6 +337,7 @@ Ignored files:
     Ignored:    analysis/10xv2_cache/
     Ignored:    analysis/10xv3_cache/
     Ignored:    data/fastqs/
+    Ignored:    data/hgmm_100_fastqs.tar
     Ignored:    data/hgmm_1k_fastqs.tar
     Ignored:    data/hgmm_1k_v3_fastqs.tar
     Ignored:    data/hgmm_1k_v3_fastqs/
@@ -345,6 +346,7 @@ Ignored files:
     Ignored:    data/whitelist_v2.txt
     Ignored:    data/whitelist_v3.txt.gz
     Ignored:    output/hs_mm_tr_index.idx
+    Ignored:    output/out_hgmm100/
     Ignored:    output/out_hgmm1k/
     Ignored:    output/out_hgmm1k_v3/
 
@@ -375,6 +377,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/BUStools/BUS_notebooks_R/85a5770b53befbfc968af9e488b546e123a8eab6/docs/index.html" target="_blank">85a5770</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2018-12-14
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -693,7 +712,27 @@ Start workflowr project.
 <pre class="r"><code>if (!require(devtools)) install.packages(&quot;devtools&quot;)
 devtools::install_github(&quot;BUStools/BUSpaRse&quot;)</code></pre>
 <p>This is work in progress. This package will be on Bioconductor soon.</p>
-<p>Installation note: This package contains compiled code. MacOS users using R 3.5 should download and install Clang 6.0 and gfortran 6.1 compilers from <a href="https://cran.r-project.org/bin/macosx/tools/">this webpage</a>. R 3.5 no longer works with Clang 4, which was used for R 3.4.</p>
+<div id="installation-note-for-macos" class="section level3">
+<h3>Installation note for MacOS</h3>
+<p>In case you encounter this error during installation:</p>
+<pre><code>clang: error: unsupported option &#39;-fopenmp&#39;</code></pre>
+<p>This is what to do to resolve it:</p>
+<p>This package contains compiled code, and a compiler that supports OpenMP is required to compile this package. However, the default clang that comes with MacOS does not support OpenMP. MacOS users using R 3.5 should download and install Clang 6.0 and gfortran 6.1 compilers from <a href="https://cran.r-project.org/bin/macosx/tools/">this webpage from CRAN</a>, which has OpenMP enabled. R 3.5 no longer works with Clang 4, which was used for R 3.4.</p>
+<p>Then, if the file <code>~/.R/Makevars</code> does not exist, in the terminal, go to your home directory by <code>cd</code>, use <code>mkdir .R</code> to create the <code>.R</code> directory, and type <code>vim Makevars</code> to create and start editing the file. If it already exists, then type <code>vim Makevars</code> to edit it.</p>
+<p>Alternatively, if you are uncomfortable with the command line, this can be done in RStudio. First use <code>file.exists(&quot;~/.R/Makevars&quot;)</code> to check if <code>~/.R/Makevars</code> exists. Then use <code>dir.exists(&quot;~/.R&quot;)</code> to check that if the <code>~/.R</code> directory exists. If it does not, then use <code>dir.create(&quot;~/.R&quot;)</code> to create the directory. Then use <code>file.create(&quot;~/.R/Makevars&quot;)</code> to create that file. Then navigate to that file in the Files pane in RStudio, open that file in RStudio, and edit it.</p>
+<p>Add the following to the <code>~/.R/Makevars</code> file:</p>
+<pre><code>CC=/usr/local/clang6/bin/clang
+SHLIB_CXXLD=/usr/local/clang6/bin/clang++
+CXX= /usr/local/clang6/bin/clang++  -Wall
+CXX1X= /usr/local/clang6/bin/clang++
+CXX98= /usr/local/clang6/bin/clang++
+CXX11= /usr/local/clang6/bin/clang++
+CXX14= /usr/local/clang6/bin/clang++
+CXX17= /usr/local/clang6/bin/clang++
+LDFLAGS=-L/usr/local/clang6/lib
+</code></pre>
+<p>Above is the default path where this Clang 6.0 is installed. Please change it if Clang 6.0 is installed in a custom path. This will tell R to use the Clang 6.0 from CRAN that has OpenMP enabled. Then restart the R session and reinstall this package.</p>
+</div>
 </div>
 <div id="notebooks" class="section level2">
 <h2>Notebooks</h2>
@@ -702,7 +741,7 @@ devtools::install_github(&quot;BUStools/BUSpaRse&quot;)</code></pre>
 <li><a href="10xv3.html">10x v3 chemistry - 1k 1:1 Mixture of Fresh Frozen Human (HEK293T) and Mouse (NIH3T3) Cells</a></li>
 </ol>
 <p>Notebooks for Drop-seq and CEL-seq2 are coming soom.</p>
-<p>If you have problems with the notebooks, or have questions about them, please go to the <a href="https://bustools.github.io/BUS_notebooks_R/index.html">GitHub repo of this website</a>.</p>
+<p>If you have problems with the notebooks, have questions about them, or want to download the notebooks, please go to the <a href="https://bustools.github.io/BUS_notebooks_R/index.html">GitHub repo of this website</a>.</p>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
