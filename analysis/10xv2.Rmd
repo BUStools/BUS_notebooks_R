@@ -19,7 +19,7 @@ First, if you want to run this notebook, please make sure you have [`git`](https
 git clone https://github.com/BUStools/BUS_notebooks_R.git
 ```
 
-This notebook is in the `analysis` directory. Also, in RStudio, go to Tools -> Global Options -> R Markdown, and set "Evaluate chunks in directory" to "Project". The reason why is that this website was built with [`workflowr`](https://jdblischak.github.io/workflowr/), which renders the notebooks in the project directory rather than the document directory.
+This will download a directory called `BUS_notebooks_R` in the directory you are in when running the `git` command. Inside the `BUS_notebooks_R` directory, this notebook is in the `analysis` directory. Then create an R project in the `BUS_notebooks_R` directory. Also, in RStudio, go to Tools -> Global Options -> R Markdown, and set "Evaluate chunks in directory" to "Project". The reason why is that this website was built with [`workflowr`](https://jdblischak.github.io/workflowr/), which renders the notebooks in the project directory rather than the document directory.
 
 Alternatively, you can directly download this notebook [here](https://github.com/BUStools/BUS_notebooks_R/raw/master/analysis/10xv2.Rmd) and open it in RStudio, but make sure to adjust the paths where files are downloaded and where output files are stored to match those in your environment.
 
@@ -119,13 +119,6 @@ See what the outputs are
 list.files("./output/out_hgmm1k/")
 ```
 
-This is what the `bus` file looks like:
-
-First column is barcode, second column is UMI, 3rd column is equivalence class index, and 4th column is count, which is ignored. This has already been sorted according to barcode.
-```{bash}
-head ./output/out_hgmm1k/output.sorted.txt
-```
-
 ## Run `BUStools`
 The `output.bus` file is a binary. In order to make R parse it, we need to convert it into a sorted text file. There's a command line tool [`bustools`](https://github.com/BUStools/bustools) for this. The reason why `kallisto bus` outputs this binary rather than the sorted text file directly is that the binary can be very compressed to save disk space. The such compression is achieved, a future version of R package `BUSpaRse` may support directly reading the binary to convert to sparse matrix. At present, as `bustools` is still under development, such compression has not been achieved, and as a result, the binary is slightly larger than the text file. 
 
@@ -136,6 +129,13 @@ export PATH=$PATH:/home/lambda/mylibs/bin/
 bustools sort -o ./output/out_hgmm1k/output.sorted -t8 ./output/out_hgmm1k/output.bus
 # Convert sorted file to text
 bustools text -o ./output/out_hgmm1k/output.sorted.txt ./output/out_hgmm1k/output.sorted
+```
+
+This is what the `bus` file looks like:
+
+First column is barcode, second column is UMI, 3rd column is equivalence class index, and 4th column is count, which is ignored. This has already been sorted according to barcode.
+```{bash}
+head ./output/out_hgmm1k/output.sorted.txt
 ```
 
 # Secondary analysis
