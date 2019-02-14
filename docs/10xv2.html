@@ -424,7 +424,8 @@ div.section {
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
-<p><details> <summary> <strong style="color:red;">✖</strong> <strong>R Markdown file:</strong> uncommitted changes </summary> The R Markdown file has unstaged changes. To know which version of the R Markdown file created these results, you’ll want to first commit it to the Git repo. If you’re still working on the analysis, you can ignore this warning. When you’re finished, you can run <code>wflow_publish</code> to commit the R Markdown file and build the HTML.</p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
 </details>
 </li>
 <li>
@@ -443,7 +444,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/45c5d4aa55bf7ae465dac70a4351f292d262b8f4" target="_blank">45c5d4a</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/8cd81e033d3bf2b02d3287043329aea3b3e60d8e" target="_blank">8cd81e0</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -452,7 +453,6 @@ Ignored files:
     Ignored:    BUSpaRse_notebooks.Rproj
     Ignored:    analysis/10xv2_cache/
     Ignored:    analysis/10xv3_cache/
-    Ignored:    analysis/figure/
     Ignored:    data/fastqs/
     Ignored:    data/hgmm_100_fastqs.tar
     Ignored:    data/hgmm_1k_fastqs.tar
@@ -462,14 +462,9 @@ Ignored files:
     Ignored:    data/mm_cdna.fa.gz
     Ignored:    data/whitelist_v2.txt
     Ignored:    data/whitelist_v3.txt.gz
-    Ignored:    docs/figure/
     Ignored:    output/hs_mm_tr_index.idx
     Ignored:    output/out_hgmm1k/
     Ignored:    output/out_hgmm1k_v3/
-
-Unstaged changes:
-    Modified:   analysis/10xv2.Rmd
-    Modified:   analysis/10xv3.Rmd
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -498,6 +493,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/8cd81e033d3bf2b02d3287043329aea3b3e60d8e/analysis/10xv2.Rmd" target="_blank">8cd81e0</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2019-02-14
+</td>
+<td style="text-align:left;">
+Finally saved the figures
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/BUStools/BUS_notebooks_R/8cd81e033d3bf2b02d3287043329aea3b3e60d8e/docs/10xv2.html" target="_blank">8cd81e0</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2019-02-14
+</td>
+<td style="text-align:left;">
+Finally saved the figures
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 html
@@ -1252,7 +1281,7 @@ bc_rank &lt;- barcodeRanks(res_mat)</code></pre>
   scale_y_log10() +
   labs(x = &quot;Rank&quot;, y = &quot;Total reads&quot;) +
   theme_bw()</code></pre>
-<p><img src="figure/10xv2.Rmd/rank-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/10xv2.Rmd/rank-1.svg" width="672" style="display: block; margin: auto;" /></p>
 <p>The inflection point looks like a reasonable number of cells.</p>
 <pre class="r"><code># Filter the matrix
 res_mat &lt;- res_mat[, tot_counts &gt; bc_rank$inflection]
@@ -1281,7 +1310,7 @@ cell_species &lt;- cell_species %&gt;%
 <pre class="r"><code>ggplot(cell_species, aes(n_human_umi, n_mouse_umi, color = species)) +
   geom_point(size = 0.5) +
   theme_bw()</code></pre>
-<p><img src="figure/10xv2.Rmd/barn-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/10xv2.Rmd/barn-1.svg" width="672" style="display: block; margin: auto;" /></p>
 <p>Great, looks like the vast majority of cells are not mixed.</p>
 <pre class="r"><code>cell_species %&gt;% 
   dplyr::count(species) %&gt;% 
@@ -1304,16 +1333,16 @@ cell_species &lt;- cell_species %&gt;%
 seu &lt;- AddMetaData(seu, metadata = cell_species$species, col.name = &quot;species&quot;)</code></pre>
 <p>See how number of total counts and number of genes expressed are distributed.</p>
 <pre class="r"><code>VlnPlot(seu, c(&quot;nCount_RNA&quot;, &quot;nFeature_RNA&quot;), group.by = &quot;species&quot;)</code></pre>
-<p><img src="figure/10xv2.Rmd/vln-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/10xv2.Rmd/vln-1.svg" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>seu &lt;- RunPCA(seu, verbose = FALSE, npcs = 30)
 ElbowPlot(seu, ndims = 30)</code></pre>
-<p><img src="figure/10xv2.Rmd/elbow-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/10xv2.Rmd/elbow-1.svg" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>DimPlot(seu, reduction = &quot;pca&quot;, pt.size = 0.5, group.by = &quot;species&quot;)</code></pre>
-<p><img src="figure/10xv2.Rmd/pca-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/10xv2.Rmd/pca-1.svg" width="672" style="display: block; margin: auto;" /></p>
 <p>The first PC separates species, as expected. Also as expected, the doublets are in between human and mouse cells in this plot.</p>
 <pre class="r"><code>seu &lt;- RunTSNE(seu, dims = 1:20, check_duplicates = FALSE)
 DimPlot(seu, reduction = &quot;tsne&quot;, pt.size = 0.5, group.by = &quot;species&quot;)</code></pre>
-<p><img src="figure/10xv2.Rmd/tsne-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/10xv2.Rmd/tsne-1.svg" width="672" style="display: block; margin: auto;" /></p>
 <p>The species separate, and the few doublets form its own cluster, as expected.</p>
 </div>
 <div id="session-information" class="section level2">
@@ -1339,20 +1368,20 @@ DimPlot(seu, reduction = &quot;tsne&quot;, pt.size = 0.5, group.by = &quot;speci
 #&gt; [8] methods   base     
 #&gt; 
 #&gt; other attached packages:
-#&gt;  [1] bindrcpp_0.2.2              Matrix_1.2-15              
-#&gt;  [3] DropletUtils_1.2.2          SingleCellExperiment_1.4.1 
-#&gt;  [5] SummarizedExperiment_1.12.0 DelayedArray_0.8.0         
-#&gt;  [7] matrixStats_0.54.0          Biobase_2.42.0             
-#&gt;  [9] GenomicRanges_1.34.0        GenomeInfoDb_1.18.1        
-#&gt; [11] IRanges_2.16.0              S4Vectors_0.20.1           
-#&gt; [13] BiocGenerics_0.28.0         BiocParallel_1.16.5        
-#&gt; [15] forcats_0.3.0               stringr_1.4.0              
-#&gt; [17] dplyr_0.7.8                 purrr_0.3.0                
-#&gt; [19] readr_1.3.1                 tidyr_0.8.2                
-#&gt; [21] tibble_2.0.1                ggplot2_3.1.0              
-#&gt; [23] tidyverse_1.2.1             Seurat_3.0.0.9000          
-#&gt; [25] data.table_1.12.0           BUSpaRse_0.99.0            
-#&gt; [27] workflowr_1.1.1            
+#&gt;  [1] bindrcpp_0.2.2              workflowr_1.1.1            
+#&gt;  [3] Matrix_1.2-15               DropletUtils_1.2.2         
+#&gt;  [5] SingleCellExperiment_1.4.1  SummarizedExperiment_1.12.0
+#&gt;  [7] DelayedArray_0.8.0          matrixStats_0.54.0         
+#&gt;  [9] Biobase_2.42.0              GenomicRanges_1.34.0       
+#&gt; [11] GenomeInfoDb_1.18.1         IRanges_2.16.0             
+#&gt; [13] S4Vectors_0.20.1            BiocGenerics_0.28.0        
+#&gt; [15] BiocParallel_1.16.5         forcats_0.3.0              
+#&gt; [17] stringr_1.4.0               dplyr_0.7.8                
+#&gt; [19] purrr_0.3.0                 readr_1.3.1                
+#&gt; [21] tidyr_0.8.2                 tibble_2.0.1               
+#&gt; [23] ggplot2_3.1.0               tidyverse_1.2.1            
+#&gt; [25] Seurat_3.0.0.9000           data.table_1.12.0          
+#&gt; [27] BUSpaRse_0.99.0            
 #&gt; 
 #&gt; loaded via a namespace (and not attached):
 #&gt;   [1] utf8_1.1.4               reticulate_1.10         
@@ -1367,7 +1396,7 @@ DimPlot(seu, reduction = &quot;tsne&quot;, pt.size = 0.5, group.by = &quot;speci
 #&gt;  [19] rstudioapi_0.9.0         ROCR_1.0-7              
 #&gt;  [21] gbRd_0.4-11              listenv_0.7.0           
 #&gt;  [23] labeling_0.3             Rdpack_0.10-1           
-#&gt;  [25] git2r_0.23.0             GenomeInfoDbData_1.2.0  
+#&gt;  [25] git2r_0.24.0             GenomeInfoDbData_1.2.0  
 #&gt;  [27] bit64_0.9-7              rhdf5_2.26.0            
 #&gt;  [29] rprojroot_1.3-2          generics_0.0.2          
 #&gt;  [31] xfun_0.4                 R6_2.3.0                
@@ -1381,52 +1410,51 @@ DimPlot(seu, reduction = &quot;tsne&quot;, pt.size = 0.5, group.by = &quot;speci
 #&gt;  [47] rtracklayer_1.42.1       lazyeval_0.2.1          
 #&gt;  [49] broom_0.5.1              plyranges_1.2.0         
 #&gt;  [51] yaml_2.2.0               modelr_0.1.3            
-#&gt;  [53] backports_1.1.2          rsconnect_0.8.13        
-#&gt;  [55] tools_3.5.1              usethis_1.4.0           
-#&gt;  [57] gplots_3.0.1.1           RColorBrewer_1.1-2      
-#&gt;  [59] sessioninfo_1.1.1        ggridges_0.5.1          
-#&gt;  [61] Rcpp_1.0.0               plyr_1.8.4              
-#&gt;  [63] progress_1.2.0           zlibbioc_1.28.0         
-#&gt;  [65] RCurl_1.95-4.11          ps_1.2.1                
-#&gt;  [67] prettyunits_1.0.2        pbapply_1.4-0           
-#&gt;  [69] cowplot_0.9.4            zoo_1.8-4               
-#&gt;  [71] haven_2.0.0              ggrepel_0.8.0           
-#&gt;  [73] cluster_2.0.7-1          fs_1.2.6                
-#&gt;  [75] magrittr_1.5             lmtest_0.9-36           
-#&gt;  [77] RANN_2.6.1               whisker_0.3-2           
-#&gt;  [79] fitdistrplus_1.0-14      pkgload_1.0.2           
-#&gt;  [81] hms_0.4.2                lsei_1.2-0              
-#&gt;  [83] evaluate_0.12            XML_3.98-1.17           
-#&gt;  [85] readxl_1.2.0             testthat_2.0.1          
-#&gt;  [87] compiler_3.5.1           biomaRt_2.38.0          
-#&gt;  [89] KernSmooth_2.23-15       crayon_1.3.4            
-#&gt;  [91] R.oo_1.22.0              htmltools_0.3.6         
-#&gt;  [93] lubridate_1.7.4          DBI_1.0.0               
-#&gt;  [95] MASS_7.3-51.1            cli_1.0.1               
-#&gt;  [97] R.methodsS3_1.7.1        gdata_2.18.0            
-#&gt;  [99] metap_1.1                bindr_0.1.1             
-#&gt; [101] igraph_1.2.4             pkgconfig_2.0.2         
-#&gt; [103] GenomicAlignments_1.18.1 plotly_4.8.0            
-#&gt; [105] xml2_1.2.0               foreach_1.4.4           
-#&gt; [107] XVector_0.22.0           bibtex_0.4.2            
-#&gt; [109] rvest_0.3.2              callr_3.1.1             
-#&gt; [111] digest_0.6.18            tsne_0.1-3              
-#&gt; [113] Biostrings_2.50.2        rmarkdown_1.11          
-#&gt; [115] cellranger_1.1.0         edgeR_3.24.3            
-#&gt; [117] Rsamtools_1.34.1         gtools_3.8.1            
-#&gt; [119] nlme_3.1-137             jsonlite_1.6            
-#&gt; [121] Rhdf5lib_1.4.0           fansi_0.4.0             
-#&gt; [123] limma_3.38.3             desc_1.2.0              
-#&gt; [125] viridisLite_0.3.0        pillar_1.3.1            
-#&gt; [127] lattice_0.20-38          httr_1.4.0              
-#&gt; [129] pkgbuild_1.0.2           survival_2.43-3         
-#&gt; [131] glue_1.3.0               remotes_2.0.2           
-#&gt; [133] png_0.1-7                iterators_1.0.10        
-#&gt; [135] bit_1.1-14               stringi_1.3.1           
-#&gt; [137] HDF5Array_1.10.1         blob_1.1.1              
-#&gt; [139] caTools_1.17.1.1         memoise_1.1.0           
-#&gt; [141] irlba_2.3.3              future.apply_1.1.0      
-#&gt; [143] ape_5.2</code></pre>
+#&gt;  [53] backports_1.1.3          tools_3.5.1             
+#&gt;  [55] usethis_1.4.0            gplots_3.0.1.1          
+#&gt;  [57] RColorBrewer_1.1-2       sessioninfo_1.1.1       
+#&gt;  [59] ggridges_0.5.1           Rcpp_1.0.0              
+#&gt;  [61] plyr_1.8.4               progress_1.2.0          
+#&gt;  [63] zlibbioc_1.28.0          RCurl_1.95-4.11         
+#&gt;  [65] ps_1.3.0                 prettyunits_1.0.2       
+#&gt;  [67] pbapply_1.4-0            cowplot_0.9.4           
+#&gt;  [69] zoo_1.8-4                haven_2.0.0             
+#&gt;  [71] ggrepel_0.8.0            cluster_2.0.7-1         
+#&gt;  [73] fs_1.2.6                 magrittr_1.5            
+#&gt;  [75] lmtest_0.9-36            RANN_2.6.1              
+#&gt;  [77] whisker_0.3-2            fitdistrplus_1.0-14     
+#&gt;  [79] pkgload_1.0.2            hms_0.4.2               
+#&gt;  [81] lsei_1.2-0               evaluate_0.12           
+#&gt;  [83] XML_3.98-1.17            readxl_1.2.0            
+#&gt;  [85] testthat_2.0.1           compiler_3.5.1          
+#&gt;  [87] biomaRt_2.38.0           KernSmooth_2.23-15      
+#&gt;  [89] crayon_1.3.4             R.oo_1.22.0             
+#&gt;  [91] htmltools_0.3.6          lubridate_1.7.4         
+#&gt;  [93] DBI_1.0.0                MASS_7.3-51.1           
+#&gt;  [95] cli_1.0.1                R.methodsS3_1.7.1       
+#&gt;  [97] gdata_2.18.0             metap_1.1               
+#&gt;  [99] bindr_0.1.1              igraph_1.2.4            
+#&gt; [101] pkgconfig_2.0.2          GenomicAlignments_1.18.1
+#&gt; [103] plotly_4.8.0             xml2_1.2.0              
+#&gt; [105] foreach_1.4.4            XVector_0.22.0          
+#&gt; [107] bibtex_0.4.2             rvest_0.3.2             
+#&gt; [109] callr_3.1.1              digest_0.6.18           
+#&gt; [111] tsne_0.1-3               Biostrings_2.50.2       
+#&gt; [113] rmarkdown_1.11           cellranger_1.1.0        
+#&gt; [115] edgeR_3.24.3             Rsamtools_1.34.1        
+#&gt; [117] gtools_3.8.1             nlme_3.1-137            
+#&gt; [119] jsonlite_1.6             Rhdf5lib_1.4.0          
+#&gt; [121] fansi_0.4.0              desc_1.2.0              
+#&gt; [123] viridisLite_0.3.0        limma_3.38.3            
+#&gt; [125] pillar_1.3.1             lattice_0.20-38         
+#&gt; [127] httr_1.4.0               pkgbuild_1.0.2          
+#&gt; [129] survival_2.43-3          glue_1.3.0              
+#&gt; [131] remotes_2.0.2            png_0.1-7               
+#&gt; [133] iterators_1.0.10         bit_1.1-14              
+#&gt; [135] stringi_1.3.1            HDF5Array_1.10.1        
+#&gt; [137] blob_1.1.1               caTools_1.17.1.1        
+#&gt; [139] memoise_1.1.0            irlba_2.3.3             
+#&gt; [141] future.apply_1.1.0       ape_5.2</code></pre>
 </div>
 </div>
 
