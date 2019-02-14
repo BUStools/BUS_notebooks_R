@@ -354,7 +354,7 @@ ElbowPlot(seu, ndims = 30)
 DimPlot(seu, reduction = "pca", pt.size = 0.5, group.by = "species")
 ```
 
-The first PC separates species, as expected. Here the 2 mixed species "cells" seem to be more similar to mouse cells than human cells.
+The first PC separates species, as expected. Here the 2 mixed species "cells" seem to be more similar to human cells than mouse cells.
 ```{r tsne}
 seu <- RunTSNE(seu, dims = 1:20, check_duplicates = FALSE)
 DimPlot(seu, reduction = "tsne", pt.size = 0.5, group.by = "species")
