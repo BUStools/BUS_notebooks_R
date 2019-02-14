@@ -444,7 +444,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/8cd81e033d3bf2b02d3287043329aea3b3e60d8e" target="_blank">8cd81e0</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/6006364fcbd35ab19d13d7c1dbd133357a573512" target="_blank">6006364</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -465,6 +465,9 @@ Ignored files:
     Ignored:    output/hs_mm_tr_index.idx
     Ignored:    output/out_hgmm1k/
     Ignored:    output/out_hgmm1k_v3/
+
+Untracked files:
+    Untracked:  docs/figure/
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -493,6 +496,57 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/6006364fcbd35ab19d13d7c1dbd133357a573512/analysis/10xv3.Rmd" target="_blank">6006364</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2019-02-14
+</td>
+<td style="text-align:left;">
+Corrected typo
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/95f29514e0449e913e4c16d3f9b6c470e373b44f/analysis/10xv3.Rmd" target="_blank">95f2951</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2019-02-14
+</td>
+<td style="text-align:left;">
+Added head of bus file
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/BUStools/BUS_notebooks_R/71849682375cab60ab7212e22d9384bb91e7494e/docs/10xv3.html" target="_blank">7184968</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2019-02-14
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -893,6 +947,19 @@ download.file(&quot;ftp://ftp.ensembl.org/pub/release-95/fasta/mus_musculus/cdna
 <pre class="r"><code>list.files(&quot;./output/out_hgmm1k_v3/&quot;)</code></pre>
 <pre><code>#&gt; [1] &quot;matrix.ec&quot;         &quot;output.bus&quot;        &quot;output.sorted&quot;    
 #&gt; [4] &quot;output.sorted.txt&quot; &quot;run_info.json&quot;     &quot;transcripts.txt&quot;</code></pre>
+<p>This is what the <code>bus</code> file looks like:</p>
+<p>First column is barcode, second column is UMI, 3rd column is equivalence class index, and 4th column is count, which is ignored. This has already been sorted according to barcode.</p>
+<pre class="bash"><code>head ./output/out_hgmm1k_v3/output.sorted.txt</code></pre>
+<pre><code>#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAAAA    319248  1
+#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAAAA    322114  1
+#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAAAA    553631  1
+#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAAAA    572943  1
+#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAAAA    981967  1
+#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAAAA    1079758 1
+#&gt; AAAAAAAAAAAAAAAA AAAACAAAAAAA    1200393 1
+#&gt; AAAAAAAAAAAAAAAA AAAAGGACAACC    327044  1
+#&gt; AAAAAAAAAAAAAAAC CATAAAAAATAT    543283  1
+#&gt; AAAAAAAAAAAAAAAG ACACCTCTTGGC    106416  1</code></pre>
 </div>
 <div id="run-bustools" class="section level2">
 <h2>Run <code>BUStools</code></h2>
@@ -1068,7 +1135,37 @@ bc_rank &lt;- barcodeRanks(res_mat)</code></pre>
   scale_y_log10() +
   labs(x = &quot;Rank&quot;, y = &quot;Total reads&quot;) +
   theme_bw()</code></pre>
-<p><img src="figure/10xv3.Rmd/rank-1.svg" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/10xv3.Rmd/rank-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of rank-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/8cd81e033d3bf2b02d3287043329aea3b3e60d8e/docs/figure/10xv3.Rmd/rank-1.png" target="_blank">8cd81e0</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2019-02-14
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>The inflection point looks like a reasonable number of cells.</p>
 <pre class="r"><code># Filter the matrix
 res_mat &lt;- res_mat[, tot_counts &gt; bc_rank$inflection]
@@ -1097,7 +1194,37 @@ cell_species &lt;- cell_species %&gt;%
 <pre class="r"><code>ggplot(cell_species, aes(n_human_umi, n_mouse_umi, color = species)) +
   geom_point(size = 0.5) +
   theme_bw()</code></pre>
-<p><img src="figure/10xv3.Rmd/barn-1.svg" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/10xv3.Rmd/barn-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of barn-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/8cd81e033d3bf2b02d3287043329aea3b3e60d8e/docs/figure/10xv3.Rmd/barn-1.png" target="_blank">8cd81e0</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2019-02-14
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>Great, looks like the vast majority of cells are not mixed.</p>
 <pre class="r"><code>cell_species %&gt;% 
   dplyr::count(species) %&gt;% 
@@ -1121,16 +1248,136 @@ cell_species &lt;- cell_species %&gt;%
 seu &lt;- AddMetaData(seu, metadata = cell_species$species, col.name = &quot;species&quot;)</code></pre>
 <p>See how number of total counts and number of genes expressed are distributed.</p>
 <pre class="r"><code>VlnPlot(seu, c(&quot;nCount_RNA&quot;, &quot;nFeature_RNA&quot;), group.by = &quot;species&quot;)</code></pre>
-<p><img src="figure/10xv3.Rmd/vln-1.svg" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/10xv3.Rmd/vln-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of vln-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/8cd81e033d3bf2b02d3287043329aea3b3e60d8e/docs/figure/10xv3.Rmd/vln-1.png" target="_blank">8cd81e0</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2019-02-14
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>seu &lt;- RunPCA(seu, verbose = FALSE, npcs = 30)
 ElbowPlot(seu, ndims = 30)</code></pre>
-<p><img src="figure/10xv3.Rmd/elbow-1.svg" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/10xv3.Rmd/elbow-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of elbow-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/8cd81e033d3bf2b02d3287043329aea3b3e60d8e/docs/figure/10xv3.Rmd/elbow-1.png" target="_blank">8cd81e0</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2019-02-14
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>DimPlot(seu, reduction = &quot;pca&quot;, pt.size = 0.5, group.by = &quot;species&quot;)</code></pre>
-<p><img src="figure/10xv3.Rmd/pca-1.svg" width="672" style="display: block; margin: auto;" /></p>
-<p>The first PC separates species, as expected. Here the 2 mixed species “cells” seem to be more similar to mouse cells than human cells.</p>
+<p><img src="figure/10xv3.Rmd/pca-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of pca-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/8cd81e033d3bf2b02d3287043329aea3b3e60d8e/docs/figure/10xv3.Rmd/pca-1.png" target="_blank">8cd81e0</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2019-02-14
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<p>The first PC separates species, as expected. Here the 2 mixed species “cells” seem to be more similar to human cells than mouse cells.</p>
 <pre class="r"><code>seu &lt;- RunTSNE(seu, dims = 1:20, check_duplicates = FALSE)
 DimPlot(seu, reduction = &quot;tsne&quot;, pt.size = 0.5, group.by = &quot;species&quot;)</code></pre>
-<p><img src="figure/10xv3.Rmd/tsne-1.svg" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/10xv3.Rmd/tsne-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of tsne-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/8cd81e033d3bf2b02d3287043329aea3b3e60d8e/docs/figure/10xv3.Rmd/tsne-1.png" target="_blank">8cd81e0</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2019-02-14
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
@@ -1155,20 +1402,20 @@ DimPlot(seu, reduction = &quot;tsne&quot;, pt.size = 0.5, group.by = &quot;speci
 #&gt; [8] methods   base     
 #&gt; 
 #&gt; other attached packages:
-#&gt;  [1] bindrcpp_0.2.2              workflowr_1.1.1            
-#&gt;  [3] Matrix_1.2-15               DropletUtils_1.2.2         
-#&gt;  [5] SingleCellExperiment_1.4.1  SummarizedExperiment_1.12.0
-#&gt;  [7] DelayedArray_0.8.0          matrixStats_0.54.0         
-#&gt;  [9] Biobase_2.42.0              GenomicRanges_1.34.0       
-#&gt; [11] GenomeInfoDb_1.18.1         IRanges_2.16.0             
-#&gt; [13] S4Vectors_0.20.1            BiocGenerics_0.28.0        
-#&gt; [15] BiocParallel_1.16.5         forcats_0.3.0              
-#&gt; [17] stringr_1.4.0               dplyr_0.7.8                
-#&gt; [19] purrr_0.3.0                 readr_1.3.1                
-#&gt; [21] tidyr_0.8.2                 tibble_2.0.1               
-#&gt; [23] ggplot2_3.1.0               tidyverse_1.2.1            
-#&gt; [25] Seurat_3.0.0.9000           data.table_1.12.0          
-#&gt; [27] BUSpaRse_0.99.0            
+#&gt;  [1] bindrcpp_0.2.2              Matrix_1.2-15              
+#&gt;  [3] DropletUtils_1.2.2          SingleCellExperiment_1.4.1 
+#&gt;  [5] SummarizedExperiment_1.12.0 DelayedArray_0.8.0         
+#&gt;  [7] matrixStats_0.54.0          Biobase_2.42.0             
+#&gt;  [9] GenomicRanges_1.34.0        GenomeInfoDb_1.18.1        
+#&gt; [11] IRanges_2.16.0              S4Vectors_0.20.1           
+#&gt; [13] BiocGenerics_0.28.0         BiocParallel_1.16.5        
+#&gt; [15] forcats_0.3.0               stringr_1.4.0              
+#&gt; [17] dplyr_0.7.8                 purrr_0.3.0                
+#&gt; [19] readr_1.3.1                 tidyr_0.8.2                
+#&gt; [21] tibble_2.0.1                ggplot2_3.1.0              
+#&gt; [23] tidyverse_1.2.1             Seurat_3.0.0.9000          
+#&gt; [25] data.table_1.12.0           BUSpaRse_0.99.0            
+#&gt; [27] workflowr_1.1.1            
 #&gt; 
 #&gt; loaded via a namespace (and not attached):
 #&gt;   [1] utf8_1.1.4               reticulate_1.10         
