@@ -221,7 +221,7 @@ The vast majority of "cells" have only a few UMI detected. Those are empty dropl
 bc_rank <- barcodeRanks(res_mat)
 ```
 
-```{r}
+```{r rank}
 qplot(bc_rank$rank, bc_rank$total, geom = "line") +
   geom_hline(yintercept = bc_rank$knee, color = "blue", linetype = 2) +
   geom_hline(yintercept = bc_rank$inflection, color = "green", linetype = 2) +
@@ -264,7 +264,7 @@ cell_species <- cell_species %>%
   ))
 ```
 
-```{r}
+```{r barn}
 ggplot(cell_species, aes(n_human_umi, n_mouse_umi, color = species)) +
   geom_point(size = 0.5) +
   theme_bw()
@@ -292,21 +292,21 @@ seu <- AddMetaData(seu, metadata = cell_species$species, col.name = "species")
 ```
 
 See how number of total counts and number of genes expressed are distributed.
-```{r}
+```{r vln}
 VlnPlot(seu, c("nCount_RNA", "nFeature_RNA"), group.by = "species")
 ```
 
-```{r}
+```{r elbow}
 seu <- RunPCA(seu, verbose = FALSE, npcs = 30)
 ElbowPlot(seu, ndims = 30)
 ```
 
-```{r}
+```{r pca}
 DimPlot(seu, reduction = "pca", pt.size = 0.5, group.by = "species")
 ```
 
 The first PC separates species, as expected. Also as expected, the doublets are in between human and mouse cells in this plot.
-```{r}
+```{r tsne}
 seu <- RunTSNE(seu, dims = 1:20, check_duplicates = FALSE)
 DimPlot(seu, reduction = "tsne", pt.size = 0.5, group.by = "species")
 ```
