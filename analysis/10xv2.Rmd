@@ -279,7 +279,7 @@ cell_species %>%
 Great, only about 0.3% of cells here are doublets, which is lower than the ~1% 10x lists. Doublet rate tends to be lower when cell concentration is lower. However, doublets can still be formed with cells from the same species, so the number of mixed species "cells" is only a lower bound of doublet rate.
 
 ## Dimension reduction
-```{r}
+```{r, cache=TRUE}
 seu <- CreateSeuratObject(res_mat, min.cells = 3) %>% 
   NormalizeData(verbose = FALSE) %>% 
   ScaleData(verbose = FALSE) %>% 

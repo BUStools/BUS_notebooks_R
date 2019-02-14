@@ -321,7 +321,7 @@ Great, only about 0.2% of cells here are doublets, which is lower than the ~1% 1
 
 ## Dimension reduction
 Note: [Seurat 3.0](https://github.com/satijalab/seurat/tree/release/3.0), which is not yet on CRAN, is used in this notebook.
-```{r}
+```{r, cache=TRUE}
 seu <- CreateSeuratObject(res_mat, min.cells = 3) %>% 
   NormalizeData(verbose = FALSE) %>% 
   ScaleData(verbose = FALSE) %>% 
