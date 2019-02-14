@@ -139,7 +139,7 @@ Actually, we don't need to unzip the fasta files
 ```
 
 ## Run `kallisto bus`
-Here we will generate the `bus` file. Here `bus` stands for *B*arbode, *U*MI, *S*et (i.e. equivalent class). In text form, it is a table whose first column is the barcode. The second column is the UMI that are associated with the barcode. The third column is the index of the equivalence class reads with the UMI maps to (equivalence class will be explained later). The fourth column is count of reads with this barcode, UMI, and equivalence class combination, which is ignored as one UMI should stand for one molecule. See [this paper](https://www.biorxiv.org/content/10.1101/472571v2) for more detail. 
+Here we will generate the `bus` file. Here `bus` stands for *B*arbode, *U*MI, *S*et (i.e. equivalent class). In text form, it is a table whose first column is the barcode. The second column is the UMI that are associated with the barcode. The third column is the index of the equivalence class reads with the UMI maps to (equivalence class will be explained later). The fourth column is count of reads with this barcode, UMI, and equivalence class combination, which is ignored as one UMI should stand for one molecule. See [this paper](https://www.biorxiv.org/content/10.1101/472571v2) for more detail.
 
 These are the technologies supported by `kallisto bus`:
 ```{r}
@@ -161,6 +161,13 @@ cd ./data
 See what the outputs are
 ```{r}
 list.files("./output/out_hgmm1k_v3/")
+```
+
+This is what the `bus` file looks like:
+
+First column is barcode, second column is UMI, 3rd column is equivalence class index, and 4th column is count, which is ignored. This has already been sorted according to barcode.
+```{bash}
+head ./output/out_hgmm1k_v3/output.sorted.txt
 ```
 
 ## Run `BUStools`

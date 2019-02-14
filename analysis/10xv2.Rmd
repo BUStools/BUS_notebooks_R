@@ -119,6 +119,13 @@ See what the outputs are
 list.files("./output/out_hgmm1k/")
 ```
 
+This is what the `bus` file looks like:
+
+First column is barcode, second column is UMI, 3rd column is equivalence class index, and 4th column is count, which is ignored. This has already been sorted according to barcode.
+```{bash}
+head ./output/out_hgmm1k/output.sorted.txt
+```
+
 ## Run `BUStools`
 The `output.bus` file is a binary. In order to make R parse it, we need to convert it into a sorted text file. There's a command line tool [`bustools`](https://github.com/BUStools/bustools) for this. The reason why `kallisto bus` outputs this binary rather than the sorted text file directly is that the binary can be very compressed to save disk space. The such compression is achieved, a future version of R package `BUSpaRse` may support directly reading the binary to convert to sparse matrix. At present, as `bustools` is still under development, such compression has not been achieved, and as a result, the binary is slightly larger than the text file. 
 
