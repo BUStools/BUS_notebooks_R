@@ -444,7 +444,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/95f29514e0449e913e4c16d3f9b6c470e373b44f" target="_blank">95f2951</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/f22beac3e993d1f097eb2d05c4a0664355921fad" target="_blank">f22beac</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -452,7 +452,6 @@ Ignored files:
     Ignored:    .Rproj.user/
     Ignored:    BUSpaRse_notebooks.Rproj
     Ignored:    analysis/10xv2_cache/
-    Ignored:    analysis/10xv3_cache/
     Ignored:    data/fastqs/
     Ignored:    data/hgmm_100_fastqs.tar
     Ignored:    data/hgmm_1k_fastqs.tar
@@ -462,10 +461,7 @@ Ignored files:
     Ignored:    data/mm_cdna.fa.gz
     Ignored:    data/whitelist_v2.txt
     Ignored:    data/whitelist_v3.txt.gz
-    Ignored:    docs/figure/
     Ignored:    output/hs_mm_tr_index.idx
-    Ignored:    output/out_hgmm1k/
-    Ignored:    output/out_hgmm1k_v3/
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -494,6 +490,57 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/f22beac3e993d1f097eb2d05c4a0664355921fad/analysis/10xv2.Rmd" target="_blank">f22beac</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2019-02-14
+</td>
+<td style="text-align:left;">
+Added CellRanger whiltelist clarification
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/000215e50f086ad1c9a3e52c3f47b91bcb1592ad/analysis/10xv2.Rmd" target="_blank">000215e</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2019-02-14
+</td>
+<td style="text-align:left;">
+Clarified git cloning this repo and resolved swapped code chunks for output.sorted.bus
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/BUStools/BUS_notebooks_R/71513e576f231d44fffa4279137aaa6a6d8ff308/docs/10xv2.html" target="_blank">71513e5</a>
+</td>
+<td style="text-align:left;">
+Lambda Moses
+</td>
+<td style="text-align:left;">
+2019-02-14
+</td>
+<td style="text-align:left;">
+Good site with figures and reproducibility metrics
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -929,7 +976,7 @@ Initial commit, already with 10xv2 notebook
 <h1>Setup</h1>
 <p>First, if you want to run this notebook, please make sure you have <a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git"><code>git</code></a> installed, go to the terminal and</p>
 <pre class="bash"><code>git clone https://github.com/BUStools/BUS_notebooks_R.git</code></pre>
-<p>This notebook is in the <code>analysis</code> directory. Also, in RStudio, go to Tools -&gt; Global Options -&gt; R Markdown, and set “Evaluate chunks in directory” to “Project”. The reason why is that this website was built with <a href="https://jdblischak.github.io/workflowr/"><code>workflowr</code></a>, which renders the notebooks in the project directory rather than the document directory.</p>
+<p>This will download a directory called <code>BUS_notebooks_R</code> in the directory you are in when running the <code>git</code> command. Inside the <code>BUS_notebooks_R</code> directory, this notebook is in the <code>analysis</code> directory. Then create an R project in the <code>BUS_notebooks_R</code> directory. Also, in RStudio, go to Tools -&gt; Global Options -&gt; R Markdown, and set “Evaluate chunks in directory” to “Project”. The reason why is that this website was built with <a href="https://jdblischak.github.io/workflowr/"><code>workflowr</code></a>, which renders the notebooks in the project directory rather than the document directory.</p>
 <p>Alternatively, you can directly download this notebook <a href="https://github.com/BUStools/BUS_notebooks_R/raw/master/analysis/10xv2.Rmd">here</a> and open it in RStudio, but make sure to adjust the paths where files are downloaded and where output files are stored to match those in your environment.</p>
 <div id="install-packages" class="section level2">
 <h2>Install packages</h2>
@@ -1022,8 +1069,8 @@ download.file(&quot;ftp://ftp.ensembl.org/pub/release-95/fasta/mus_musculus/cdna
 <p>Here we will generate the <code>bus</code> file. Here <code>bus</code> stands for <em>B</em>arbode, <em>U</em>MI, <em>S</em>et (i.e. equivalent class). In text form, it is a table whose first column is the barcode. The second column is the UMI that are associated with the barcode. The third column is the index of the equivalence class reads with the UMI maps to (equivalence class will be explained later). The fourth column is count of reads with this barcode, UMI, and equivalence class combination, which is ignored as one UMI should stand for one molecule. See <a href="https://www.biorxiv.org/content/10.1101/472571v2">this paper</a> for more detail.</p>
 <p>These are the technologies supported by <code>kallisto bus</code>:</p>
 <pre class="r"><code>system(&quot;kallisto bus --list&quot;, intern = TRUE)</code></pre>
-<pre><code>#&gt; Warning in system(&quot;kallisto bus --list&quot;, intern = TRUE): running command
-#&gt; &#39;kallisto bus --list&#39; had status 1</code></pre>
+<pre><code>#&gt; Warning in system(&quot;kallisto bus --list&quot;, intern = TRUE): running command &#39;kallisto bus --
+#&gt; list&#39; had status 1</code></pre>
 <pre><code>#&gt;  [1] &quot;List of supported single cell technologies&quot;
 #&gt;  [2] &quot;&quot;                                          
 #&gt;  [3] &quot;short name       description&quot;              
@@ -1074,21 +1121,7 @@ kallisto bus -i ../output/hs_mm_tr_index.idx -o ../output/out_hgmm1k -x 10xv2 -t
 #&gt; [quant] processed 63,252,296 reads, 52,231,469 reads pseudoaligned</code></pre>
 <p>See what the outputs are</p>
 <pre class="r"><code>list.files(&quot;./output/out_hgmm1k/&quot;)</code></pre>
-<pre><code>#&gt; [1] &quot;matrix.ec&quot;         &quot;output.bus&quot;        &quot;output.sorted&quot;    
-#&gt; [4] &quot;output.sorted.txt&quot; &quot;run_info.json&quot;     &quot;transcripts.txt&quot;</code></pre>
-<p>This is what the <code>bus</code> file looks like:</p>
-<p>First column is barcode, second column is UMI, 3rd column is equivalence class index, and 4th column is count, which is ignored. This has already been sorted according to barcode.</p>
-<pre class="bash"><code>head ./output/out_hgmm1k/output.sorted.txt</code></pre>
-<pre><code>#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAA  6575    1
-#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAA  9414    1
-#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAA  10354   1
-#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAA  38532   1
-#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAA  112639  1
-#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAA  123866  1
-#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAA  136025  1
-#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAA  204499  2
-#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAA  209310  1
-#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAA  221957  1</code></pre>
+<pre><code>#&gt; [1] &quot;matrix.ec&quot;       &quot;output.bus&quot;      &quot;run_info.json&quot;   &quot;transcripts.txt&quot;</code></pre>
 </div>
 <div id="run-bustools" class="section level2">
 <h2>Run <code>BUStools</code></h2>
@@ -1102,6 +1135,19 @@ bustools text -o ./output/out_hgmm1k/output.sorted.txt ./output/out_hgmm1k/outpu
 <pre><code>#&gt; Read in 52231469 number of busrecords
 #&gt; All sorted
 #&gt; Read in 43778790 number of busrecords</code></pre>
+<p>This is what the <code>bus</code> file looks like:</p>
+<p>First column is barcode, second column is UMI, 3rd column is equivalence class index, and 4th column is count, which is ignored. This has already been sorted according to barcode.</p>
+<pre class="bash"><code>head ./output/out_hgmm1k/output.sorted.txt</code></pre>
+<pre><code>#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAA  6575    1
+#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAA  9414    1
+#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAA  10354   1
+#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAA  38532   1
+#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAA  112639  1
+#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAA  123866  1
+#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAA  136025  1
+#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAA  204499  2
+#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAA  209310  1
+#&gt; AAAAAAAAAAAAAAAA AAAAAAAAAA  221957  1</code></pre>
 </div>
 </div>
 <div id="secondary-analysis" class="section level1">
@@ -1188,93 +1234,74 @@ bustools text -o ./output/out_hgmm1k/output.sorted.txt ./output/out_hgmm1k/outpu
 #&gt; [1] &quot;ENSG00000211923.1&quot;</code></pre>
 <pre class="r"><code>tail(genes)</code></pre>
 <pre><code>#&gt; [[1]]
-#&gt;  [1] &quot;ENSG00000256683.6&quot;  &quot;ENSG00000112276.13&quot; &quot;ENSG00000274671.4&quot; 
-#&gt;  [4] &quot;ENSG00000278767.4&quot;  &quot;ENSG00000100625.8&quot;  &quot;ENSG00000140093.9&quot; 
-#&gt;  [7] &quot;ENSG00000152939.15&quot; &quot;ENSG00000135956.8&quot;  &quot;ENSG00000215271.7&quot; 
-#&gt; [10] &quot;ENSG00000141965.4&quot;  &quot;ENSG00000255561.6&quot;  &quot;ENSG00000196376.10&quot;
-#&gt; [13] &quot;ENSG00000185960.14&quot; &quot;ENSG00000172000.7&quot;  &quot;ENSG00000227454.2&quot; 
-#&gt; [16] &quot;ENSG00000280700.1&quot; 
+#&gt;  [1] &quot;ENSG00000256683.6&quot;  &quot;ENSG00000112276.13&quot; &quot;ENSG00000274671.4&quot;  &quot;ENSG00000278767.4&quot; 
+#&gt;  [5] &quot;ENSG00000100625.8&quot;  &quot;ENSG00000140093.9&quot;  &quot;ENSG00000152939.15&quot; &quot;ENSG00000135956.8&quot; 
+#&gt;  [9] &quot;ENSG00000215271.7&quot;  &quot;ENSG00000141965.4&quot;  &quot;ENSG00000255561.6&quot;  &quot;ENSG00000196376.10&quot;
+#&gt; [13] &quot;ENSG00000185960.14&quot; &quot;ENSG00000172000.7&quot;  &quot;ENSG00000227454.2&quot;  &quot;ENSG00000280700.1&quot; 
 #&gt; 
 #&gt; [[2]]
-#&gt;  [1] &quot;ENSMUSG00000062647.16&quot; &quot;ENSMUSG00000115584.1&quot; 
-#&gt;  [3] &quot;ENSMUSG00000115188.1&quot;  &quot;ENSMUSG00000117228.1&quot; 
-#&gt;  [5] &quot;ENSMUSG00000083553.1&quot;  &quot;ENSMUSG00000107920.1&quot; 
-#&gt;  [7] &quot;ENSMUSG00000114756.1&quot;  &quot;ENSMUSG00000067147.7&quot; 
-#&gt;  [9] &quot;ENSMUSG00000104775.1&quot;  &quot;ENSMUSG00000081238.3&quot; 
-#&gt; [11] &quot;ENSMUSG00000110109.1&quot;  &quot;ENSMUSG00000062758.6&quot; 
-#&gt; [13] &quot;ENSMUSG00000116481.1&quot;  &quot;ENSMUSG00000081675.1&quot; 
-#&gt; [15] &quot;ENSMUSG00000090305.2&quot;  &quot;ENSMUSG00000106258.1&quot; 
-#&gt; [17] &quot;ENSMUSG00000106243.1&quot;  &quot;ENSMUSG00000117585.1&quot; 
-#&gt; [19] &quot;ENSMUSG00000071052.4&quot;  &quot;ENSMUSG00000086925.1&quot; 
-#&gt; [21] &quot;ENSMUSG00000099927.1&quot;  &quot;ENSMUSG00000112574.1&quot; 
-#&gt; [23] &quot;ENSMUSG00000087321.1&quot;  &quot;ENSMUSG00000099980.1&quot; 
-#&gt; [25] &quot;ENSMUSG00000098893.1&quot;  &quot;ENSMUSG00000082920.1&quot; 
-#&gt; [27] &quot;ENSMUSG00000117002.1&quot;  &quot;ENSMUSG00000083826.1&quot; 
-#&gt; [29] &quot;ENSMUSG00000116757.1&quot; 
+#&gt;  [1] &quot;ENSMUSG00000062647.16&quot; &quot;ENSMUSG00000115584.1&quot;  &quot;ENSMUSG00000115188.1&quot; 
+#&gt;  [4] &quot;ENSMUSG00000117228.1&quot;  &quot;ENSMUSG00000083553.1&quot;  &quot;ENSMUSG00000107920.1&quot; 
+#&gt;  [7] &quot;ENSMUSG00000114756.1&quot;  &quot;ENSMUSG00000067147.7&quot;  &quot;ENSMUSG00000104775.1&quot; 
+#&gt; [10] &quot;ENSMUSG00000081238.3&quot;  &quot;ENSMUSG00000110109.1&quot;  &quot;ENSMUSG00000062758.6&quot; 
+#&gt; [13] &quot;ENSMUSG00000116481.1&quot;  &quot;ENSMUSG00000081675.1&quot;  &quot;ENSMUSG00000090305.2&quot; 
+#&gt; [16] &quot;ENSMUSG00000106258.1&quot;  &quot;ENSMUSG00000106243.1&quot;  &quot;ENSMUSG00000117585.1&quot; 
+#&gt; [19] &quot;ENSMUSG00000071052.4&quot;  &quot;ENSMUSG00000086925.1&quot;  &quot;ENSMUSG00000099927.1&quot; 
+#&gt; [22] &quot;ENSMUSG00000112574.1&quot;  &quot;ENSMUSG00000087321.1&quot;  &quot;ENSMUSG00000099980.1&quot; 
+#&gt; [25] &quot;ENSMUSG00000098893.1&quot;  &quot;ENSMUSG00000082920.1&quot;  &quot;ENSMUSG00000117002.1&quot; 
+#&gt; [28] &quot;ENSMUSG00000083826.1&quot;  &quot;ENSMUSG00000116757.1&quot; 
 #&gt; 
 #&gt; [[3]]
-#&gt;  [1] &quot;ENSG00000165792.17&quot; &quot;ENSG00000171346.15&quot; &quot;ENSG00000180336.17&quot;
-#&gt;  [4] &quot;ENSG00000105443.14&quot; &quot;ENSG00000148225.15&quot; &quot;ENSG00000101940.17&quot;
-#&gt;  [7] &quot;ENSG00000157540.20&quot; &quot;ENSG00000197563.10&quot; &quot;ENSG00000003402.19&quot;
-#&gt; [10] &quot;ENSG00000136731.12&quot; &quot;ENSG00000160049.11&quot;
+#&gt;  [1] &quot;ENSG00000165792.17&quot; &quot;ENSG00000171346.15&quot; &quot;ENSG00000180336.17&quot; &quot;ENSG00000105443.14&quot;
+#&gt;  [5] &quot;ENSG00000148225.15&quot; &quot;ENSG00000101940.17&quot; &quot;ENSG00000157540.20&quot; &quot;ENSG00000197563.10&quot;
+#&gt;  [9] &quot;ENSG00000003402.19&quot; &quot;ENSG00000136731.12&quot; &quot;ENSG00000160049.11&quot;
 #&gt; 
 #&gt; [[4]]
-#&gt;  [1] &quot;ENSG00000100626.16&quot; &quot;ENSG00000153283.12&quot; &quot;ENSG00000196312.13&quot;
-#&gt;  [4] &quot;ENSG00000132680.10&quot; &quot;ENSG00000196418.12&quot; &quot;ENSG00000174197.16&quot;
-#&gt;  [7] &quot;ENSG00000186185.13&quot; &quot;ENSG00000130164.13&quot; &quot;ENSG00000198089.15&quot;
-#&gt; [10] &quot;ENSG00000081320.10&quot; &quot;ENSG00000122779.17&quot; &quot;ENSG00000089053.12&quot;
-#&gt; [13] &quot;ENSG00000010244.18&quot; &quot;ENSG00000177034.15&quot; &quot;ENSG00000039068.18&quot;
-#&gt; [16] &quot;ENSG00000068079.7&quot;  &quot;ENSG00000149554.12&quot; &quot;ENSG00000104408.9&quot; 
-#&gt; [19] &quot;ENSG00000165525.17&quot; &quot;ENSG00000167523.13&quot; &quot;ENSG00000172339.9&quot; 
-#&gt; [22] &quot;ENSG00000167721.10&quot; &quot;ENSG00000149182.14&quot; &quot;ENSG00000134759.13&quot;
-#&gt; [25] &quot;ENSG00000100554.11&quot; &quot;ENSG00000116871.15&quot; &quot;ENSG00000198252.11&quot;
-#&gt; [28] &quot;ENSG00000090382.6&quot;  &quot;ENSG00000067533.5&quot;  &quot;ENSG00000185869.14&quot;
-#&gt; [31] &quot;ENSG00000117505.12&quot; &quot;ENSG00000152229.18&quot; &quot;ENSG00000135966.12&quot;
-#&gt; [34] &quot;ENSG00000148655.14&quot; &quot;ENSG00000100243.20&quot; &quot;ENSG00000115756.12&quot;
-#&gt; [37] &quot;ENSG00000225973.3&quot;  &quot;ENSG00000140451.12&quot; &quot;ENSG00000105793.15&quot;
-#&gt; [40] &quot;ENSG00000162144.9&quot;  &quot;ENSG00000196417.12&quot; &quot;ENSG00000069020.18&quot;
-#&gt; [43] &quot;ENSG00000175575.12&quot; &quot;ENSG00000153066.12&quot; &quot;ENSG00000160062.14&quot;
-#&gt; [46] &quot;ENSG00000265491.4&quot;  &quot;ENSG00000125965.8&quot;  &quot;ENSG00000078674.17&quot;
-#&gt; [49] &quot;ENSG00000162241.12&quot; &quot;ENSG00000167703.14&quot; &quot;ENSG00000149483.11&quot;
-#&gt; [52] &quot;ENSG00000158987.20&quot; &quot;ENSG00000110031.12&quot; &quot;ENSG00000144730.17&quot;
-#&gt; [55] &quot;ENSG00000163705.12&quot; &quot;ENSG00000278550.4&quot;  &quot;ENSG00000007545.15&quot;
-#&gt; [58] &quot;ENSG00000178927.17&quot; &quot;ENSG00000115947.13&quot; &quot;ENSG00000186687.15&quot;
-#&gt; [61] &quot;ENSG00000152348.15&quot; &quot;ENSG00000184898.6&quot;  &quot;ENSG00000138380.17&quot;
-#&gt; [64] &quot;ENSG00000108587.15&quot; &quot;ENSG00000172000.7&quot;  &quot;ENSG00000119906.12&quot;
-#&gt; [67] &quot;ENSG00000169371.13&quot; &quot;ENSG00000100034.13&quot; &quot;ENSG00000108448.21&quot;
-#&gt; [70] &quot;ENSG00000169895.5&quot;  &quot;ENSG00000088888.17&quot; &quot;ENSG00000178950.16&quot;
+#&gt;  [1] &quot;ENSG00000100626.16&quot; &quot;ENSG00000153283.12&quot; &quot;ENSG00000196312.13&quot; &quot;ENSG00000132680.10&quot;
+#&gt;  [5] &quot;ENSG00000196418.12&quot; &quot;ENSG00000174197.16&quot; &quot;ENSG00000186185.13&quot; &quot;ENSG00000130164.13&quot;
+#&gt;  [9] &quot;ENSG00000198089.15&quot; &quot;ENSG00000081320.10&quot; &quot;ENSG00000122779.17&quot; &quot;ENSG00000089053.12&quot;
+#&gt; [13] &quot;ENSG00000010244.18&quot; &quot;ENSG00000177034.15&quot; &quot;ENSG00000039068.18&quot; &quot;ENSG00000068079.7&quot; 
+#&gt; [17] &quot;ENSG00000149554.12&quot; &quot;ENSG00000104408.9&quot;  &quot;ENSG00000165525.17&quot; &quot;ENSG00000167523.13&quot;
+#&gt; [21] &quot;ENSG00000172339.9&quot;  &quot;ENSG00000167721.10&quot; &quot;ENSG00000149182.14&quot; &quot;ENSG00000134759.13&quot;
+#&gt; [25] &quot;ENSG00000100554.11&quot; &quot;ENSG00000116871.15&quot; &quot;ENSG00000198252.11&quot; &quot;ENSG00000090382.6&quot; 
+#&gt; [29] &quot;ENSG00000067533.5&quot;  &quot;ENSG00000185869.14&quot; &quot;ENSG00000117505.12&quot; &quot;ENSG00000152229.18&quot;
+#&gt; [33] &quot;ENSG00000135966.12&quot; &quot;ENSG00000148655.14&quot; &quot;ENSG00000100243.20&quot; &quot;ENSG00000115756.12&quot;
+#&gt; [37] &quot;ENSG00000225973.3&quot;  &quot;ENSG00000140451.12&quot; &quot;ENSG00000105793.15&quot; &quot;ENSG00000162144.9&quot; 
+#&gt; [41] &quot;ENSG00000196417.12&quot; &quot;ENSG00000069020.18&quot; &quot;ENSG00000175575.12&quot; &quot;ENSG00000153066.12&quot;
+#&gt; [45] &quot;ENSG00000160062.14&quot; &quot;ENSG00000265491.4&quot;  &quot;ENSG00000125965.8&quot;  &quot;ENSG00000078674.17&quot;
+#&gt; [49] &quot;ENSG00000162241.12&quot; &quot;ENSG00000167703.14&quot; &quot;ENSG00000149483.11&quot; &quot;ENSG00000158987.20&quot;
+#&gt; [53] &quot;ENSG00000110031.12&quot; &quot;ENSG00000144730.17&quot; &quot;ENSG00000163705.12&quot; &quot;ENSG00000278550.4&quot; 
+#&gt; [57] &quot;ENSG00000007545.15&quot; &quot;ENSG00000178927.17&quot; &quot;ENSG00000115947.13&quot; &quot;ENSG00000186687.15&quot;
+#&gt; [61] &quot;ENSG00000152348.15&quot; &quot;ENSG00000184898.6&quot;  &quot;ENSG00000138380.17&quot; &quot;ENSG00000108587.15&quot;
+#&gt; [65] &quot;ENSG00000172000.7&quot;  &quot;ENSG00000119906.12&quot; &quot;ENSG00000169371.13&quot; &quot;ENSG00000100034.13&quot;
+#&gt; [69] &quot;ENSG00000108448.21&quot; &quot;ENSG00000169895.5&quot;  &quot;ENSG00000088888.17&quot; &quot;ENSG00000178950.16&quot;
 #&gt; [73] &quot;ENSG00000214176.9&quot;  &quot;ENSG00000226789.1&quot;  &quot;ENSG00000204118.2&quot; 
 #&gt; 
 #&gt; [[5]]
 #&gt; [1] &quot;ENSG00000127311.9&quot; &quot;ENSG00000135722.8&quot;
 #&gt; 
 #&gt; [[6]]
-#&gt;  [1] &quot;ENSG00000111832.12&quot; &quot;ENSG00000167637.16&quot; &quot;ENSG00000066422.4&quot; 
-#&gt;  [4] &quot;ENSG00000131269.16&quot; &quot;ENSG00000110871.14&quot; &quot;ENSG00000140416.20&quot;
-#&gt;  [7] &quot;ENSG00000151131.10&quot; &quot;ENSG00000151338.18&quot; &quot;ENSG00000085382.11&quot;
-#&gt; [10] &quot;ENSG00000143315.7&quot;  &quot;ENSG00000144460.12&quot; &quot;ENSG00000128973.12&quot;
-#&gt; [13] &quot;ENSG00000011021.22&quot; &quot;ENSG00000135643.4&quot;  &quot;ENSG00000177565.16&quot;
-#&gt; [16] &quot;ENSG00000185324.21&quot; &quot;ENSG00000105726.16&quot; &quot;ENSG00000184304.14&quot;
-#&gt; [19] &quot;ENSG00000135747.11&quot; &quot;ENSG00000248905.8&quot;  &quot;ENSG00000143322.19&quot;
-#&gt; [22] &quot;ENSG00000102144.14&quot; &quot;ENSG00000166822.12&quot; &quot;ENSG00000215883.10&quot;
-#&gt; [25] &quot;ENSG00000163728.10&quot; &quot;ENSG00000127603.25&quot; &quot;ENSG00000161328.10&quot;
-#&gt; [28] &quot;ENSG00000141551.14&quot; &quot;ENSG00000166938.12&quot; &quot;ENSG00000103657.13&quot;
-#&gt; [31] &quot;ENSG00000114982.17&quot; &quot;ENSG00000148225.15&quot; &quot;ENSG00000114902.13&quot;
-#&gt; [34] &quot;ENSG00000114904.12&quot; &quot;ENSG00000134539.16&quot; &quot;ENSG00000265491.4&quot; 
-#&gt; [37] &quot;ENSG00000162971.10&quot; &quot;ENSG00000134245.17&quot; &quot;ENSG00000273831.2&quot; 
-#&gt; [40] &quot;ENSG00000224383.7&quot;  &quot;ENSG00000101417.11&quot; &quot;ENSG00000148688.13&quot;
-#&gt; [43] &quot;ENSG00000073605.18&quot; &quot;ENSG00000115641.18&quot; &quot;ENSG00000102290.22&quot;
-#&gt; [46] &quot;ENSG00000275111.4&quot;  &quot;ENSG00000124357.12&quot; &quot;ENSG00000106069.22&quot;
-#&gt; [49] &quot;ENSG00000163964.14&quot; &quot;ENSG00000138592.13&quot; &quot;ENSG00000090238.11&quot;
-#&gt; [52] &quot;ENSG00000113532.12&quot; &quot;ENSG00000213949.8&quot;  &quot;ENSG00000175387.15&quot;
-#&gt; [55] &quot;ENSG00000282513.1&quot;  &quot;ENSG00000189136.9&quot;  &quot;ENSG00000268949.1&quot; 
-#&gt; [58] &quot;ENSG00000267253.1&quot;  &quot;ENSG00000249616.1&quot;  &quot;ENSG00000229816.1&quot; 
+#&gt;  [1] &quot;ENSG00000111832.12&quot; &quot;ENSG00000167637.16&quot; &quot;ENSG00000066422.4&quot;  &quot;ENSG00000131269.16&quot;
+#&gt;  [5] &quot;ENSG00000110871.14&quot; &quot;ENSG00000140416.20&quot; &quot;ENSG00000151131.10&quot; &quot;ENSG00000151338.18&quot;
+#&gt;  [9] &quot;ENSG00000085382.11&quot; &quot;ENSG00000143315.7&quot;  &quot;ENSG00000144460.12&quot; &quot;ENSG00000128973.12&quot;
+#&gt; [13] &quot;ENSG00000011021.22&quot; &quot;ENSG00000135643.4&quot;  &quot;ENSG00000177565.16&quot; &quot;ENSG00000185324.21&quot;
+#&gt; [17] &quot;ENSG00000105726.16&quot; &quot;ENSG00000184304.14&quot; &quot;ENSG00000135747.11&quot; &quot;ENSG00000248905.8&quot; 
+#&gt; [21] &quot;ENSG00000143322.19&quot; &quot;ENSG00000102144.14&quot; &quot;ENSG00000166822.12&quot; &quot;ENSG00000215883.10&quot;
+#&gt; [25] &quot;ENSG00000163728.10&quot; &quot;ENSG00000127603.25&quot; &quot;ENSG00000161328.10&quot; &quot;ENSG00000141551.14&quot;
+#&gt; [29] &quot;ENSG00000166938.12&quot; &quot;ENSG00000103657.13&quot; &quot;ENSG00000114982.17&quot; &quot;ENSG00000148225.15&quot;
+#&gt; [33] &quot;ENSG00000114902.13&quot; &quot;ENSG00000114904.12&quot; &quot;ENSG00000134539.16&quot; &quot;ENSG00000265491.4&quot; 
+#&gt; [37] &quot;ENSG00000162971.10&quot; &quot;ENSG00000134245.17&quot; &quot;ENSG00000273831.2&quot;  &quot;ENSG00000224383.7&quot; 
+#&gt; [41] &quot;ENSG00000101417.11&quot; &quot;ENSG00000148688.13&quot; &quot;ENSG00000073605.18&quot; &quot;ENSG00000115641.18&quot;
+#&gt; [45] &quot;ENSG00000102290.22&quot; &quot;ENSG00000275111.4&quot;  &quot;ENSG00000124357.12&quot; &quot;ENSG00000106069.22&quot;
+#&gt; [49] &quot;ENSG00000163964.14&quot; &quot;ENSG00000138592.13&quot; &quot;ENSG00000090238.11&quot; &quot;ENSG00000113532.12&quot;
+#&gt; [53] &quot;ENSG00000213949.8&quot;  &quot;ENSG00000175387.15&quot; &quot;ENSG00000282513.1&quot;  &quot;ENSG00000189136.9&quot; 
+#&gt; [57] &quot;ENSG00000268949.1&quot;  &quot;ENSG00000267253.1&quot;  &quot;ENSG00000249616.1&quot;  &quot;ENSG00000229816.1&quot; 
 #&gt; [61] &quot;ENSG00000265158.1&quot;</code></pre>
 <p>Apparently some ECs map to many genes.</p>
 </div>
 <div id="make-the-sparse-matrix" class="section level2">
 <h2>Make the sparse matrix</h2>
-<p>For 10x, we do have a file with all valid cell barcodes that comes with CellRanger.</p>
+<p>For 10x, we do have a file with all valid cell barcodes that comes with CellRanger. You need to install CellRanger to get this file, though you do not need to run CellRanger for this notebook. The whitelist is optional, so if you don’t have one, you may skip the whitelist step and the <code>whitelist</code> argument in the <code>makr_sparse_matrix</code> function.</p>
 <pre class="bash"><code># Copy v2 chemistry whitelist to working directory
 cp ~/cellranger-3.0.1/cellranger-cs/3.0.1/lib/python/cellranger/barcodes/737K-august-2016.txt \
 ./data/whitelist_v2.txt</code></pre>
@@ -1584,105 +1611,75 @@ Lambda Moses
 #&gt; BLAS/LAPACK: /usr/lib64/R/lib/libRblas.so
 #&gt; 
 #&gt; locale:
-#&gt;  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
-#&gt;  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
-#&gt;  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
-#&gt;  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
-#&gt;  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-#&gt; [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+#&gt;  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C               LC_TIME=en_US.UTF-8       
+#&gt;  [4] LC_COLLATE=en_US.UTF-8     LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+#&gt;  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                  LC_ADDRESS=C              
+#&gt; [10] LC_TELEPHONE=C             LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 #&gt; 
 #&gt; attached base packages:
-#&gt; [1] parallel  stats4    stats     graphics  grDevices utils     datasets 
-#&gt; [8] methods   base     
+#&gt; [1] parallel  stats4    stats     graphics  grDevices utils     datasets  methods  
+#&gt; [9] base     
 #&gt; 
 #&gt; other attached packages:
-#&gt;  [1] bindrcpp_0.2.2              Matrix_1.2-15              
-#&gt;  [3] DropletUtils_1.2.2          SingleCellExperiment_1.4.1 
-#&gt;  [5] SummarizedExperiment_1.12.0 DelayedArray_0.8.0         
-#&gt;  [7] matrixStats_0.54.0          Biobase_2.42.0             
-#&gt;  [9] GenomicRanges_1.34.0        GenomeInfoDb_1.18.1        
-#&gt; [11] IRanges_2.16.0              S4Vectors_0.20.1           
-#&gt; [13] BiocGenerics_0.28.0         BiocParallel_1.16.5        
-#&gt; [15] forcats_0.3.0               stringr_1.4.0              
-#&gt; [17] dplyr_0.7.8                 purrr_0.3.0                
-#&gt; [19] readr_1.3.1                 tidyr_0.8.2                
-#&gt; [21] tibble_2.0.1                ggplot2_3.1.0              
-#&gt; [23] tidyverse_1.2.1             Seurat_3.0.0.9000          
-#&gt; [25] data.table_1.12.0           BUSpaRse_0.99.0            
-#&gt; [27] workflowr_1.1.1            
+#&gt;  [1] bindrcpp_0.2.2              Matrix_1.2-15               DropletUtils_1.2.2         
+#&gt;  [4] SingleCellExperiment_1.4.1  SummarizedExperiment_1.12.0 DelayedArray_0.8.0         
+#&gt;  [7] matrixStats_0.54.0          Biobase_2.42.0              GenomicRanges_1.34.0       
+#&gt; [10] GenomeInfoDb_1.18.1         IRanges_2.16.0              S4Vectors_0.20.1           
+#&gt; [13] BiocGenerics_0.28.0         BiocParallel_1.16.5         forcats_0.3.0              
+#&gt; [16] stringr_1.4.0               dplyr_0.7.8                 purrr_0.3.0                
+#&gt; [19] readr_1.3.1                 tidyr_0.8.2                 tibble_2.0.1               
+#&gt; [22] ggplot2_3.1.0               tidyverse_1.2.1             Seurat_3.0.0.9000          
+#&gt; [25] data.table_1.12.0           BUSpaRse_0.99.0             workflowr_1.1.1            
 #&gt; 
 #&gt; loaded via a namespace (and not attached):
-#&gt;   [1] utf8_1.1.4               reticulate_1.10         
-#&gt;   [3] R.utils_2.7.0            tidyselect_0.2.5        
-#&gt;   [5] RSQLite_2.1.1            AnnotationDbi_1.44.0    
-#&gt;   [7] htmlwidgets_1.3          grid_3.5.1              
-#&gt;   [9] Rtsne_0.15               devtools_2.0.1          
-#&gt;  [11] munsell_0.5.0            codetools_0.2-16        
-#&gt;  [13] ica_1.0-2                future_1.11.1.1         
-#&gt;  [15] withr_2.1.2              colorspace_1.4-0        
-#&gt;  [17] highr_0.7                knitr_1.21              
-#&gt;  [19] rstudioapi_0.9.0         ROCR_1.0-7              
-#&gt;  [21] gbRd_0.4-11              listenv_0.7.0           
-#&gt;  [23] labeling_0.3             Rdpack_0.10-1           
-#&gt;  [25] git2r_0.24.0             GenomeInfoDbData_1.2.0  
-#&gt;  [27] bit64_0.9-7              rhdf5_2.26.0            
-#&gt;  [29] rprojroot_1.3-2          generics_0.0.2          
-#&gt;  [31] xfun_0.4                 R6_2.3.0                
-#&gt;  [33] doParallel_1.0.14        rsvd_1.0.0              
-#&gt;  [35] locfit_1.5-9.1           bitops_1.0-6            
-#&gt;  [37] assertthat_0.2.0         SDMTools_1.1-221        
-#&gt;  [39] scales_1.0.0             gtable_0.2.0            
-#&gt;  [41] npsurv_0.4-0             globals_0.12.4          
-#&gt;  [43] processx_3.2.1           rlang_0.3.1             
-#&gt;  [45] zeallot_0.1.0            splines_3.5.1           
-#&gt;  [47] rtracklayer_1.42.1       lazyeval_0.2.1          
-#&gt;  [49] broom_0.5.1              plyranges_1.2.0         
-#&gt;  [51] yaml_2.2.0               modelr_0.1.3            
-#&gt;  [53] backports_1.1.3          tools_3.5.1             
-#&gt;  [55] usethis_1.4.0            gplots_3.0.1.1          
-#&gt;  [57] RColorBrewer_1.1-2       sessioninfo_1.1.1       
-#&gt;  [59] ggridges_0.5.1           Rcpp_1.0.0              
-#&gt;  [61] plyr_1.8.4               progress_1.2.0          
-#&gt;  [63] zlibbioc_1.28.0          RCurl_1.95-4.11         
-#&gt;  [65] ps_1.3.0                 prettyunits_1.0.2       
-#&gt;  [67] pbapply_1.4-0            cowplot_0.9.4           
-#&gt;  [69] zoo_1.8-4                haven_2.0.0             
-#&gt;  [71] ggrepel_0.8.0            cluster_2.0.7-1         
-#&gt;  [73] fs_1.2.6                 magrittr_1.5            
-#&gt;  [75] lmtest_0.9-36            RANN_2.6.1              
-#&gt;  [77] whisker_0.3-2            fitdistrplus_1.0-14     
-#&gt;  [79] pkgload_1.0.2            hms_0.4.2               
-#&gt;  [81] lsei_1.2-0               evaluate_0.12           
-#&gt;  [83] XML_3.98-1.17            readxl_1.2.0            
-#&gt;  [85] testthat_2.0.1           compiler_3.5.1          
-#&gt;  [87] biomaRt_2.38.0           KernSmooth_2.23-15      
-#&gt;  [89] crayon_1.3.4             R.oo_1.22.0             
-#&gt;  [91] htmltools_0.3.6          lubridate_1.7.4         
-#&gt;  [93] DBI_1.0.0                MASS_7.3-51.1           
-#&gt;  [95] cli_1.0.1                R.methodsS3_1.7.1       
-#&gt;  [97] gdata_2.18.0             metap_1.1               
-#&gt;  [99] bindr_0.1.1              igraph_1.2.4            
-#&gt; [101] pkgconfig_2.0.2          GenomicAlignments_1.18.1
-#&gt; [103] plotly_4.8.0             xml2_1.2.0              
-#&gt; [105] foreach_1.4.4            XVector_0.22.0          
-#&gt; [107] bibtex_0.4.2             rvest_0.3.2             
-#&gt; [109] callr_3.1.1              digest_0.6.18           
-#&gt; [111] tsne_0.1-3               Biostrings_2.50.2       
-#&gt; [113] rmarkdown_1.11           cellranger_1.1.0        
-#&gt; [115] edgeR_3.24.3             Rsamtools_1.34.1        
-#&gt; [117] gtools_3.8.1             nlme_3.1-137            
-#&gt; [119] jsonlite_1.6             Rhdf5lib_1.4.0          
-#&gt; [121] fansi_0.4.0              desc_1.2.0              
-#&gt; [123] viridisLite_0.3.0        limma_3.38.3            
-#&gt; [125] pillar_1.3.1             lattice_0.20-38         
-#&gt; [127] httr_1.4.0               pkgbuild_1.0.2          
-#&gt; [129] survival_2.43-3          glue_1.3.0              
-#&gt; [131] remotes_2.0.2            png_0.1-7               
-#&gt; [133] iterators_1.0.10         bit_1.1-14              
-#&gt; [135] stringi_1.3.1            HDF5Array_1.10.1        
-#&gt; [137] blob_1.1.1               caTools_1.17.1.1        
-#&gt; [139] memoise_1.1.0            irlba_2.3.3             
-#&gt; [141] future.apply_1.1.0       ape_5.2</code></pre>
+#&gt;   [1] utf8_1.1.4               reticulate_1.10          R.utils_2.7.0           
+#&gt;   [4] tidyselect_0.2.5         RSQLite_2.1.1            AnnotationDbi_1.44.0    
+#&gt;   [7] htmlwidgets_1.3          grid_3.5.1               Rtsne_0.15              
+#&gt;  [10] devtools_2.0.1           munsell_0.5.0            codetools_0.2-16        
+#&gt;  [13] ica_1.0-2                future_1.11.1.1          withr_2.1.2             
+#&gt;  [16] colorspace_1.4-0         highr_0.7                knitr_1.21              
+#&gt;  [19] rstudioapi_0.9.0         ROCR_1.0-7               gbRd_0.4-11             
+#&gt;  [22] listenv_0.7.0            labeling_0.3             Rdpack_0.10-1           
+#&gt;  [25] git2r_0.24.0             GenomeInfoDbData_1.2.0   bit64_0.9-7             
+#&gt;  [28] rhdf5_2.26.0             rprojroot_1.3-2          generics_0.0.2          
+#&gt;  [31] xfun_0.4                 R6_2.3.0                 doParallel_1.0.14       
+#&gt;  [34] rsvd_1.0.0               locfit_1.5-9.1           bitops_1.0-6            
+#&gt;  [37] assertthat_0.2.0         SDMTools_1.1-221         scales_1.0.0            
+#&gt;  [40] gtable_0.2.0             npsurv_0.4-0             globals_0.12.4          
+#&gt;  [43] processx_3.2.1           rlang_0.3.1              zeallot_0.1.0           
+#&gt;  [46] splines_3.5.1            rtracklayer_1.42.1       lazyeval_0.2.1          
+#&gt;  [49] broom_0.5.1              plyranges_1.2.0          yaml_2.2.0              
+#&gt;  [52] modelr_0.1.3             backports_1.1.3          tools_3.5.1             
+#&gt;  [55] usethis_1.4.0            gplots_3.0.1.1           RColorBrewer_1.1-2      
+#&gt;  [58] sessioninfo_1.1.1        ggridges_0.5.1           Rcpp_1.0.0              
+#&gt;  [61] plyr_1.8.4               progress_1.2.0           zlibbioc_1.28.0         
+#&gt;  [64] RCurl_1.95-4.11          ps_1.3.0                 prettyunits_1.0.2       
+#&gt;  [67] pbapply_1.4-0            cowplot_0.9.4            zoo_1.8-4               
+#&gt;  [70] haven_2.0.0              ggrepel_0.8.0            cluster_2.0.7-1         
+#&gt;  [73] fs_1.2.6                 magrittr_1.5             lmtest_0.9-36           
+#&gt;  [76] RANN_2.6.1               whisker_0.3-2            fitdistrplus_1.0-14     
+#&gt;  [79] pkgload_1.0.2            hms_0.4.2                lsei_1.2-0              
+#&gt;  [82] evaluate_0.12            XML_3.98-1.17            readxl_1.2.0            
+#&gt;  [85] testthat_2.0.1           compiler_3.5.1           biomaRt_2.38.0          
+#&gt;  [88] KernSmooth_2.23-15       crayon_1.3.4             R.oo_1.22.0             
+#&gt;  [91] htmltools_0.3.6          lubridate_1.7.4          DBI_1.0.0               
+#&gt;  [94] MASS_7.3-51.1            cli_1.0.1                R.methodsS3_1.7.1       
+#&gt;  [97] gdata_2.18.0             metap_1.1                bindr_0.1.1             
+#&gt; [100] igraph_1.2.4             pkgconfig_2.0.2          GenomicAlignments_1.18.1
+#&gt; [103] plotly_4.8.0             xml2_1.2.0               foreach_1.4.4           
+#&gt; [106] XVector_0.22.0           bibtex_0.4.2             rvest_0.3.2             
+#&gt; [109] callr_3.1.1              digest_0.6.18            tsne_0.1-3              
+#&gt; [112] Biostrings_2.50.2        rmarkdown_1.11           cellranger_1.1.0        
+#&gt; [115] edgeR_3.24.3             Rsamtools_1.34.1         gtools_3.8.1            
+#&gt; [118] nlme_3.1-137             jsonlite_1.6             Rhdf5lib_1.4.0          
+#&gt; [121] fansi_0.4.0              desc_1.2.0               viridisLite_0.3.0       
+#&gt; [124] limma_3.38.3             pillar_1.3.1             lattice_0.20-38         
+#&gt; [127] httr_1.4.0               pkgbuild_1.0.2           survival_2.43-3         
+#&gt; [130] glue_1.3.0               remotes_2.0.2            png_0.1-7               
+#&gt; [133] iterators_1.0.10         bit_1.1-14               stringi_1.3.1           
+#&gt; [136] HDF5Array_1.10.1         blob_1.1.1               caTools_1.17.1.1        
+#&gt; [139] memoise_1.1.0            irlba_2.3.3              future.apply_1.1.0      
+#&gt; [142] ape_5.2</code></pre>
 </div>
 </div>
 
