@@ -63,7 +63,7 @@ library(Matrix)
 
 ## Download data
 The data set we are using here is 1k 1:1 Mixture of Fresh Frozen Human (HEK293T) and Mouse (NIH3T3) Cells from the 10x website. First, we download the fastq files (6.34 GB).
-```{r, cache=TRUE}
+```{r dl_data, cache=TRUE}
 download.file("http://cf.10xgenomics.com/samples/cell-exp/2.1.0/hgmm_1k/hgmm_1k_fastqs.tar", destfile = "./data/hgmm_1k_fastqs.tar", quiet = TRUE)
 ```
 
@@ -76,7 +76,7 @@ tar -xvf ./hgmm_1k_fastqs.tar
 # Primary analysis
 ## Build the `kallisto` index
 Here we use [kallisto](https://pachterlab.github.io/kallisto/about) to pseudoalign the reads to the transcriptome and then to create the `bus` file to be converted to a sparse matrix. The first step is to build an index of the transcriptome. This data set has both human and mouse cells, so we need both human and mouse transcriptomes. The transcriptomes downloaded here are from Ensembl version 95, released in January 2019. As of the writing of this notebook, this is the most recent Ensembl release.
-```{r, cache=TRUE}
+```{r dl_tx, cache=TRUE}
 # Human transcriptome
 download.file("ftp://ftp.ensembl.org/pub/release-95/fasta/homo_sapiens/cdna/Homo_sapiens.GRCh38.cdna.all.fa.gz", "./data/hs_cdna.fa.gz", quiet = TRUE)
 # Mouse transcriptome
@@ -87,7 +87,7 @@ download.file("ftp://ftp.ensembl.org/pub/release-95/fasta/mus_musculus/cdna/Mus_
 kallisto version
 ```
 Actually, we don't need to unzip the fasta files 
-```{bash, cache=TRUE}
+```{bash index, cache=TRUE}
 kallisto index -i ./output/hs_mm_tr_index.idx ./data/hs_cdna.fa.gz ./data/mm_cdna.fa.gz
 ```
 
@@ -101,7 +101,7 @@ system("kallisto bus --list", intern = TRUE)
 
 Here we have 8 samples. Each sample has 3 files: `I1` means sample index, `R1` means barcode and UMI, and `R2` means the piece of cDNA. The `-i` argument specifies the index file we just built. The `-o` argument specifies the output directory. The `-x` argument specifies the sequencing technology used to generate this data set. The `-t` argument specifies the number of threads used. I ran this on a server and used 8 threads. 
 
-```{bash, cache=TRUE}
+```{bash bus, cache=TRUE}
 cd ./data
 kallisto bus -i ../output/hs_mm_tr_index.idx -o ../output/out_hgmm1k -x 10xv2 -t8 \
 ./fastqs/hgmm_1k_S1_L001_R1_001.fastq.gz ./fastqs/hgmm_1k_S1_L001_R2_001.fastq.gz \
@@ -122,7 +122,7 @@ list.files("./output/out_hgmm1k/")
 ## Run `BUStools`
 The `output.bus` file is a binary. In order to make R parse it, we need to convert it into a sorted text file. There's a command line tool [`bustools`](https://github.com/BUStools/bustools) for this. The reason why `kallisto bus` outputs this binary rather than the sorted text file directly is that the binary can be very compressed to save disk space. The such compression is achieved, a future version of R package `BUSpaRse` may support directly reading the binary to convert to sparse matrix. At present, as `bustools` is still under development, such compression has not been achieved, and as a result, the binary is slightly larger than the text file. 
 
-```{bash, cache=TRUE}
+```{bash bustools, cache=TRUE}
 # Add where I installed bustools to PATH
 export PATH=$PATH:/home/lambda/mylibs/bin/
 # Sort, with 8 threads
@@ -143,7 +143,7 @@ head ./output/out_hgmm1k/output.sorted.txt
 For the sparse matrix, most people are interested in how many UMIs per gene per cell, we here we will quantify this from the `bus` output, and to do so, we need to find which gene corresponds to each transcript. Remember in the output of `kallisto bus`, there's the file `transcripts.txt`. Those are the transcripts in the transcriptome index. Now we'll only keep the transcripts present there and make sure that the transcripts in `tr2g` are in the same order as those in the index. You will soon see why the order is important.
 
 Remember that we downloaded transcriptome FASTA files from Ensembl just now. In FASTA files, each entry is a sequence with a name. In Ensembl FASTA files, the sequence name has genome annotation of the corresponding sequence, so we can extract transcript IDs and corresponding gene IDs and gene names from there.
-```{r}
+```{r tr2g}
 tr2g <- transcript2gene(fasta_file = c("./data/hs_cdna.fa.gz", "./data/mm_cdna.fa.gz"),
                         kallisto_out_path = "./output/out_hgmm1k")
 ```
@@ -160,7 +160,7 @@ The function `transcript2gene` not only gets the transcript and gene IDs but als
 The 3rd column in the `output.sorted.txt` is the equivalence class (EC) index of each UMI for each cell barcode. Equivalence class (EC) means the set of transcripts in the transcriptome that the read is compatible to. While in most cases, an EC only has transcripts for the same gene, there are some ECs that have transcripts for different genes. The file in the `kallisto bus` output, `matrix.ec`, maps the EC index in `output.sorted.txt` to sets of line numbers in the transcriptome assembly. That's why we ensured that the `tr2g` data frame has the same order as the transcripts in the index.
 
 Also note that while this function supports multithreading, unless the `matrix.ec` file is really large, setting `ncores > 1` will not improve performance since only 1 core will be used anyway. It may even _compromise_ performance since creating multiple processes has overhead. For this dataset, where `matrix.ec` is 68.8MB, it is not large enough to warrant the use of more than 1 core.
-```{r}
+```{r EC2gene}
 genes <- EC2gene(tr2g, "./output/out_hgmm1k", ncores = 1)
 ```
 
@@ -176,7 +176,7 @@ tail(genes)
 Apparently some ECs map to many genes.
 
 ## Make the sparse matrix
-For 10x, we do have a file with all valid cell barcodes that comes with CellRanger. 
+For 10x, we do have a file with all valid cell barcodes that comes with CellRanger. You need to install CellRanger to get this file, though you do not need to run CellRanger for this notebook. The whitelist is optional, so if you don't have one, you may skip the whitelist step and the `whitelist` argument in the `makr_sparse_matrix` function. 
 ```{bash}
 # Copy v2 chemistry whitelist to working directory
 cp ~/cellranger-3.0.1/cellranger-cs/3.0.1/lib/python/cellranger/barcodes/737K-august-2016.txt \
@@ -196,7 +196,7 @@ Now we have everything we need to make the sparse matrix. This function reads in
 Note that the arguments `est_ncells` (estimated number of cells) and `est_ngenes` (estimated number of genes) are important. With the estimate, this function reserves memory for the data to be added into, reducing the need of reallocation, which will slow the function down. Since the vast majority of "cells" you get in this sparse matrix are empty droplets rather than cells, please put at least 200 times more "cells" than you actually expect in `est_ncells`.
 
 If you do not have a whitelist of barcodes, then it's fine; the `whitelist` argument is optional.
-```{r}
+```{r spmat}
 res_mat <- make_sparse_matrix("./output/out_hgmm1k/output.sorted.txt",
                               genes = genes, est_ncells = 3.5e5,
                               est_ngenes = nrow(tr2g),
@@ -286,7 +286,7 @@ cell_species %>%
 Great, only about 0.3% of cells here are doublets, which is lower than the ~1% 10x lists. Doublet rate tends to be lower when cell concentration is lower. However, doublets can still be formed with cells from the same species, so the number of mixed species "cells" is only a lower bound of doublet rate.
 
 ## Dimension reduction
-```{r, cache=TRUE}
+```{r seu, cache=TRUE}
 seu <- CreateSeuratObject(res_mat, min.cells = 3) %>% 
   NormalizeData(verbose = FALSE) %>% 
   ScaleData(verbose = FALSE) %>% 
