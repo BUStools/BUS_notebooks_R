@@ -9,6 +9,7 @@ output: html_document
 knitr::opts_chunk$set(
   comment = "#>"
 )
+knitr::opts_chunk$set(autodep = TRUE)
 ```
 
 In this vignette, we process fastq data from scRNA-seq (10x v2 chemistry) with to make a sparse matrix that can be used in downstream analysis. Then we will start that standard downstream analysis with `Seurat`. 
@@ -110,8 +111,10 @@ library(Matrix)
 
 ## Download data
 The data set we are using here is 1k 1:1 Mixture of Fresh Frozen Human (HEK293T) and Mouse (NIH3T3) Cells from the 10x website. First, we download the fastq files (4.54 GB).
-```{r dl_data, cache=TRUE}
-download.file("http://cf.10xgenomics.com/samples/cell-exp/3.0.0/hgmm_1k_v3/hgmm_1k_v3_fastqs.tar", destfile = "./data/hgmm_1k_v3_fastqs.tar", quiet = TRUE)
+```{r dl_data}
+if (!file.exists("./data/hgmm_1k_v3_fastqs.tar")) {
+  download.file("http://cf.10xgenomics.com/samples/cell-exp/3.0.0/hgmm_1k_v3/hgmm_1k_v3_fastqs.tar", destfile = "./data/hgmm_1k_v3_fastqs.tar", quiet = TRUE)
+}
 ```
 
 Then untar this file
@@ -123,11 +126,15 @@ tar -xvf ./hgmm_1k_v3_fastqs.tar
 # Primary analysis
 ## Build the `kallisto` index
 Here we use [kallisto](https://pachterlab.github.io/kallisto/about) to pseudoalign the reads to the transcriptome and then to create the `bus` file to be converted to a sparse matrix. The first step is to build an index of the transcriptome. This data set has both human and mouse cells, so we need both human and mouse transcriptomes. The transcriptomes downloaded here are from Ensembl version 95, released in January 2019. As of the writing of this notebook, this is the most recent Ensembl release.
-```{r dl_tx, cache=TRUE}
+```{r dl_tx}
 # Human transcriptome
-download.file("ftp://ftp.ensembl.org/pub/release-95/fasta/homo_sapiens/cdna/Homo_sapiens.GRCh38.cdna.all.fa.gz", "./data/hs_cdna.fa.gz", quiet = TRUE)
+if (!file.exists("./data/hs_cdna.fa.gz")) {
+  download.file("ftp://ftp.ensembl.org/pub/release-95/fasta/homo_sapiens/cdna/Homo_sapiens.GRCh38.cdna.all.fa.gz", "./data/hs_cdna.fa.gz", quiet = TRUE)
+}
 # Mouse transcriptome
-download.file("ftp://ftp.ensembl.org/pub/release-95/fasta/mus_musculus/cdna/Mus_musculus.GRCm38.cdna.all.fa.gz", "./data/mm_cdna.fa.gz", quiet = TRUE)
+if (!file.exists("./data/mm_cdna.fa.gz")) {
+  download.file("ftp://ftp.ensembl.org/pub/release-95/fasta/mus_musculus/cdna/Mus_musculus.GRCm38.cdna.all.fa.gz", "./data/mm_cdna.fa.gz", quiet = TRUE)
+}
 ```
 
 ```{bash}
@@ -197,25 +204,6 @@ Alternative ways of getting `tr2g` have been implemented in the `BUSpaRse` packa
 
 The function `transcript2gene` not only gets the transcript and gene IDs but also sorts the transcripts. This function only supports Ensembl biomart query and Ensembl fasta files as the source of transcript and gene IDs, as the attribute field of GTF and GFF3 files can differ between sources and further cleanup may be needed.
 
-## Map ECs to genes
-The 3rd column in the `output.sorted.txt` is the equivalence class (EC) index of each UMI for each cell barcode. Equivalence class (EC) means the set of transcripts in the transcriptome that the read is compatible to. While in most cases, an EC only has transcripts for the same gene, there are some ECs that have transcripts for different genes. The file in the `kallisto bus` output, `matrix.ec`, maps the EC index in `output.sorted.txt` to sets of line numbers in the transcriptome assembly. That's why we ensured that the `tr2g` data frame has the same order as the transcripts in the index.
-
-Also note that while this function supports multithreading, unless the `matrix.ec` file is really large, setting `ncores > 1` will not improve performance since only 1 core will be used anyway. It may even _compromise_ performance since creating multiple processes has overhead. For this dataset, where `matrix.ec` is 68.8MB, it is not large enough to warrant the use of more than 1 core.
-```{r EC2gene}
-genes <- EC2gene(tr2g, "./output/out_hgmm1k_v3", ncores = 1)
-```
-
-Now for each EC, we have a set of genes the EC is compatible to.
-
-```{r}
-head(genes)
-```
-
-```{r}
-tail(genes)
-```
-Apparently some ECs map to many genes.
-
 ## Make the sparse matrix
 For 10x, we do have a file with all valid cell barcodes that comes with CellRanger. You need to install CellRanger to get this file, though you do not need to run CellRanger for this notebook. The whitelist is optional, so if you don't have one, you may skip the whitelist step and the `whitelist` argument in the `makr_sparse_matrix` function. 
 ```{bash}
@@ -237,11 +225,13 @@ Now we have everything we need to make the sparse matrix. This function reads in
 Note that the arguments `est_ncells` (estimated number of cells) and `est_ngenes` (estimated number of genes) are important. With the estimate, this function reserves memory for the data to be added into, reducing the need of reallocation, which will slow the function down. Since the vast majority of "cells" you get in this sparse matrix are empty droplets rather than cells, please put at least 200 times more "cells" than you actually expect in `est_ncells`.
 
 If you do not have a whitelist of barcodes, then it's fine; the `whitelist` argument is optional.
+
+The function `make_sparse_matrix` can make the gene count matrix and the transcript compatibility count (TCC) matrix at the same time. For the purpose of this notebook, we only generate the gene count matrix. An upcoming notebook will demonstrate some more detailed analysis with a TCC matrix. See [Ntranos et al. 2016](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-0970-8) for more information about TCC matrices.
 ```{r spmat}
 res_mat <- make_sparse_matrix("./output/out_hgmm1k_v3/output.sorted.txt",
-                              genes = genes, est_ncells = 3e5,
+                              tr2g = tr2g, est_ncells = 3e5,
                               est_ngenes = nrow(tr2g),
-                              whitelist = whitelist_v3)
+                              whitelist = whitelist_v3, TCC = FALSE)
 ```
 
 The matrix we get has genes in rows and barcode in columns. The row names are the gene IDs (not using human readable gene names since they're not guaranteed to be unique), and the column names are cell barcodes.

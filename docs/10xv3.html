@@ -11,7 +11,7 @@
 
 <meta name="author" content="Lambda Moses" />
 
-<meta name="date" content="2019-02-14" />
+<meta name="date" content="2019-03-01" />
 
 <title>Processing kallisto bus Output (10x v3 chemistry)</title>
 
@@ -415,43 +415,143 @@ div.section {
 
 <h1 class="title toc-ignore">Processing kallisto bus Output (10x v3 chemistry)</h1>
 <h4 class="author"><em>Lambda Moses</em></h4>
-<h4 class="date"><em>2019-02-14</em></h4>
+<h4 class="date"><em>2019-03-01</em></h4>
 
 </div>
 
 
-<p><strong>Last updated:</strong> 2019-02-14</p>
-<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#report"> Report <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2019-03-01
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 4 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 2
+</p>
+<p>
+<strong>Knit directory:</strong> <code>BUSpaRse_notebooks/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.2.0). The <em>Report</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="report" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted changes </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguncommittedchanges" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The R Markdown file has unstaged changes. To know which version of the R Markdown file created these results, you’ll want to first commit it to the Git repo. If you’re still working on the analysis, you can ignore this warning. When you’re finished, you can run <code>wflow_publish</code> to commit the R Markdown file and build the HTML.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20181214code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20181214)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20181214code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20181214)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongdetected"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>Cache:</strong> detected </a>
+</p>
+</div>
+<div id="strongCachestrongdetected" class="panel-collapse collapse">
+<div class="panel-body">
+The following chunks had caches available:
 <ul>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
-<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
-</details>
+bus
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
-<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
-</details>
+bustools
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(20181214)</code> </summary></p>
-<p>The command <code>set.seed(20181214)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
-</details>
+index
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
-<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
-</details>
+seu
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/f22beac3e993d1f097eb2d05c4a0664355921fad" target="_blank">f22beac</a> </summary></p>
+unnamed-chunk-8
+</li>
+</ul>
+<p>To ensure reproducibility of the results, delete the cache directory <code>10xv3_cache</code> and re-run the analysis. To have workflowr automatically delete the cache directory prior to building the file, set <code>delete_cache = TRUE</code> when running <code>wflow_build()</code> or <code>wflow_publish()</code>.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtreec465ce10ae3051256899d4c085684a715c1fc1bftargetblankc465ce1a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/c465ce10ae3051256899d4c085684a715c1fc1bf" target="_blank">c465ce1</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtreec465ce10ae3051256899d4c085684a715c1fc1bftargetblankc465ce1a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
 <pre><code>
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    BUSpaRse_notebooks.Rproj
     Ignored:    analysis/10xv2_cache/
+    Ignored:    analysis/10xv3_cache/
     Ignored:    data/fastqs/
     Ignored:    data/hgmm_100_fastqs.tar
     Ignored:    data/hgmm_1k_fastqs.tar
@@ -463,379 +563,413 @@ Ignored files:
     Ignored:    data/whitelist_v3.txt.gz
     Ignored:    output/hs_mm_tr_index.idx
     Ignored:    output/out_hgmm1k/
+    Ignored:    output/out_hgmm1k_v3/
+
+Unstaged changes:
+    Modified:   analysis/10xv2.Rmd
+    Modified:   analysis/10xv3.Rmd
 
 </code></pre>
-Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
-</li>
-</ul>
-<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
-<ul>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the R Markdown and HTML files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view them.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 File
 </th>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
-<th style="text-align:left;">
+<th>
 Message
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
-Rmd
+<td>
+html
 </td>
-<td style="text-align:left;">
-<a href="https://github.com/BUStools/BUS_notebooks_R/blob/f22beac3e993d1f097eb2d05c4a0664355921fad/analysis/10xv3.Rmd" target="_blank">f22beac</a>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/c465ce10ae3051256899d4c085684a715c1fc1bf/docs/10xv3.html" target="_blank">c465ce1</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-14
 </td>
-<td style="text-align:left;">
+<td>
+Build site
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/f22beac3e993d1f097eb2d05c4a0664355921fad/analysis/10xv3.Rmd" target="_blank">f22beac</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-02-14
+</td>
+<td>
 Added CellRanger whiltelist clarification
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 Rmd
 </td>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/000215e50f086ad1c9a3e52c3f47b91bcb1592ad/analysis/10xv3.Rmd" target="_blank">000215e</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-14
 </td>
-<td style="text-align:left;">
+<td>
 Clarified git cloning this repo and resolved swapped code chunks for output.sorted.bus
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 html
 </td>
-<td style="text-align:left;">
-<a href="https://cdn.rawgit.com/BUStools/BUS_notebooks_R/71513e576f231d44fffa4279137aaa6a6d8ff308/docs/10xv3.html" target="_blank">71513e5</a>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/71513e576f231d44fffa4279137aaa6a6d8ff308/docs/10xv3.html" target="_blank">71513e5</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-14
 </td>
-<td style="text-align:left;">
+<td>
 Good site with figures and reproducibility metrics
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 Rmd
 </td>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/6006364fcbd35ab19d13d7c1dbd133357a573512/analysis/10xv3.Rmd" target="_blank">6006364</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-14
 </td>
-<td style="text-align:left;">
+<td>
 Corrected typo
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 Rmd
 </td>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/95f29514e0449e913e4c16d3f9b6c470e373b44f/analysis/10xv3.Rmd" target="_blank">95f2951</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-14
 </td>
-<td style="text-align:left;">
+<td>
 Added head of bus file
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 html
 </td>
-<td style="text-align:left;">
-<a href="https://cdn.rawgit.com/BUStools/BUS_notebooks_R/71849682375cab60ab7212e22d9384bb91e7494e/docs/10xv3.html" target="_blank">7184968</a>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/71849682375cab60ab7212e22d9384bb91e7494e/docs/10xv3.html" target="_blank">7184968</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-14
 </td>
-<td style="text-align:left;">
+<td>
 Build site.
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 Rmd
 </td>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/8cd81e033d3bf2b02d3287043329aea3b3e60d8e/analysis/10xv3.Rmd" target="_blank">8cd81e0</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-14
 </td>
-<td style="text-align:left;">
+<td>
 Finally saved the figures
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 html
 </td>
-<td style="text-align:left;">
-<a href="https://cdn.rawgit.com/BUStools/BUS_notebooks_R/8cd81e033d3bf2b02d3287043329aea3b3e60d8e/docs/10xv3.html" target="_blank">8cd81e0</a>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/8cd81e033d3bf2b02d3287043329aea3b3e60d8e/docs/10xv3.html" target="_blank">8cd81e0</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-14
 </td>
-<td style="text-align:left;">
+<td>
 Finally saved the figures
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 html
 </td>
-<td style="text-align:left;">
-<a href="https://cdn.rawgit.com/BUStools/BUS_notebooks_R/45c5d4aa55bf7ae465dac70a4351f292d262b8f4/docs/10xv3.html" target="_blank">45c5d4a</a>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/45c5d4aa55bf7ae465dac70a4351f292d262b8f4/docs/10xv3.html" target="_blank">45c5d4a</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-14
 </td>
-<td style="text-align:left;">
+<td>
 Build site.
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 Rmd
 </td>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/92aa9159e1d9e192d401e974d8551a06bfc52c72/analysis/10xv3.Rmd" target="_blank">92aa915</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-14
 </td>
-<td style="text-align:left;">
+<td>
 Named chunks with images
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 html
 </td>
-<td style="text-align:left;">
-<a href="https://cdn.rawgit.com/BUStools/BUS_notebooks_R/87d15f5ac8538c38c74af4f0763f79887c2a5e4d/docs/10xv3.html" target="_blank">87d15f5</a>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/87d15f5ac8538c38c74af4f0763f79887c2a5e4d/docs/10xv3.html" target="_blank">87d15f5</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-14
 </td>
-<td style="text-align:left;">
+<td>
 Build site.
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 Rmd
 </td>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/8d9fe9a5ef4f9ee3a3123a4db61029831dacc2e3/analysis/10xv3.Rmd" target="_blank">8d9fe9a</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-14
 </td>
-<td style="text-align:left;">
+<td>
 More detailed explanations for kallisto bus workshop
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 html
 </td>
-<td style="text-align:left;">
-<a href="https://cdn.rawgit.com/BUStools/BUS_notebooks_R/b7b21a0eab033a957a93102ee2222a1d1139d1dd/docs/10xv3.html" target="_blank">b7b21a0</a>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/b7b21a0eab033a957a93102ee2222a1d1139d1dd/docs/10xv3.html" target="_blank">b7b21a0</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-02
 </td>
-<td style="text-align:left;">
+<td>
 Build site.
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 html
 </td>
-<td style="text-align:left;">
-<a href="https://cdn.rawgit.com/BUStools/BUS_notebooks_R/85a5770b53befbfc968af9e488b546e123a8eab6/docs/10xv3.html" target="_blank">85a5770</a>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/85a5770b53befbfc968af9e488b546e123a8eab6/docs/10xv3.html" target="_blank">85a5770</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2018-12-14
 </td>
-<td style="text-align:left;">
+<td>
 Build site.
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 Rmd
 </td>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/ca1d6ce5bd620c25609b92c6d098229c1b713bb6/analysis/10xv3.Rmd" target="_blank">ca1d6ce</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2018-12-14
 </td>
-<td style="text-align:left;">
+<td>
 Clean up
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 html
 </td>
-<td style="text-align:left;">
-<a href="https://cdn.rawgit.com/BUStools/BUS_notebooks_R/6276894f775df80018e05467e79c54a750722e4f/docs/10xv3.html" target="_blank">6276894</a>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/6276894f775df80018e05467e79c54a750722e4f/docs/10xv3.html" target="_blank">6276894</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2018-12-14
 </td>
-<td style="text-align:left;">
+<td>
 Build site.
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 html
 </td>
-<td style="text-align:left;">
-<a href="https://cdn.rawgit.com/BUStools/BUS_notebooks_R/166854fe0508a3781bd961e329b843464151201e/docs/10xv3.html" target="_blank">166854f</a>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/166854fe0508a3781bd961e329b843464151201e/docs/10xv3.html" target="_blank">166854f</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2018-12-14
 </td>
-<td style="text-align:left;">
+<td>
 Build site.
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 Rmd
 </td>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/ef5cfc5bd78a314089158309ce9ee482384d549b/analysis/10xv3.Rmd" target="_blank">ef5cfc5</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2018-12-14
 </td>
-<td style="text-align:left;">
+<td>
 Corrected stated file size
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 html
 </td>
-<td style="text-align:left;">
-<a href="https://cdn.rawgit.com/BUStools/BUS_notebooks_R/e0e7d0a7267201f05098eb6245cf9e754646c3de/docs/10xv3.html" target="_blank">e0e7d0a</a>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/e0e7d0a7267201f05098eb6245cf9e754646c3de/docs/10xv3.html" target="_blank">e0e7d0a</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2018-12-14
 </td>
-<td style="text-align:left;">
+<td>
 Build site.
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 Rmd
 </td>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/aab422a6b0dc03205e25c321268bf0959dd4d69c/analysis/10xv3.Rmd" target="_blank">aab422a</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2018-12-14
 </td>
-<td style="text-align:left;">
+<td>
 Added 10xv3 notebook
 </td>
 </tr>
 </tbody>
 </table>
-</ul>
-<p></details></p>
-<hr />
+</div>
+<hr>
+</div>
+</div>
+</div>
 <p>In this vignette, we process fastq data from scRNA-seq (10x v2 chemistry) with to make a sparse matrix that can be used in downstream analysis. Then we will start that standard downstream analysis with <code>Seurat</code>.</p>
 <div id="setup" class="section level1">
 <h1>Setup</h1>
@@ -908,7 +1042,9 @@ library(Matrix)</code></pre>
 <div id="download-data" class="section level2">
 <h2>Download data</h2>
 <p>The data set we are using here is 1k 1:1 Mixture of Fresh Frozen Human (HEK293T) and Mouse (NIH3T3) Cells from the 10x website. First, we download the fastq files (4.54 GB).</p>
-<pre class="r"><code>download.file(&quot;http://cf.10xgenomics.com/samples/cell-exp/3.0.0/hgmm_1k_v3/hgmm_1k_v3_fastqs.tar&quot;, destfile = &quot;./data/hgmm_1k_v3_fastqs.tar&quot;, quiet = TRUE)</code></pre>
+<pre class="r"><code>if (!file.exists(&quot;./data/hgmm_1k_v3_fastqs.tar&quot;)) {
+  download.file(&quot;http://cf.10xgenomics.com/samples/cell-exp/3.0.0/hgmm_1k_v3/hgmm_1k_v3_fastqs.tar&quot;, destfile = &quot;./data/hgmm_1k_v3_fastqs.tar&quot;, quiet = TRUE)
+}</code></pre>
 <p>Then untar this file</p>
 <pre class="bash"><code>cd ./data
 tar -xvf ./hgmm_1k_v3_fastqs.tar</code></pre>
@@ -927,9 +1063,13 @@ tar -xvf ./hgmm_1k_v3_fastqs.tar</code></pre>
 <h2>Build the <code>kallisto</code> index</h2>
 <p>Here we use <a href="https://pachterlab.github.io/kallisto/about">kallisto</a> to pseudoalign the reads to the transcriptome and then to create the <code>bus</code> file to be converted to a sparse matrix. The first step is to build an index of the transcriptome. This data set has both human and mouse cells, so we need both human and mouse transcriptomes. The transcriptomes downloaded here are from Ensembl version 95, released in January 2019. As of the writing of this notebook, this is the most recent Ensembl release.</p>
 <pre class="r"><code># Human transcriptome
-download.file(&quot;ftp://ftp.ensembl.org/pub/release-95/fasta/homo_sapiens/cdna/Homo_sapiens.GRCh38.cdna.all.fa.gz&quot;, &quot;./data/hs_cdna.fa.gz&quot;, quiet = TRUE)
+if (!file.exists(&quot;./data/hs_cdna.fa.gz&quot;)) {
+  download.file(&quot;ftp://ftp.ensembl.org/pub/release-95/fasta/homo_sapiens/cdna/Homo_sapiens.GRCh38.cdna.all.fa.gz&quot;, &quot;./data/hs_cdna.fa.gz&quot;, quiet = TRUE)
+}
 # Mouse transcriptome
-download.file(&quot;ftp://ftp.ensembl.org/pub/release-95/fasta/mus_musculus/cdna/Mus_musculus.GRCm38.cdna.all.fa.gz&quot;, &quot;./data/mm_cdna.fa.gz&quot;, quiet = TRUE)</code></pre>
+if (!file.exists(&quot;./data/mm_cdna.fa.gz&quot;)) {
+  download.file(&quot;ftp://ftp.ensembl.org/pub/release-95/fasta/mus_musculus/cdna/Mus_musculus.GRCm38.cdna.all.fa.gz&quot;, &quot;./data/mm_cdna.fa.gz&quot;, quiet = TRUE)
+}</code></pre>
 <pre class="bash"><code>~/mylibs/bin/kallisto version</code></pre>
 <pre><code>#&gt; kallisto, version 0.45.0</code></pre>
 <p>Actually, we don’t need to unzip the fasta files</p>
@@ -991,7 +1131,8 @@ download.file(&quot;ftp://ftp.ensembl.org/pub/release-95/fasta/mus_musculus/cdna
 #&gt; [quant] processed 63,105,786 reads, 46,343,056 reads pseudoaligned</code></pre>
 <p>See what the outputs are</p>
 <pre class="r"><code>list.files(&quot;./output/out_hgmm1k_v3/&quot;)</code></pre>
-<pre><code>#&gt; [1] &quot;matrix.ec&quot;       &quot;output.bus&quot;      &quot;run_info.json&quot;   &quot;transcripts.txt&quot;</code></pre>
+<pre><code>#&gt; [1] &quot;matrix.ec&quot;         &quot;output.bus&quot;        &quot;output.sorted&quot;     &quot;output.sorted.txt&quot;
+#&gt; [5] &quot;run_info.json&quot;     &quot;transcripts.txt&quot;</code></pre>
 </div>
 <div id="run-bustools" class="section level2">
 <h2>Run <code>BUStools</code></h2>
@@ -1071,59 +1212,6 @@ bustools text -o ./output/out_hgmm1k_v3/output.sorted.txt ./output/out_hgmm1k_v3
 <p>Alternative ways of getting <code>tr2g</code> have been implemented in the <code>BUSpaRse</code> package. You may use <code>tr2g_ensembl</code> to query Ensembl with biomart to get transcript and gene IDs. If you use this method, then please make sure that the Ensembl version used in the query matches that of the transcriptome. This method is convenient for the user since you only need to input species names, but it can be slow since biomart database query can be slow. You may also use <code>tr2g_gtf</code> for GTF files and <code>tr2g_gff3</code> for GFF3 files, which are more useful for non-model organisms absent from Ensemble. After calling the <code>tr2g_*</code> family of functions, you should sort the transcripts from those functions with <code>sort_tr2g</code> so the transcripts are in the same order as those in the kallisto index. The FASTA way is the fastest, as reading FASTA files is faster than reading GTF and GFF files. Whichever way you choose, this shouldn’t take much more than half a minute per species.</p>
 <p>The function <code>transcript2gene</code> not only gets the transcript and gene IDs but also sorts the transcripts. This function only supports Ensembl biomart query and Ensembl fasta files as the source of transcript and gene IDs, as the attribute field of GTF and GFF3 files can differ between sources and further cleanup may be needed.</p>
 </div>
-<div id="map-ecs-to-genes" class="section level2">
-<h2>Map ECs to genes</h2>
-<p>The 3rd column in the <code>output.sorted.txt</code> is the equivalence class (EC) index of each UMI for each cell barcode. Equivalence class (EC) means the set of transcripts in the transcriptome that the read is compatible to. While in most cases, an EC only has transcripts for the same gene, there are some ECs that have transcripts for different genes. The file in the <code>kallisto bus</code> output, <code>matrix.ec</code>, maps the EC index in <code>output.sorted.txt</code> to sets of line numbers in the transcriptome assembly. That’s why we ensured that the <code>tr2g</code> data frame has the same order as the transcripts in the index.</p>
-<p>Also note that while this function supports multithreading, unless the <code>matrix.ec</code> file is really large, setting <code>ncores &gt; 1</code> will not improve performance since only 1 core will be used anyway. It may even <em>compromise</em> performance since creating multiple processes has overhead. For this dataset, where <code>matrix.ec</code> is 68.8MB, it is not large enough to warrant the use of more than 1 core.</p>
-<pre class="r"><code>genes &lt;- EC2gene(tr2g, &quot;./output/out_hgmm1k_v3&quot;, ncores = 1)</code></pre>
-<pre><code>#&gt; Reading matrix.ec</code></pre>
-<pre><code>#&gt; Processing genes</code></pre>
-<p>Now for each EC, we have a set of genes the EC is compatible to.</p>
-<pre class="r"><code>head(genes)</code></pre>
-<pre><code>#&gt; [[1]]
-#&gt; [1] &quot;ENSG00000282431.1&quot;
-#&gt; 
-#&gt; [[2]]
-#&gt; [1] &quot;ENSG00000237235.2&quot;
-#&gt; 
-#&gt; [[3]]
-#&gt; [1] &quot;ENSG00000228985.1&quot;
-#&gt; 
-#&gt; [[4]]
-#&gt; [1] &quot;ENSG00000223997.1&quot;
-#&gt; 
-#&gt; [[5]]
-#&gt; [1] &quot;ENSG00000282253.1&quot;
-#&gt; 
-#&gt; [[6]]
-#&gt; [1] &quot;ENSG00000211923.1&quot;</code></pre>
-<pre class="r"><code>tail(genes)</code></pre>
-<pre><code>#&gt; [[1]]
-#&gt; [1] &quot;ENSG00000196418.12&quot; &quot;ENSG00000178199.13&quot; &quot;ENSG00000011523.13&quot;
-#&gt; 
-#&gt; [[2]]
-#&gt; [1] &quot;ENSMUSG00000044026.2&quot;  &quot;ENSMUSG00000026470.14&quot; &quot;ENSMUSG00000048424.17&quot;
-#&gt; [4] &quot;ENSMUSG00000110746.3&quot; 
-#&gt; 
-#&gt; [[3]]
-#&gt;  [1] &quot;ENSG00000121413.12&quot; &quot;ENSG00000117115.12&quot; &quot;ENSG00000117475.13&quot;
-#&gt;  [4] &quot;ENSG00000197380.10&quot; &quot;ENSG00000158220.13&quot; &quot;ENSG00000163378.13&quot;
-#&gt;  [7] &quot;ENSG00000196417.12&quot; &quot;ENSG00000149311.18&quot; &quot;ENSG00000167984.17&quot;
-#&gt; [10] &quot;ENSG00000274897.2&quot;  &quot;ENSG00000265863.1&quot; 
-#&gt; 
-#&gt; [[4]]
-#&gt; [1] &quot;ENSG00000070814.19&quot; &quot;ENSG00000166847.9&quot; 
-#&gt; 
-#&gt; [[5]]
-#&gt;  [1] &quot;ENSG00000135930.13&quot; &quot;ENSG00000204842.15&quot; &quot;ENSG00000141665.12&quot;
-#&gt;  [4] &quot;ENSG00000163877.10&quot; &quot;ENSG00000197580.11&quot; &quot;ENSG00000131686.14&quot;
-#&gt;  [7] &quot;ENSG00000159023.21&quot; &quot;ENSG00000183323.12&quot; &quot;ENSG00000113558.18&quot;
-#&gt; [10] &quot;ENSG00000277868.4&quot; 
-#&gt; 
-#&gt; [[6]]
-#&gt; [1] &quot;ENSG00000148734.7&quot;  &quot;ENSG00000187715.13&quot;</code></pre>
-<p>Apparently some ECs map to many genes.</p>
-</div>
 <div id="make-the-sparse-matrix" class="section level2">
 <h2>Make the sparse matrix</h2>
 <p>For 10x, we do have a file with all valid cell barcodes that comes with CellRanger. You need to install CellRanger to get this file, though you do not need to run CellRanger for this notebook. The whitelist is optional, so if you don’t have one, you may skip the whitelist step and the <code>whitelist</code> argument in the <code>makr_sparse_matrix</code> function.</p>
@@ -1138,19 +1226,23 @@ length(whitelist_v3)</code></pre>
 <p>Now we have everything we need to make the sparse matrix. This function reads in <code>output.sorted.txt</code> line by line and processes them. It does not do barcode correction for now, so the barcode must exactly match those in the whitelist if one is provided. It took 5 to 6 minutes to construct the sparse matrix in the hgmm6k dataset, which has over 280 million lines in <code>output.sorted.txt</code>, which is over 9GB. Here the data set is smaller, and it takes less than a minute. A future version of <code>BUSpaRse</code> will parallelize this process to make it more scalable for huge datasets. For now, it’s single threaded.</p>
 <p>Note that the arguments <code>est_ncells</code> (estimated number of cells) and <code>est_ngenes</code> (estimated number of genes) are important. With the estimate, this function reserves memory for the data to be added into, reducing the need of reallocation, which will slow the function down. Since the vast majority of “cells” you get in this sparse matrix are empty droplets rather than cells, please put at least 200 times more “cells” than you actually expect in <code>est_ncells</code>.</p>
 <p>If you do not have a whitelist of barcodes, then it’s fine; the <code>whitelist</code> argument is optional.</p>
+<p>The function <code>make_sparse_matrix</code> can make the gene count matrix and the transcript compatibility count (TCC) matrix at the same time. For the purpose of this notebook, we only generate the gene count matrix. An upcoming notebook will demonstrate some more detailed analysis with a TCC matrix. See <a href="https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-0970-8">Ntranos et al. 2016</a> for more information about TCC matrices.</p>
 <pre class="r"><code>res_mat &lt;- make_sparse_matrix(&quot;./output/out_hgmm1k_v3/output.sorted.txt&quot;,
-                              genes = genes, est_ncells = 3e5,
+                              tr2g = tr2g, est_ncells = 3e5,
                               est_ngenes = nrow(tr2g),
-                              whitelist = whitelist_v3)</code></pre>
-<pre><code>#&gt; Reading data
-#&gt; Read 5 million lines
-#&gt; Read 10 million lines
-#&gt; Read 15 million lines
-#&gt; Read 20 million lines
-#&gt; Read 25 million lines
-#&gt; Read 30 million lines
-#&gt; Read 35 million lines
-#&gt; Constructing sparse matrix</code></pre>
+                              whitelist = whitelist_v3, TCC = FALSE)</code></pre>
+<pre><code>#&gt; Reading matrix.ec
+#&gt; Processing ECs
+#&gt; Matching genes to ECs
+#&gt; Reading data
+#&gt; Read 5 million reads
+#&gt; Read 10 million reads
+#&gt; Read 15 million reads
+#&gt; Read 20 million reads
+#&gt; Read 25 million reads
+#&gt; Read 30 million reads
+#&gt; Read 35 million reads
+#&gt; Constructing gene count matrix</code></pre>
 <p>The matrix we get has genes in rows and barcode in columns. The row names are the gene IDs (not using human readable gene names since they’re not guaranteed to be unique), and the column names are cell barcodes.</p>
 <p>For Ensembl transcriptomes, all the 3 steps in <code>BUSpaRse</code> we have just done can be condensed into one step, with the <code>busparse_gene_count</code> function.</p>
 </div>
@@ -1181,36 +1273,43 @@ bc_rank &lt;- barcodeRanks(res_mat)</code></pre>
   labs(x = &quot;Rank&quot;, y = &quot;Total reads&quot;) +
   theme_bw()</code></pre>
 <p><img src="figure/10xv3.Rmd/rank-1.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of rank-1.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-rank-1">
+Past versions of rank-1.png
+</button>
+</p>
+<div id="fig-rank-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/8cd81e033d3bf2b02d3287043329aea3b3e60d8e/docs/figure/10xv3.Rmd/rank-1.png" target="_blank">8cd81e0</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-14
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <p>The inflection point looks like a reasonable number of cells.</p>
 <pre class="r"><code># Filter the matrix
 res_mat &lt;- res_mat[, tot_counts &gt; bc_rank$inflection]
@@ -1240,36 +1339,43 @@ cell_species &lt;- cell_species %&gt;%
   geom_point(size = 0.5) +
   theme_bw()</code></pre>
 <p><img src="figure/10xv3.Rmd/barn-1.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of barn-1.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-barn-1">
+Past versions of barn-1.png
+</button>
+</p>
+<div id="fig-barn-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/8cd81e033d3bf2b02d3287043329aea3b3e60d8e/docs/figure/10xv3.Rmd/barn-1.png" target="_blank">8cd81e0</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-14
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <p>Great, looks like the vast majority of cells are not mixed.</p>
 <pre class="r"><code>cell_species %&gt;% 
   dplyr::count(species) %&gt;% 
@@ -1294,138 +1400,170 @@ seu &lt;- AddMetaData(seu, metadata = cell_species$species, col.name = &quot;spe
 <p>See how number of total counts and number of genes expressed are distributed.</p>
 <pre class="r"><code>VlnPlot(seu, c(&quot;nCount_RNA&quot;, &quot;nFeature_RNA&quot;), group.by = &quot;species&quot;)</code></pre>
 <p><img src="figure/10xv3.Rmd/vln-1.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of vln-1.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-vln-1">
+Past versions of vln-1.png
+</button>
+</p>
+<div id="fig-vln-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/8cd81e033d3bf2b02d3287043329aea3b3e60d8e/docs/figure/10xv3.Rmd/vln-1.png" target="_blank">8cd81e0</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-14
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <pre class="r"><code>seu &lt;- RunPCA(seu, verbose = FALSE, npcs = 30)
 ElbowPlot(seu, ndims = 30)</code></pre>
 <p><img src="figure/10xv3.Rmd/elbow-1.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of elbow-1.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-elbow-1">
+Past versions of elbow-1.png
+</button>
+</p>
+<div id="fig-elbow-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/8cd81e033d3bf2b02d3287043329aea3b3e60d8e/docs/figure/10xv3.Rmd/elbow-1.png" target="_blank">8cd81e0</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-14
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <pre class="r"><code>DimPlot(seu, reduction = &quot;pca&quot;, pt.size = 0.5, group.by = &quot;species&quot;)</code></pre>
 <p><img src="figure/10xv3.Rmd/pca-1.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of pca-1.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-pca-1">
+Past versions of pca-1.png
+</button>
+</p>
+<div id="fig-pca-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/8cd81e033d3bf2b02d3287043329aea3b3e60d8e/docs/figure/10xv3.Rmd/pca-1.png" target="_blank">8cd81e0</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-14
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <p>The first PC separates species, as expected. Here the 2 mixed species “cells” seem to be more similar to human cells than mouse cells.</p>
 <pre class="r"><code>seu &lt;- RunTSNE(seu, dims = 1:20, check_duplicates = FALSE)
 DimPlot(seu, reduction = &quot;tsne&quot;, pt.size = 0.5, group.by = &quot;species&quot;)</code></pre>
 <p><img src="figure/10xv3.Rmd/tsne-1.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of tsne-1.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-tsne-1">
+Past versions of tsne-1.png
+</button>
+</p>
+<div id="fig-tsne-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/8cd81e033d3bf2b02d3287043329aea3b3e60d8e/docs/figure/10xv3.Rmd/tsne-1.png" target="_blank">8cd81e0</a>
 </td>
-<td style="text-align:left;">
+<td>
 Lambda Moses
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-14
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
 </div>
-<div id="session-information" class="section level2">
-<h2>Session information</h2>
+</div>
+<br> <br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
 <pre class="r"><code>sessionInfo()</code></pre>
 <pre><code>#&gt; R version 3.5.1 (2018-07-02)
 #&gt; Platform: x86_64-redhat-linux-gnu (64-bit)
@@ -1435,107 +1573,78 @@ Lambda Moses
 #&gt; BLAS/LAPACK: /usr/lib64/R/lib/libRblas.so
 #&gt; 
 #&gt; locale:
-#&gt;  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
-#&gt;  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
-#&gt;  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
-#&gt;  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
-#&gt;  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-#&gt; [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+#&gt;  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C               LC_TIME=en_US.UTF-8       
+#&gt;  [4] LC_COLLATE=en_US.UTF-8     LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+#&gt;  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                  LC_ADDRESS=C              
+#&gt; [10] LC_TELEPHONE=C             LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 #&gt; 
 #&gt; attached base packages:
-#&gt; [1] parallel  stats4    stats     graphics  grDevices utils     datasets 
-#&gt; [8] methods   base     
+#&gt; [1] parallel  stats4    stats     graphics  grDevices utils     datasets  methods  
+#&gt; [9] base     
 #&gt; 
 #&gt; other attached packages:
-#&gt;  [1] bindrcpp_0.2.2              Matrix_1.2-15              
-#&gt;  [3] DropletUtils_1.2.2          SingleCellExperiment_1.4.1 
-#&gt;  [5] SummarizedExperiment_1.12.0 DelayedArray_0.8.0         
-#&gt;  [7] matrixStats_0.54.0          Biobase_2.42.0             
-#&gt;  [9] GenomicRanges_1.34.0        GenomeInfoDb_1.18.1        
-#&gt; [11] IRanges_2.16.0              S4Vectors_0.20.1           
-#&gt; [13] BiocGenerics_0.28.0         BiocParallel_1.16.5        
-#&gt; [15] forcats_0.3.0               stringr_1.4.0              
-#&gt; [17] dplyr_0.7.8                 purrr_0.3.0                
-#&gt; [19] readr_1.3.1                 tidyr_0.8.2                
-#&gt; [21] tibble_2.0.1                ggplot2_3.1.0              
-#&gt; [23] tidyverse_1.2.1             Seurat_3.0.0.9000          
-#&gt; [25] data.table_1.12.0           BUSpaRse_0.99.0            
-#&gt; [27] workflowr_1.1.1            
+#&gt;  [1] Matrix_1.2-15               DropletUtils_1.2.2          SingleCellExperiment_1.4.1 
+#&gt;  [4] SummarizedExperiment_1.12.0 DelayedArray_0.8.0          matrixStats_0.54.0         
+#&gt;  [7] Biobase_2.42.0              GenomicRanges_1.34.0        GenomeInfoDb_1.18.1        
+#&gt; [10] IRanges_2.16.0              S4Vectors_0.20.1            BiocGenerics_0.28.0        
+#&gt; [13] BiocParallel_1.16.5         forcats_0.4.0               stringr_1.4.0              
+#&gt; [16] dplyr_0.8.0.1               purrr_0.3.0                 readr_1.3.1                
+#&gt; [19] tidyr_0.8.2                 tibble_2.0.1                ggplot2_3.1.0              
+#&gt; [22] tidyverse_1.2.1             Seurat_3.0.0.9000           data.table_1.12.0          
+#&gt; [25] BUSpaRse_0.99.0             workflowr_1.2.0            
 #&gt; 
 #&gt; loaded via a namespace (and not attached):
-#&gt;   [1] utf8_1.1.4               reticulate_1.10         
-#&gt;   [3] R.utils_2.7.0            tidyselect_0.2.5        
-#&gt;   [5] RSQLite_2.1.1            AnnotationDbi_1.44.0    
-#&gt;   [7] htmlwidgets_1.3          grid_3.5.1              
-#&gt;   [9] Rtsne_0.15               devtools_2.0.1          
-#&gt;  [11] munsell_0.5.0            codetools_0.2-16        
-#&gt;  [13] ica_1.0-2                future_1.11.1.1         
-#&gt;  [15] withr_2.1.2              colorspace_1.4-0        
-#&gt;  [17] highr_0.7                knitr_1.21              
-#&gt;  [19] rstudioapi_0.9.0         ROCR_1.0-7              
-#&gt;  [21] gbRd_0.4-11              listenv_0.7.0           
-#&gt;  [23] labeling_0.3             Rdpack_0.10-1           
-#&gt;  [25] git2r_0.24.0             GenomeInfoDbData_1.2.0  
-#&gt;  [27] bit64_0.9-7              rhdf5_2.26.0            
-#&gt;  [29] rprojroot_1.3-2          generics_0.0.2          
-#&gt;  [31] xfun_0.4                 R6_2.3.0                
-#&gt;  [33] doParallel_1.0.14        rsvd_1.0.0              
-#&gt;  [35] locfit_1.5-9.1           bitops_1.0-6            
-#&gt;  [37] assertthat_0.2.0         SDMTools_1.1-221        
-#&gt;  [39] scales_1.0.0             gtable_0.2.0            
-#&gt;  [41] npsurv_0.4-0             globals_0.12.4          
-#&gt;  [43] processx_3.2.1           rlang_0.3.1             
-#&gt;  [45] zeallot_0.1.0            splines_3.5.1           
-#&gt;  [47] rtracklayer_1.42.1       lazyeval_0.2.1          
-#&gt;  [49] broom_0.5.1              plyranges_1.2.0         
-#&gt;  [51] yaml_2.2.0               modelr_0.1.3            
-#&gt;  [53] backports_1.1.3          tools_3.5.1             
-#&gt;  [55] usethis_1.4.0            gplots_3.0.1.1          
-#&gt;  [57] RColorBrewer_1.1-2       sessioninfo_1.1.1       
-#&gt;  [59] ggridges_0.5.1           Rcpp_1.0.0              
-#&gt;  [61] plyr_1.8.4               progress_1.2.0          
-#&gt;  [63] zlibbioc_1.28.0          RCurl_1.95-4.11         
-#&gt;  [65] ps_1.3.0                 prettyunits_1.0.2       
-#&gt;  [67] pbapply_1.4-0            cowplot_0.9.4           
-#&gt;  [69] zoo_1.8-4                haven_2.0.0             
-#&gt;  [71] ggrepel_0.8.0            cluster_2.0.7-1         
-#&gt;  [73] fs_1.2.6                 magrittr_1.5            
-#&gt;  [75] lmtest_0.9-36            RANN_2.6.1              
-#&gt;  [77] whisker_0.3-2            fitdistrplus_1.0-14     
-#&gt;  [79] pkgload_1.0.2            hms_0.4.2               
-#&gt;  [81] lsei_1.2-0               evaluate_0.12           
-#&gt;  [83] XML_3.98-1.17            readxl_1.2.0            
-#&gt;  [85] testthat_2.0.1           compiler_3.5.1          
-#&gt;  [87] biomaRt_2.38.0           KernSmooth_2.23-15      
-#&gt;  [89] crayon_1.3.4             R.oo_1.22.0             
-#&gt;  [91] htmltools_0.3.6          lubridate_1.7.4         
-#&gt;  [93] DBI_1.0.0                MASS_7.3-51.1           
-#&gt;  [95] cli_1.0.1                R.methodsS3_1.7.1       
-#&gt;  [97] gdata_2.18.0             metap_1.1               
-#&gt;  [99] bindr_0.1.1              igraph_1.2.4            
-#&gt; [101] pkgconfig_2.0.2          GenomicAlignments_1.18.1
-#&gt; [103] plotly_4.8.0             xml2_1.2.0              
-#&gt; [105] foreach_1.4.4            XVector_0.22.0          
-#&gt; [107] bibtex_0.4.2             rvest_0.3.2             
-#&gt; [109] callr_3.1.1              digest_0.6.18           
-#&gt; [111] tsne_0.1-3               Biostrings_2.50.2       
-#&gt; [113] rmarkdown_1.11           cellranger_1.1.0        
-#&gt; [115] edgeR_3.24.3             Rsamtools_1.34.1        
-#&gt; [117] gtools_3.8.1             nlme_3.1-137            
-#&gt; [119] jsonlite_1.6             Rhdf5lib_1.4.0          
-#&gt; [121] fansi_0.4.0              desc_1.2.0              
-#&gt; [123] viridisLite_0.3.0        limma_3.38.3            
-#&gt; [125] pillar_1.3.1             lattice_0.20-38         
-#&gt; [127] httr_1.4.0               pkgbuild_1.0.2          
-#&gt; [129] survival_2.43-3          glue_1.3.0              
-#&gt; [131] remotes_2.0.2            png_0.1-7               
-#&gt; [133] iterators_1.0.10         bit_1.1-14              
-#&gt; [135] stringi_1.3.1            HDF5Array_1.10.1        
-#&gt; [137] blob_1.1.1               caTools_1.17.1.1        
-#&gt; [139] memoise_1.1.0            irlba_2.3.3             
-#&gt; [141] future.apply_1.1.0       ape_5.2</code></pre>
+#&gt;   [1] utf8_1.1.4               reticulate_1.11          R.utils_2.8.0           
+#&gt;   [4] tidyselect_0.2.5         RSQLite_2.1.1            AnnotationDbi_1.44.0    
+#&gt;   [7] htmlwidgets_1.3          grid_3.5.1               Rtsne_0.15              
+#&gt;  [10] devtools_2.0.1           munsell_0.5.0            codetools_0.2-16        
+#&gt;  [13] ica_1.0-2                future_1.11.1.1          withr_2.1.2             
+#&gt;  [16] colorspace_1.4-0         highr_0.7                knitr_1.21              
+#&gt;  [19] rstudioapi_0.9.0         ROCR_1.0-7               gbRd_0.4-11             
+#&gt;  [22] listenv_0.7.0            Rdpack_0.10-1            labeling_0.3            
+#&gt;  [25] git2r_0.24.0             GenomeInfoDbData_1.2.0   bit64_0.9-7             
+#&gt;  [28] rhdf5_2.26.0             rprojroot_1.3-2          generics_0.0.2          
+#&gt;  [31] xfun_0.5                 R6_2.4.0                 rsvd_1.0.0              
+#&gt;  [34] locfit_1.5-9.1           bitops_1.0-6             assertthat_0.2.0        
+#&gt;  [37] SDMTools_1.1-221         scales_1.0.0             gtable_0.2.0            
+#&gt;  [40] npsurv_0.4-0             globals_0.12.4           processx_3.2.1          
+#&gt;  [43] rlang_0.3.1              zeallot_0.1.0            splines_3.5.1           
+#&gt;  [46] rtracklayer_1.42.1       lazyeval_0.2.1           broom_0.5.1             
+#&gt;  [49] plyranges_1.2.0          yaml_2.2.0               modelr_0.1.4            
+#&gt;  [52] backports_1.1.3          tools_3.5.1              usethis_1.4.0           
+#&gt;  [55] gplots_3.0.1.1           RColorBrewer_1.1-2       sessioninfo_1.1.1       
+#&gt;  [58] ggridges_0.5.1           Rcpp_1.0.0               plyr_1.8.4              
+#&gt;  [61] progress_1.2.0           zlibbioc_1.28.0          RCurl_1.95-4.11         
+#&gt;  [64] ps_1.3.0                 prettyunits_1.0.2        pbapply_1.4-0           
+#&gt;  [67] cowplot_0.9.4            zoo_1.8-4                haven_2.1.0             
+#&gt;  [70] ggrepel_0.8.0            cluster_2.0.7-1          fs_1.2.6                
+#&gt;  [73] magrittr_1.5             lmtest_0.9-36            RANN_2.6.1              
+#&gt;  [76] whisker_0.3-2            fitdistrplus_1.0-14      pkgload_1.0.2           
+#&gt;  [79] hms_0.4.2                lsei_1.2-0               evaluate_0.13           
+#&gt;  [82] XML_3.98-1.17            readxl_1.3.0             testthat_2.0.1          
+#&gt;  [85] compiler_3.5.1           biomaRt_2.38.0           KernSmooth_2.23-15      
+#&gt;  [88] crayon_1.3.4             R.oo_1.22.0              htmltools_0.3.6         
+#&gt;  [91] RcppParallel_4.4.2       lubridate_1.7.4          DBI_1.0.0               
+#&gt;  [94] MASS_7.3-51.1            cli_1.0.1                R.methodsS3_1.7.1       
+#&gt;  [97] gdata_2.18.0             metap_1.1                igraph_1.2.4            
+#&gt; [100] pkgconfig_2.0.2          GenomicAlignments_1.18.1 plotly_4.8.0            
+#&gt; [103] xml2_1.2.0               XVector_0.22.0           bibtex_0.4.2            
+#&gt; [106] rvest_0.3.2              callr_3.1.1              digest_0.6.18           
+#&gt; [109] tsne_0.1-3               Biostrings_2.50.2        rmarkdown_1.11          
+#&gt; [112] cellranger_1.1.0         edgeR_3.24.3             Rsamtools_1.34.1        
+#&gt; [115] gtools_3.8.1             nlme_3.1-137             jsonlite_1.6            
+#&gt; [118] Rhdf5lib_1.4.0           desc_1.2.0               viridisLite_0.3.0       
+#&gt; [121] limma_3.38.3             fansi_0.4.0              pillar_1.3.1            
+#&gt; [124] lattice_0.20-38          httr_1.4.0               pkgbuild_1.0.2          
+#&gt; [127] survival_2.43-3          glue_1.3.0               remotes_2.0.2           
+#&gt; [130] png_0.1-7                bit_1.1-14               stringi_1.3.1           
+#&gt; [133] HDF5Array_1.10.1         blob_1.1.1               caTools_1.17.1.1        
+#&gt; [136] memoise_1.1.0            irlba_2.3.3              future.apply_1.1.0      
+#&gt; [139] ape_5.2</code></pre>
 </div>
 </div>
+</div>
+
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
 TeX fonts only; see
@@ -1548,14 +1657,6 @@ footer is added to webpages before the MathJax javascript. -->
     "HTML-CSS": { availableFonts: ["TeX"] }
   });
 </script>
-
-<hr>
-<p>
-  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
-  analysis was created with
-  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.1.1
-</p>
-<hr>
 
 
 </div>
