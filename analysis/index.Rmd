@@ -8,7 +8,7 @@ output:
 
 # bustools R notebooks
 
-This repository has example notebooks that demonstrate usage of `kallisto bus` to generate gene count or (transcript compatibility count) TCC matrices from FASTQ files and some basic downstream analyses. To run the notebooks, please install [kallisto](https://pachterlab.github.io/kallisto/starting), [bustools](https://github.com/BUStools/bustools), and the [BUSpaRse](https://github.com/BUStools/BUSpaRse) R package. 
+This repository has example notebooks that demonstrate usage of [`kallisto bus`](https://www.biorxiv.org/content/10.1101/673285v1) to generate gene count or (transcript compatibility count) TCC matrices from FASTQ files and some basic downstream analyses. To run the notebooks, please install [kallisto](https://pachterlab.github.io/kallisto/starting), [bustools](https://github.com/BUStools/bustools), and the [BUSpaRse](https://github.com/BUStools/BUSpaRse) R package. 
 
 ## Notebooks
 
