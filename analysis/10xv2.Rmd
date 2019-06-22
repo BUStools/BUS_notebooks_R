@@ -2,7 +2,9 @@
 title: "Processing kallisto bus Output (10x v2 chemistry)"
 author: "Lambda Moses"
 date: "`r Sys.Date()`"
-output: html_document
+output: 
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include = FALSE}
@@ -12,26 +14,17 @@ knitr::opts_chunk$set(
 knitr::opts_chunk$set(autodep = TRUE)
 ```
 
-In this vignette, we process fastq data from scRNA-seq (10x v2 chemistry) with to make a sparse matrix that can be used in downstream analysis. Then we will start that standard downstream analysis with `Seurat`. 
+In this vignette, we process fastq data from scRNA-seq (10x v2 chemistry) with to make a sparse matrix that can be used in downstream analysis with command line tools `kallisto` and `bustools`, as described in the [`kallisto bus` paper](https://www.biorxiv.org/content/10.1101/673285v1). Then we will start a standard downstream analysis with `Seurat`. 
 
 # Setup
-First, if you want to run this notebook, please make sure you have [`git`](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed, go to the terminal and
-```{bash, eval = FALSE}
-git clone https://github.com/BUStools/BUS_notebooks_R.git
-```
-
-This will download a directory called `BUS_notebooks_R` in the directory you are in when running the `git` command. Inside the `BUS_notebooks_R` directory, this notebook is in the `analysis` directory. Then create an R project in the `BUS_notebooks_R` directory. Also, in RStudio, go to Tools -> Global Options -> R Markdown, and set "Evaluate chunks in directory" to "Project". The reason why is that this website was built with [`workflowr`](https://jdblischak.github.io/workflowr/), which renders the notebooks in the project directory rather than the document directory.
-
-Alternatively, you can directly download this notebook [here](https://github.com/BUStools/BUS_notebooks_R/raw/master/analysis/10xv2.Rmd) and open it in RStudio, but make sure to adjust the paths where files are downloaded and where output files are stored to match those in your environment.
+If you would like to rerun this notebook, you can git clone [this repository](https://github.com/BUStools/BUS_notebooks_R) or directly download [this notebook from GitHub](https://github.com/BUStools/BUS_notebooks_R/blob/master/analysis/10xv2.Rmd). 
 
 ## Install packages
-The primary analysis section of this notebook demonstrates the use of command line tools `kallisto` and `bustools`. Please use `kallisto` 0.45, whose binary can be downloaded [here](https://pachterlab.github.io/kallisto/download). The binary of `bustools` can be found [here](https://github.com/BUStools/bustools/releases). 
+The primary analysis section of this notebook demonstrates the use of command line tools `kallisto` and `bustools`. Please use `kallisto` >= 0.45, whose binary can be downloaded [here](https://pachterlab.github.io/kallisto/download). The binary of `bustools` can be found [here](https://github.com/BUStools/bustools/releases). 
 
 After you download the binary, you should decompress the file (if it is `tar.gz`) with `tar -xzvf file.tar.gz` in the `bash` terminal, and add the directory containing the binary to `PATH` by `export PATH=$PATH:/foo/bar`, where `/foo/bar` here is the directory of interest. Then you can directly invoke the binary on the command line as we will do in this notebook.
 
-Note for Windows users: `bustools` does not have a Windows binary, but you can use a [Linux subsystem in Windows 10](https://docs.microsoft.com/en-us/windows/wsl/install-win10). If you use earlier version of Windows, then unfortunately you need to either use Linux dual boot or virtual machine or find a Linux or Mac computer such as a server.
-
-We will be using the R packages below. `BUSpaRse` is not yet on CRAN or Bioconductor. For Mac users, see the [installation note for `BUSpaRse`](https://bustools.github.io/BUS_notebooks_R/index.html). We will also use `Seurat` 3.0, which is not yet on CRAN (the CRAN version is 2.3.4), for the standard downstream analysis. `Seurat` 3.0 has some cool new features such as getting batch corrected gene count matrix and cell label transfer across datasets. See [this paper](https://www.biorxiv.org/content/10.1101/460147v1) for more detail. Though we will not get into those new features here, it's worthwhile to check them out.
+We will be using the R packages below. `BUSpaRse` is not yet on CRAN or Bioconductor. For Mac users, see the [installation note for `BUSpaRse`](https://github.com/BUStools/BUSpaRse). `BUSpaRse` will be used to generate the transcript to gene file for `bustools` and to read output of `bustools` into R. We will also use `Seurat` version 3 which is now on CRAN.
 
 ```{r, eval=FALSE}
 # Install devtools if it's not already installed
@@ -40,7 +33,6 @@ if (!require(devtools)) {
 }
 # Install from GitHub
 devtools::install_github("BUStools/BUSpaRse")
-devtools::install_github("satijalab/seurat", ref = "release/3.0")
 ```
 
 The package `DropletUtils` will be used to estimate the number of real cells as opposed to empty droplets. It's on Bioconductor, and here is how it should be installed:
@@ -55,17 +47,17 @@ The other R packages below are on CRAN, and can be installed with `install.packa
 
 ```{r, message=FALSE}
 library(BUSpaRse)
-library(data.table)
 library(Seurat)
 library(tidyverse)
 library(DropletUtils)
 library(Matrix)
+theme_set(theme_bw())
 ```
 
 ## Download data
 The data set we are using here is 1k 1:1 Mixture of Fresh Frozen Human (HEK293T) and Mouse (NIH3T3) Cells from the 10x website. First, we download the fastq files (6.34 GB).
 ```{r dl_data}
-if (!file.exists("./data/hgmm1k_fastqs.tar")) {
+if (!file.exists("./data/hgmm_1k_fastqs.tar")) {
   download.file("http://cf.10xgenomics.com/samples/cell-exp/2.1.0/hgmm_1k/hgmm_1k_fastqs.tar", destfile = "./data/hgmm_1k_fastqs.tar", quiet = TRUE)
 }
 ```
@@ -76,30 +68,34 @@ cd ./data
 tar -xvf ./hgmm_1k_fastqs.tar
 ```
 
-# Primary analysis
+# Generate the gene count matrix
 ## Build the `kallisto` index
-Here we use [kallisto](https://pachterlab.github.io/kallisto/about) to pseudoalign the reads to the transcriptome and then to create the `bus` file to be converted to a sparse matrix. The first step is to build an index of the transcriptome. This data set has both human and mouse cells, so we need both human and mouse transcriptomes. The transcriptomes downloaded here are from Ensembl version 95, released in January 2019. As of the writing of this notebook, this is the most recent Ensembl release.
+Here we use [kallisto](https://pachterlab.github.io/kallisto/about) to pseudoalign the reads to the transcriptome and then to create the `bus` file to be converted to a sparse matrix. The first step is to build an index of the transcriptome. This data set has both human and mouse cells, so we need both human and mouse transcriptomes. The transcriptomes downloaded here are from Ensembl version 94, released in October 2018. 
 ```{r dl_tx}
 # Human transcriptome
 if (!file.exists("./data/hs_cdna.fa.gz")) {
-  download.file("ftp://ftp.ensembl.org/pub/release-95/fasta/homo_sapiens/cdna/Homo_sapiens.GRCh38.cdna.all.fa.gz", "./data/hs_cdna.fa.gz", method = "wget", quiet = TRUE)
+  download.file("ftp://ftp.ensembl.org/pub/release-94/fasta/homo_sapiens/cdna/Homo_sapiens.GRCh38.cdna.all.fa.gz", "./data/hs_cdna.fa.gz", method = "wget", quiet = TRUE)
 }
 # Mouse transcriptome
 if (!file.exists("./data/mm_cdna.fa.gz")) {
-  download.file("ftp://ftp.ensembl.org/pub/release-95/fasta/mus_musculus/cdna/Mus_musculus.GRCm38.cdna.all.fa.gz", "./data/mm_cdna.fa.gz", method = "wget", quiet = TRUE)
+  download.file("ftp://ftp.ensembl.org/pub/release-94/fasta/mus_musculus/cdna/Mus_musculus.GRCm38.cdna.all.fa.gz", "./data/mm_cdna.fa.gz", method = "wget", quiet = TRUE)
 }
 ```
 
 ```{bash}
+# This chunk is in bash
 kallisto version
 ```
+
 Actually, we don't need to unzip the fasta files 
-```{bash index, cache=TRUE}
-kallisto index -i ./output/hs_mm_tr_index.idx ./data/hs_cdna.fa.gz ./data/mm_cdna.fa.gz
+```{r index, cache=TRUE}
+if (!file.exists("./output/hs_mm_tr_index.idx")) {
+  system("kallisto index -i ./output/hs_mm_tr_index.idx ./data/hs_cdna.fa.gz ./data/mm_cdna.fa.gz")
+}
 ```
 
 ## Run `kallisto bus`
-Here we will generate the `bus` file. Here `bus` stands for *B*arbode, *U*MI, *S*et (i.e. equivalent class). In text form, it is a table whose first column is the barcode. The second column is the UMI that are associated with the barcode. The third column is the index of the equivalence class reads with the UMI maps to (equivalence class will be explained later). The fourth column is count of reads with this barcode, UMI, and equivalence class combination, which is ignored as one UMI should stand for one molecule. See [this paper](https://www.biorxiv.org/content/10.1101/472571v2) for more detail. 
+Here we will generate the `bus` file. Here `bus` stands for *B*arbode, *U*MI, *S*et (i.e. equivalent class). In text form, it is a table whose first column is the barcode. The second column is the UMI that are associated with the barcode. The third column is the index of the equivalence class reads with the UMI maps to (equivalence class will be explained later). The fourth column is count of reads with this barcode, UMI, and equivalence class combination, which is ignored as one UMI should stand for one molecule. See [this paper](https://doi.org/10.1093/bioinformatics/btz279) for more detail. 
 
 These are the technologies supported by `kallisto bus`:
 ```{r}
@@ -109,6 +105,7 @@ system("kallisto bus --list", intern = TRUE)
 Here we have 8 samples. Each sample has 3 files: `I1` means sample index, `R1` means barcode and UMI, and `R2` means the piece of cDNA. The `-i` argument specifies the index file we just built. The `-o` argument specifies the output directory. The `-x` argument specifies the sequencing technology used to generate this data set. The `-t` argument specifies the number of threads used. I ran this on a server and used 8 threads. 
 
 ```{bash bus, cache=TRUE}
+# This chunk is in bash
 cd ./data
 kallisto bus -i ../output/hs_mm_tr_index.idx -o ../output/out_hgmm1k -x 10xv2 -t8 \
 ./fastqs/hgmm_1k_S1_L001_R1_001.fastq.gz ./fastqs/hgmm_1k_S1_L001_R2_001.fastq.gz \
@@ -127,27 +124,8 @@ list.files("./output/out_hgmm1k/")
 ```
 
 ## Run `BUStools`
-The `output.bus` file is a binary. In order to make R parse it, we need to convert it into a sorted text file. There's a command line tool [`bustools`](https://github.com/BUStools/bustools) for this. The reason why `kallisto bus` outputs this binary rather than the sorted text file directly is that the binary can be very compressed to save disk space. The such compression is achieved, a future version of R package `BUSpaRse` may support directly reading the binary to convert to sparse matrix. At present, as `bustools` is still under development, such compression has not been achieved, and as a result, the binary is slightly larger than the text file. 
-
-```{bash bustools, cache=TRUE}
-# Add where I installed bustools to PATH
-export PATH=$PATH:/home/lambda/mylibs/bin/
-# Sort, with 8 threads
-bustools sort -o ./output/out_hgmm1k/output.sorted -t8 ./output/out_hgmm1k/output.bus
-# Convert sorted file to text
-bustools text -o ./output/out_hgmm1k/output.sorted.txt ./output/out_hgmm1k/output.sorted
-```
-
-This is what the `bus` file looks like:
-
-First column is barcode, second column is UMI, 3rd column is equivalence class index, and 4th column is count, which is ignored. This has already been sorted according to barcode.
-```{bash}
-head ./output/out_hgmm1k/output.sorted.txt
-```
-
-# Secondary analysis
-## Map transcripts to genes
-For the sparse matrix, most people are interested in how many UMIs per gene per cell, we here we will quantify this from the `bus` output, and to do so, we need to find which gene corresponds to each transcript. Remember in the output of `kallisto bus`, there's the file `transcripts.txt`. Those are the transcripts in the transcriptome index. Now we'll only keep the transcripts present there and make sure that the transcripts in `tr2g` are in the same order as those in the index. You will soon see why the order is important.
+### Map transcripts to genes
+For the sparse matrix, most people are interested in how many UMIs per gene per cell, we here we will quantify this from the `bus` output, and to do so, we need to find which gene corresponds to each transcript. Remember in the output of `kallisto bus`, there's the file `transcripts.txt`. Those are the transcripts in the transcriptome index. 
 
 Remember that we downloaded transcriptome FASTA files from Ensembl just now. In FASTA files, each entry is a sequence with a name. In Ensembl FASTA files, the sequence name has genome annotation of the corresponding sequence, so we can extract transcript IDs and corresponding gene IDs and gene names from there.
 ```{r tr2g}
@@ -156,55 +134,51 @@ tr2g <- transcript2gene(fasta_file = c("./data/hs_cdna.fa.gz", "./data/mm_cdna.f
 ```
 
 ```{r}
-head(tr2g) %>% knitr::kable()
+head(tr2g)
 ```
 
-Alternative ways of getting `tr2g` have been implemented in the `BUSpaRse` package. You may use `tr2g_ensembl` to query Ensembl with biomart to get transcript and gene IDs. If you use this method, then please make sure that the Ensembl version used in the query matches that of the transcriptome. This method is convenient for the user since you only need to input species names, but it can be slow since biomart database query can be slow. You may also use `tr2g_gtf` for GTF files and `tr2g_gff3` for GFF3 files, which are more useful for non-model organisms absent from Ensemble. After calling the `tr2g_*` family of functions, you should sort the transcripts from those functions with `sort_tr2g` so the transcripts are in the same order as those in the kallisto index. The FASTA way is the fastest, as reading FASTA files is faster than reading GTF and GFF files. Whichever way you choose, this shouldn't take much more than half a minute per species.
+`bustools` requires `tr2g` to be written into a tab delimited file of a specific format: No headers, first column is transcript ID, and second column is the corresponding gene ID. Transcript IDs must be in the same order as in the `kallisto` index.
+```{r}
+# Write tr2g to format required by bustools
+save_tr2g_bustools(tr2g, "./output/tr2g_hgmm.tsv")
+```
 
-The function `transcript2gene` not only gets the transcript and gene IDs but also sorts the transcripts. This function only supports Ensembl biomart query and Ensembl fasta files as the source of transcript and gene IDs, as the attribute field of GTF and GFF3 files can differ between sources and further cleanup may be needed.
-
-## Make the sparse matrix
-For 10x, we do have a file with all valid cell barcodes that comes with CellRanger. You need to install CellRanger to get this file, though you do not need to run CellRanger for this notebook. The whitelist is optional, so if you don't have one, you may skip the whitelist step and the `whitelist` argument in the `makr_sparse_matrix` function. 
+A whitelist that contains all the barcodes known to be present in the kit is provided by 10x and comes with CellRanger. A CellRanger installation is required, though we will not run CellRanger here.
 ```{bash}
 # Copy v2 chemistry whitelist to working directory
-cp ~/cellranger-3.0.1/cellranger-cs/3.0.1/lib/python/cellranger/barcodes/737K-august-2016.txt \
+cp ~/cellranger-3.0.2/cellranger-cs/3.0.2/lib/python/cellranger/barcodes/737K-august-2016.txt \
 ./data/whitelist_v2.txt
 ```
 
+Then we're ready to make the gene count matrix. First, `bustools` runs barcode error correction on the `bus` file. Then, the corrected `bus` file is sorted by barcode, UMI, and equivalence classes. Then the UMIs are counted and the counts are collapsed into gene level. Here the `|` is pipe in bash, just like the magrittr pipe `%>%` in R, that pipes the output of one command to the next.
+```{bash bustools, cache=TRUE}
+mkdir ./output/out_hgmm1k/genecount ./tmp
+bustools correct -w ./data/whitelist_v2.txt -p ./output/out_hgmm1k/output.bus | \
+bustools sort -T tmp/ -t 4 -p - | \
+bustools count -o ./output/out_hgmm1k/genecount/genes -g ./output/tr2g_hgmm.tsv \
+-e ./output/out_hgmm1k/matrix.ec -t ./output/out_hgmm1k/transcripts.txt --genecounts -
+```
+
+See what the outputs are
 ```{r}
-# Read in the whitelist
-whitelist_v2 <- fread("./data/whitelist_v2.txt", header = FALSE)$V1
-length(whitelist_v2)
+list.files("./output/out_hgmm1k/genecount")
 ```
-
-There about 737K valid cell barcodes.
-
-Now we have everything we need to make the sparse matrix. This function reads in `output.sorted.txt` line by line and processes them. It does not do barcode correction for now, so the barcode must exactly match those in the whitelist if one is provided. It took 5 to 6 minutes to construct the sparse matrix in the hgmm6k dataset, which has over 280 million lines in `output.sorted.txt`, which is over 9GB. Here the data set is smaller, and it takes less than a minute. A future version of `BUSpaRse` will parallelize this process to make it more scalable for huge datasets. For now, it's single threaded.
-
-Note that the arguments `est_ncells` (estimated number of cells) and `est_ngenes` (estimated number of genes) are important. With the estimate, this function reserves memory for the data to be added into, reducing the need of reallocation, which will slow the function down. Since the vast majority of "cells" you get in this sparse matrix are empty droplets rather than cells, please put at least 200 times more "cells" than you actually expect in `est_ncells`.
-
-If you do not have a whitelist of barcodes, then it's fine; the `whitelist` argument is optional.
-
-The function `make_sparse_matrix` can make the gene count matrix and the transcript compatibility count (TCC) matrix at the same time. For the purpose of this notebook, we only generate the gene count matrix. An upcoming notebook will demonstrate some more detailed analysis with a TCC matrix. See [Ntranos et al. 2016](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-0970-8) for more information about TCC matrices.
-```{r spmat}
-res_mat <- make_sparse_matrix("./output/out_hgmm1k/output.sorted.txt",
-                              tr2g = tr2g, est_ncells = 3.5e5,
-                              est_ngenes = nrow(tr2g),
-                              whitelist = whitelist_v2, TCC = FALSE)
-```
-
-The matrix we get has genes in rows and barcode in columns. The row names are the gene IDs (not using human readable gene names since they're not guaranteed to be unique), and the column names are cell barcodes.
-
-For Ensembl transcriptomes, you may call `busparse_matrix` to bypass the separate step of getting the `tr2g` data frame here to directly get the matrix.
+Here we have text files for barcodes and gene names, and an `mtx` file for the sparse gene count matrix.
 
 # Explore the data
+Now we can load the matrix into R for analysis.
+```{r}
+res_mat <- read_count_output("./output/out_hgmm1k/genecount",
+                             name = "genes", tcc = FALSE)
+```
+
 ## Remove empty droplets
 Cool, so now we have the sparse matrix. What does it look like?
 ```{r}
 dim(res_mat)
 ```
 
-That's way more cells than we expect, which is about 1000. So what's going on?
+The number of genes is as expected for two species. There're way more cells than we expect, which is about 1000. So what's going on?
 
 How many UMIs per barcode?
 ```{r}
@@ -220,20 +194,19 @@ bc_rank <- barcodeRanks(res_mat)
 
 ```{r rank}
 qplot(bc_rank$rank, bc_rank$total, geom = "line") +
-  geom_hline(yintercept = bc_rank$knee, color = "blue", linetype = 2) +
-  geom_hline(yintercept = bc_rank$inflection, color = "green", linetype = 2) +
-  annotate("text", x = 1000, y = 1.5 * c(bc_rank$knee, bc_rank$inflection),
+  geom_hline(yintercept = metadata(bc_rank)$knee, color = "blue", linetype = 2) +
+  geom_hline(yintercept = metadata(bc_rank)$inflection, color = "green", linetype = 2) +
+  annotate("text", x = 1000, y = 1.5 * c(metadata(bc_rank)$knee, metadata(bc_rank)$inflection),
            label = c("knee", "inflection"), color = c("blue", "green")) +
   scale_x_log10() +
   scale_y_log10() +
-  labs(x = "Rank", y = "Total reads") +
-  theme_bw()
+  labs(x = "Rank", y = "Total reads")
 ```
 
 The inflection point looks like a reasonable number of cells.
 ```{r}
 # Filter the matrix
-res_mat <- res_mat[, tot_counts > bc_rank$inflection]
+res_mat <- res_mat[, tot_counts > metadata(bc_rank)$inflection]
 dim(res_mat)
 ```
 
@@ -263,8 +236,7 @@ cell_species <- cell_species %>%
 
 ```{r barn}
 ggplot(cell_species, aes(n_human_umi, n_mouse_umi, color = species)) +
-  geom_point(size = 0.5) +
-  theme_bw()
+  geom_point(size = 0.5)
 ```
 
 Great, looks like the vast majority of cells are not mixed.
@@ -290,8 +262,18 @@ seu <- AddMetaData(seu, metadata = cell_species$species, col.name = "species")
 
 See how number of total counts and number of genes expressed are distributed.
 ```{r vln}
-VlnPlot(seu, c("nCount_RNA", "nFeature_RNA"), group.by = "species")
+VlnPlot(seu, c("nCount_RNA", "nFeature_RNA"), group.by = "species",
+        pt.size = 0.1)
 ```
+
+Another QC plot
+```{r}
+ggplot(seu@meta.data, aes(nCount_RNA, nFeature_RNA, color = species)) +
+  geom_point(alpha = 0.7, size = 0.5) +
+  labs(x = "Total UMI counts per cell", y = "Number of genes detected")
+```
+
+The mixed species doublets do look different from human and mouse cells.
 
 ```{r elbow}
 seu <- RunPCA(seu, verbose = FALSE, npcs = 30)
