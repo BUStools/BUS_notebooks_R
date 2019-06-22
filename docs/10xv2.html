@@ -537,10 +537,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtreedba27cc4899dd41ffacf23c3c5307ce082466347targetblankdba27cca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/dba27cc4899dd41ffacf23c3c5307ce082466347" target="_blank">dba27cc</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree9fa20ae42471ca2c414164c7a1d726263dfed52btargetblank9fa20aea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/9fa20ae42471ca2c414164c7a1d726263dfed52b" target="_blank">9fa20ae</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtreedba27cc4899dd41ffacf23c3c5307ce082466347targetblankdba27cca" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree9fa20ae42471ca2c414164c7a1d726263dfed52btargetblank9fa20aea" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -562,7 +562,6 @@ Ignored files:
     Ignored:    tmp/
 
 Untracked files:
-    Untracked:  output/out_hgmm1k/
     Untracked:  output/tr2g_hgmm.tsv
 
 Unstaged changes:
@@ -606,6 +605,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/9fa20ae42471ca2c414164c7a1d726263dfed52b/docs/10xv2.html" target="_blank">9fa20ae</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-06-22
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1336,8 +1352,7 @@ kallisto bus -i ../output/hs_mm_tr_index.idx -o ../output/out_hgmm1k -x 10xv2 -t
 #&gt; [quant] processed 63,252,296 reads, 52,229,344 reads pseudoaligned</code></pre>
 <p>See what the outputs are</p>
 <pre class="r"><code>list.files(&quot;./output/out_hgmm1k/&quot;)</code></pre>
-<pre><code>#&gt; [1] &quot;genecount&quot;       &quot;matrix.ec&quot;       &quot;output.bus&quot;      &quot;run_info.json&quot;  
-#&gt; [5] &quot;transcripts.txt&quot;</code></pre>
+<pre><code>#&gt; [1] &quot;matrix.ec&quot;       &quot;output.bus&quot;      &quot;run_info.json&quot;   &quot;transcripts.txt&quot;</code></pre>
 </div>
 <div id="run-bustools" class="section level2">
 <h2>Run <code>BUStools</code></h2>
@@ -1371,8 +1386,7 @@ bustools correct -w ./data/whitelist_v2.txt -p ./output/out_hgmm1k/output.bus | 
 bustools sort -T tmp/ -t 4 -p - | \
 bustools count -o ./output/out_hgmm1k/genecount/genes -g ./output/tr2g_hgmm.tsv \
 -e ./output/out_hgmm1k/matrix.ec -t ./output/out_hgmm1k/transcripts.txt --genecounts -</code></pre>
-<pre><code>#&gt; mkdir: cannot create directory ‘./output/out_hgmm1k/genecount’: File exists
-#&gt; mkdir: cannot create directory ‘./tmp’: File exists
+<pre><code>#&gt; mkdir: cannot create directory ‘./tmp’: File exists
 #&gt; Found 737280 barcodes in the whitelist
 #&gt; Number of hamming dist 1 barcodes = 20550336
 #&gt; Processed 52229344 bus records
@@ -1438,6 +1452,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/9fa20ae42471ca2c414164c7a1d726263dfed52b/docs/figure/10xv2.Rmd/rank-1.png" target="_blank">9fa20ae</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-06-22
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/06e98693d04189ba4f1b7c49d9466b6663e2e590/docs/figure/10xv2.Rmd/rank-1.png" target="_blank">06e9869</a>
@@ -1516,6 +1541,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/9fa20ae42471ca2c414164c7a1d726263dfed52b/docs/figure/10xv2.Rmd/barn-1.png" target="_blank">9fa20ae</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-06-22
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/8cd81e033d3bf2b02d3287043329aea3b3e60d8e/docs/figure/10xv2.Rmd/barn-1.png" target="_blank">8cd81e0</a>
 </td>
 <td>
@@ -1577,6 +1613,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/9fa20ae42471ca2c414164c7a1d726263dfed52b/docs/figure/10xv2.Rmd/vln-1.png" target="_blank">9fa20ae</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-06-22
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/8cd81e033d3bf2b02d3287043329aea3b3e60d8e/docs/figure/10xv2.Rmd/vln-1.png" target="_blank">8cd81e0</a>
 </td>
 <td>
@@ -1595,6 +1642,43 @@ Lambda Moses
   geom_point(alpha = 0.7, size = 0.5) +
   labs(x = &quot;Total UMI counts per cell&quot;, y = &quot;Number of genes detected&quot;)</code></pre>
 <p><img src="figure/10xv2.Rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-21-1">
+Past versions of unnamed-chunk-21-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-21-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/9fa20ae42471ca2c414164c7a1d726263dfed52b/docs/figure/10xv2.Rmd/unnamed-chunk-21-1.png" target="_blank">9fa20ae</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-06-22
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>The mixed species doublets do look different from human and mouse cells.</p>
 <pre class="r"><code>seu &lt;- RunPCA(seu, verbose = FALSE, npcs = 30)
 ElbowPlot(seu, ndims = 30)</code></pre>
@@ -1621,6 +1705,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/9fa20ae42471ca2c414164c7a1d726263dfed52b/docs/figure/10xv2.Rmd/elbow-1.png" target="_blank">9fa20ae</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-06-22
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/06e98693d04189ba4f1b7c49d9466b6663e2e590/docs/figure/10xv2.Rmd/elbow-1.png" target="_blank">06e9869</a>
@@ -1673,6 +1768,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/9fa20ae42471ca2c414164c7a1d726263dfed52b/docs/figure/10xv2.Rmd/pca-1.png" target="_blank">9fa20ae</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-06-22
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/06e98693d04189ba4f1b7c49d9466b6663e2e590/docs/figure/10xv2.Rmd/pca-1.png" target="_blank">06e9869</a>
 </td>
 <td>
@@ -1723,6 +1829,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/9fa20ae42471ca2c414164c7a1d726263dfed52b/docs/figure/10xv2.Rmd/tsne-1.png" target="_blank">9fa20ae</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-06-22
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/06e98693d04189ba4f1b7c49d9466b6663e2e590/docs/figure/10xv2.Rmd/tsne-1.png" target="_blank">06e9869</a>
