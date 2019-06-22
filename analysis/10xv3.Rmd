@@ -20,7 +20,7 @@ This vignette demonstrates how to manipulate `bus` format in R with `BUSpaRse`. 
 If you would like to rerun this notebook, you can git clone [this repository](https://github.com/BUStools/BUS_notebooks_R) or directly download [this notebook from GitHub](https://github.com/BUStools/BUS_notebooks_R/blob/master/analysis/10xv3.Rmd). 
 
 ## Install packages
-We will be using the R packages below. `BUSpaRse` is not yet on CRAN or Bioconductor. For Mac users, see the [installation note for `BUSpaRse`](https://github.com/BUStools/BUSpaRse). The data, which is already in `bus` format, can be downloaded from the package `TENxBUSData`. Both `TENxBUSData` and `BUSpaRse` have been submitted to Bioconductor for review; the data for `TENxBUSData` can only be downloaded from Bioconductor devel, which requires R 3.6.0.
+We will be using the R packages below. `BUSpaRse` is not yet on CRAN or Bioconductor. For Mac users, see the [installation note for `BUSpaRse`](https://github.com/BUStools/BUSpaRse). The data, which is already in `bus` format, can be downloaded from the package `TENxBUSData`. Both `TENxBUSData` and `BUSpaRse` have been submitted to Bioconductor for review; the data for `TENxBUSData` can only be downloaded from Bioconductor devel (version 3.10), which requires R 3.6.0.
 
 ```{r, eval=FALSE}
 # Install devtools if it's not already installed
@@ -47,6 +47,8 @@ The other R packages below are on CRAN, and can be installed with `install.packa
 ```{r, message=FALSE}
 library(BUSpaRse)
 library(TENxBUSData)
+library(ggplot2)
+library(magrittr)
 library(data.table)
 library(Seurat)
 library(DropletUtils)
@@ -54,9 +56,13 @@ library(Matrix)
 theme_set(theme_bw())
 ```
 
-We will not get into the details of how to make the `bus` file with `kallisto bus` and `bustools`, as the data will be downloaded with `TENxBUSData`.
+We will not get into the details of how to make the `bus` file with `kallisto bus` and `bustools`, as the data will be downloaded with `TENxBUSData`. `TENxBUSData` provides 5 different datasets, and we will use the PBMC 1k dataset here. The data from `TENxBUSData` contains the sorted `bus` file in text format. While the `BUSpaRse` package converts that text format `bus` file into gene count matrix, this text file can be loaded into R as a data frame for further exploration.
 ```{r}
-TENxBUSData("./output", dataset = "pbmc1k")
+fn <- TENxBUSData("./output", dataset = "pbmc1k")
+```
+
+```{r}
+list.files(fn)
 ```
 
 # Sparse matrix
@@ -79,7 +85,7 @@ Alternative ways of getting `tr2g` have been implemented in the `BUSpaRse` packa
 For 10x, we do have a file with all valid cell barcodes that comes with CellRanger. You need to install CellRanger to get this file, though you do not need to run CellRanger for this notebook. The whitelist is optional, so if you don't have one, you may skip the whitelist step and the `whitelist` argument in the `makr_sparse_matrix` function. 
 ```{bash}
 # Copy v3 chemistry whitelist to working directory
-cp ~/cellranger-3.0.1/cellranger-cs/3.0.1/lib/python/cellranger/barcodes/3M-february-2018.txt.gz \
+cp ~/cellranger-3.0.2/cellranger-cs/3.0.2/lib/python/cellranger/barcodes/3M-february-2018.txt.gz \
 ./data/whitelist_v3.txt.gz
 ```
 
@@ -142,7 +148,7 @@ qplot(bc_rank$rank, bc_rank$total, geom = "line") +
 The inflection point looks like a reasonable number of cells.
 ```{r}
 # Filter the matrix
-res_mat <- res_mat[, tot_counts > bc_rank$inflection]
+res_mat <- res_mat[, tot_counts > metadata(bc_rank)$inflection]
 dim(res_mat)
 ```
 
@@ -156,12 +162,12 @@ seu <- CreateSeuratObject(res_mat, min.cells = 3) %>%
 
 See how number of total counts and number of genes expressed are distributed.
 ```{r vln}
-VlnPlot(seu, c("nCount_RNA", "nFeature_RNA"))
+VlnPlot(seu, c("nCount_RNA", "nFeature_RNA"), pt.size = 0.1)
 ```
 
 Another QC plot
 ```{r}
-ggplot(seu@meta.data, aes(nCount_RNA, nFeature_RNA, color = species)) +
+ggplot(seu@meta.data, aes(nCount_RNA, nFeature_RNA)) +
   geom_point(alpha = 0.7, size = 0.5) +
   labs(x = "Total UMI counts per cell", y = "Number of genes detected")
 ```
@@ -171,17 +177,18 @@ seu <- RunPCA(seu, verbose = FALSE, npcs = 30)
 ElbowPlot(seu, ndims = 30)
 ```
 
+We can do Leiden clustering. Leiden is an improvement over Louvain that guarantees that clusters are well-connected on the k nearest neighbor graph.
 ```{r}
-# Louvain clustering
+# Leiden clustering
 seu <- FindNeighbors(seu)
-seu <- FindClusters(seu)
+seu <- FindClusters(seu, algorithm = 4)
 ```
 
 ```{r pca}
-DimPlot(seu, reduction = "pca", pt.size = 0.5, group.by = "species")
+DimPlot(seu, reduction = "pca", pt.size = 0.5)
 ```
 
 ```{r tsne}
 seu <- RunTSNE(seu, dims = 1:20, check_duplicates = FALSE)
-DimPlot(seu, reduction = "tsne", pt.size = 0.5, group.by = "species")
+DimPlot(seu, reduction = "tsne", pt.size = 0.5)
 ```
