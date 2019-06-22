@@ -1,5 +1,5 @@
 ---
-title: "Processing kallisto bus Output (10x v2 chemistry)"
+title: "1k 1:1 Mixture of Fresh Frozen Human (HEK293T) and Mouse (NIH3T3) Cells (10x v2 chemistry)"
 author: "Lambda Moses"
 date: "`r Sys.Date()`"
 output: 
@@ -63,7 +63,7 @@ if (!file.exists("./data/hgmm_1k_fastqs.tar")) {
 ```
 
 Then untar this file
-```{bash, cache=TRUE}
+```{bash}
 cd ./data
 tar -xvf ./hgmm_1k_fastqs.tar
 ```
@@ -88,7 +88,7 @@ kallisto version
 ```
 
 Actually, we don't need to unzip the fasta files 
-```{r index, cache=TRUE}
+```{r index}
 if (!file.exists("./output/hs_mm_tr_index.idx")) {
   system("kallisto index -i ./output/hs_mm_tr_index.idx ./data/hs_cdna.fa.gz ./data/mm_cdna.fa.gz")
 }
@@ -104,7 +104,7 @@ system("kallisto bus --list", intern = TRUE)
 
 Here we have 8 samples. Each sample has 3 files: `I1` means sample index, `R1` means barcode and UMI, and `R2` means the piece of cDNA. The `-i` argument specifies the index file we just built. The `-o` argument specifies the output directory. The `-x` argument specifies the sequencing technology used to generate this data set. The `-t` argument specifies the number of threads used. I ran this on a server and used 8 threads. 
 
-```{bash bus, cache=TRUE}
+```{bash bus}
 # This chunk is in bash
 cd ./data
 kallisto bus -i ../output/hs_mm_tr_index.idx -o ../output/out_hgmm1k -x 10xv2 -t8 \
@@ -151,7 +151,7 @@ cp ~/cellranger-3.0.2/cellranger-cs/3.0.2/lib/python/cellranger/barcodes/737K-au
 ```
 
 Then we're ready to make the gene count matrix. First, `bustools` runs barcode error correction on the `bus` file. Then, the corrected `bus` file is sorted by barcode, UMI, and equivalence classes. Then the UMIs are counted and the counts are collapsed into gene level. Here the `|` is pipe in bash, just like the magrittr pipe `%>%` in R, that pipes the output of one command to the next.
-```{bash bustools, cache=TRUE}
+```{bash bustools}
 mkdir ./output/out_hgmm1k/genecount ./tmp
 bustools correct -w ./data/whitelist_v2.txt -p ./output/out_hgmm1k/output.bus | \
 bustools sort -T tmp/ -t 4 -p - | \
@@ -248,7 +248,7 @@ cell_species %>%
 Great, only about 0.3% of cells here are doublets, which is lower than the ~1% 10x lists. Doublet rate tends to be lower when cell concentration is lower. However, doublets can still be formed with cells from the same species, so the number of mixed species "cells" is only a lower bound of doublet rate.
 
 ## Dimension reduction
-```{r seu, cache=TRUE}
+```{r seu}
 seu <- CreateSeuratObject(res_mat, min.cells = 3) %>% 
   NormalizeData(verbose = FALSE) %>% 
   ScaleData(verbose = FALSE) %>% 
