@@ -380,7 +380,7 @@ div.tocify {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">BUS Notebooks R</a>
+      <a class="navbar-brand" href="index.html">kallisto | bustools R Notebooks</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
@@ -535,10 +535,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtreeac15697975ff6fc72b3ca90a50568df65c87a149targetblankac15697a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/ac15697975ff6fc72b3ca90a50568df65c87a149" target="_blank">ac15697</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree2b6460d84d0123080d8aaf64c329dc0d1792bdaatargetblank2b6460da"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/2b6460d84d0123080d8aaf64c329dc0d1792bdaa" target="_blank">2b6460d</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtreeac15697975ff6fc72b3ca90a50568df65c87a149targetblankac15697a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree2b6460d84d0123080d8aaf64c329dc0d1792bdaatargetblank2b6460da" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -550,6 +550,10 @@ Ignored files:
     Ignored:    BUS_notebooks_R.Rproj
     Ignored:    data/whitelist_v3.txt.gz
     Ignored:    output/out_pbmc1k/
+
+Unstaged changes:
+    Modified:   analysis/10xv2.Rmd
+    Modified:   analysis/_site.yml
 
 </code></pre>
 <p>
@@ -588,6 +592,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/2b6460d84d0123080d8aaf64c329dc0d1792bdaa/analysis/10xv3.Rmd" target="_blank">2b6460d</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-06-22
+</td>
+<td>
+Transposed knee plot
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/3642b69dd6fea71a98430c4e0bc3201fee7684ab/docs/10xv3.html" target="_blank">3642b69</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-06-22
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1037,7 +1075,7 @@ Added 10xv3 notebook
 </div>
 </div>
 </div>
-<p>This vignette demonstrates how to manipulate <code>bus</code> format in R with <code>BUSpaRse</code>. The most recent version of <code>bustools</code> can generate gene count matrices from <code>bus</code> files more efficiently; the purpose of the separate implementation in <code>BUSpaRse</code> is for advanced users to experiment with new ways to collapse UMIs mapped to multiple genes and to adapt <code>bus</code> format to purposes other than single cell RNA-seq. This implementation exists is is maintained because R and Rcpp code is easier to work with than pure C++.</p>
+<p>This vignette demonstrates how to manipulate <code>bus</code> format in R with <code>BUSpaRse</code>. The most recent version of <code>bustools</code> can generate gene count matrices from <code>bus</code> files more efficiently; the purpose of the separate implementation in <code>BUSpaRse</code> is for advanced users to experiment with new ways to collapse UMIs mapped to multiple genes and to adapt <code>bus</code> format to purposes other than single cell RNA-seq. This implementation is intended to facilitate exploration using R/Rcpp, which is easier to work with than C++.</p>
 <div id="setup" class="section level1">
 <h1>Setup</h1>
 <p>If you would like to rerun this notebook, you can git clone <a href="https://github.com/BUStools/BUS_notebooks_R">this repository</a> or directly download <a href="https://github.com/BUStools/BUS_notebooks_R/blob/master/analysis/10xv3.Rmd">this notebook from GitHub</a>.</p>
@@ -1142,14 +1180,14 @@ summary(tot_counts)</code></pre>
 <p>The vast majority of “cells” have only a few UMI detected. Those are empty droplets. 10x claims to have cell capture rate of up to 65%, but in practice, depending on how many cells are in fact loaded, the rate can be much lower. A commonly used method to estimate the number of empty droplets is barcode ranking knee and inflection points, as those are often assumed to represent transition between two components of a distribution. While more sophisticated method exist (e.g. see <a href="https://www.bioconductor.org/packages/devel/bioc/vignettes/DropletUtils/inst/doc/DropletUtils.html#detecting-empty-droplets"><code>emptyDrops</code> in <code>DropletUtils</code></a>), for simplicity, we will use the barcode ranking method here. However, whichever way we go, we don’t have the ground truth.</p>
 <pre class="r"><code># Compute barcode rank
 bc_rank &lt;- barcodeRanks(res_mat)</code></pre>
-<pre class="r"><code>qplot(bc_rank$rank, bc_rank$total, geom = &quot;line&quot;) +
-  geom_hline(yintercept = metadata(bc_rank)$knee, color = &quot;blue&quot;, linetype = 2) +
-  geom_hline(yintercept = metadata(bc_rank)$inflection, color = &quot;green&quot;, linetype = 2) +
-  annotate(&quot;text&quot;, x = 1000, y = 1.5 * c(metadata(bc_rank)$knee, metadata(bc_rank)$inflection),
+<pre class="r"><code>qplot(bc_rank$total, bc_rank$rank, geom = &quot;line&quot;) +
+  geom_vline(xintercept = metadata(bc_rank)$knee, color = &quot;blue&quot;, linetype = 2) +
+  geom_vline(xintercept = metadata(bc_rank)$inflection, color = &quot;green&quot;, linetype = 2) +
+  annotate(&quot;text&quot;, y = 1000, x = 1.5 * c(metadata(bc_rank)$knee, metadata(bc_rank)$inflection),
            label = c(&quot;knee&quot;, &quot;inflection&quot;), color = c(&quot;blue&quot;, &quot;green&quot;)) +
   scale_x_log10() +
   scale_y_log10() +
-  labs(x = &quot;Rank&quot;, y = &quot;Total reads&quot;)</code></pre>
+  labs(y = &quot;Barcode rank&quot;, x = &quot;Total UMI count&quot;)</code></pre>
 <p><img src="figure/10xv3.Rmd/rank-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-rank-1">
@@ -1173,6 +1211,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/3642b69dd6fea71a98430c4e0bc3201fee7684ab/docs/figure/10xv3.Rmd/rank-1.png" target="_blank">3642b69</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-06-22
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/06e98693d04189ba4f1b7c49d9466b6663e2e590/docs/figure/10xv3.Rmd/rank-1.png" target="_blank">06e9869</a>
@@ -1238,6 +1287,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/3642b69dd6fea71a98430c4e0bc3201fee7684ab/docs/figure/10xv3.Rmd/vln-1.png" target="_blank">3642b69</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-06-22
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/8cd81e033d3bf2b02d3287043329aea3b3e60d8e/docs/figure/10xv3.Rmd/vln-1.png" target="_blank">8cd81e0</a>
 </td>
 <td>
@@ -1256,6 +1316,43 @@ Lambda Moses
   geom_point(alpha = 0.7, size = 0.5) +
   labs(x = &quot;Total UMI counts per cell&quot;, y = &quot;Number of genes detected&quot;)</code></pre>
 <p><img src="figure/10xv3.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-1">
+Past versions of unnamed-chunk-13-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-13-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/3642b69dd6fea71a98430c4e0bc3201fee7684ab/docs/figure/10xv3.Rmd/unnamed-chunk-13-1.png" target="_blank">3642b69</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-06-22
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>seu &lt;- RunPCA(seu, verbose = FALSE, npcs = 30)
 ElbowPlot(seu, ndims = 30)</code></pre>
 <p><img src="figure/10xv3.Rmd/elbow-1.png" width="672" style="display: block; margin: auto;" /></p>
@@ -1281,6 +1378,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/3642b69dd6fea71a98430c4e0bc3201fee7684ab/docs/figure/10xv3.Rmd/elbow-1.png" target="_blank">3642b69</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-06-22
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/06e98693d04189ba4f1b7c49d9466b6663e2e590/docs/figure/10xv3.Rmd/elbow-1.png" target="_blank">06e9869</a>
@@ -1339,6 +1447,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/3642b69dd6fea71a98430c4e0bc3201fee7684ab/docs/figure/10xv3.Rmd/pca-1.png" target="_blank">3642b69</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-06-22
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/06e98693d04189ba4f1b7c49d9466b6663e2e590/docs/figure/10xv3.Rmd/pca-1.png" target="_blank">06e9869</a>
 </td>
 <td>
@@ -1388,6 +1507,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/3642b69dd6fea71a98430c4e0bc3201fee7684ab/docs/figure/10xv3.Rmd/tsne-1.png" target="_blank">3642b69</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-06-22
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/06e98693d04189ba4f1b7c49d9466b6663e2e590/docs/figure/10xv3.Rmd/tsne-1.png" target="_blank">06e9869</a>
