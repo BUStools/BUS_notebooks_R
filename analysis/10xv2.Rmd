@@ -20,9 +20,9 @@ In this vignette, we process fastq data from scRNA-seq (10x v2 chemistry) with t
 If you would like to rerun this notebook, you can git clone [this repository](https://github.com/BUStools/BUS_notebooks_R) or directly download [this notebook from GitHub](https://github.com/BUStools/BUS_notebooks_R/blob/master/analysis/10xv2.Rmd). 
 
 ## Install packages
-The primary analysis section of this notebook demonstrates the use of command line tools `kallisto` and `bustools`. Please use `kallisto` >= 0.45, whose binary can be downloaded [here](https://pachterlab.github.io/kallisto/download). The binary of `bustools` can be found [here](https://github.com/BUStools/bustools/releases). 
+This notebook demonstrates the use of command line tools `kallisto` and `bustools`. Please use `kallisto` >= 0.46, whose binary can be downloaded [here](https://pachterlab.github.io/kallisto/download). The binary of `bustools` can be found [here](https://github.com/BUStools/bustools/releases). 
 
-After you download the binary, you should decompress the file (if it is `tar.gz`) with `tar -xzvf file.tar.gz` in the `bash` terminal, and add the directory containing the binary to `PATH` by `export PATH=$PATH:/foo/bar`, where `/foo/bar` here is the directory of interest. Then you can directly invoke the binary on the command line as we will do in this notebook.
+After you download the binary, you should decompress the file (if it is `tar.gz`) with `tar -xzvf file.tar.gz` in the `bash` terminal, and add the directory containing the binary to `PATH` by `export PATH=$PATH:/foo/bar`, where `/foo/bar` is the directory of interest. Then you can directly invoke the binary on the command line as we will do in this notebook.
 
 We will be using the R packages below. `BUSpaRse` is not yet on CRAN or Bioconductor. For Mac users, see the [installation note for `BUSpaRse`](https://github.com/BUStools/BUSpaRse). `BUSpaRse` will be used to generate the transcript to gene file for `bustools` and to read output of `bustools` into R. We will also use `Seurat` version 3 which is now on CRAN.
 
@@ -193,14 +193,14 @@ bc_rank <- barcodeRanks(res_mat)
 ```
 
 ```{r rank}
-qplot(bc_rank$rank, bc_rank$total, geom = "line") +
-  geom_hline(yintercept = metadata(bc_rank)$knee, color = "blue", linetype = 2) +
-  geom_hline(yintercept = metadata(bc_rank)$inflection, color = "green", linetype = 2) +
-  annotate("text", x = 1000, y = 1.5 * c(metadata(bc_rank)$knee, metadata(bc_rank)$inflection),
+qplot(bc_rank$total, bc_rank$rank, geom = "line") +
+  geom_vline(xintercept = metadata(bc_rank)$knee, color = "blue", linetype = 2) +
+  geom_vline(xintercept = metadata(bc_rank)$inflection, color = "green", linetype = 2) +
+  annotate("text", y = 1000, x = 1.5 * c(metadata(bc_rank)$knee, metadata(bc_rank)$inflection),
            label = c("knee", "inflection"), color = c("blue", "green")) +
   scale_x_log10() +
   scale_y_log10() +
-  labs(x = "Rank", y = "Total reads")
+  labs(y = "Barcode rank", x = "Total UMI count")
 ```
 
 The inflection point looks like a reasonable number of cells.
@@ -245,6 +245,7 @@ cell_species %>%
   dplyr::count(species) %>% 
   mutate(proportion = n / ncol(res_mat))
 ```
+
 Great, only about 0.3% of cells here are doublets, which is lower than the ~1% 10x lists. Doublet rate tends to be lower when cell concentration is lower. However, doublets can still be formed with cells from the same species, so the number of mixed species "cells" is only a lower bound of doublet rate.
 
 ## Dimension reduction

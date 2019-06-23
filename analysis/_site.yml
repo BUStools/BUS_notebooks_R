@@ -1,7 +1,7 @@
-name: "BUS Notebooks R"
+name: "kallisto | bustools R Notebooks"
 output_dir: "../docs"
 navbar:
-  title: "BUS Notebooks R"
+  title: "kallisto | bustools R Notebooks"
   left:
     - text: "Home"
       href: index.html
