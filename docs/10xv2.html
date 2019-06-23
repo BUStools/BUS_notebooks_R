@@ -382,7 +382,7 @@ div.tocify {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">BUS Notebooks R</a>
+      <a class="navbar-brand" href="index.html">kallisto | bustools R Notebooks</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
@@ -537,10 +537,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtreece7a44d83d9647933b11430d25682a19b60d3815targetblankce7a44da"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/ce7a44d83d9647933b11430d25682a19b60d3815" target="_blank">ce7a44d</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtreecf90f3283aa133484e3670e922810b25ab511177targetblankcf90f32a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/cf90f3283aa133484e3670e922810b25ab511177" target="_blank">cf90f32</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtreece7a44d83d9647933b11430d25682a19b60d3815targetblankce7a44da" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtreecf90f3283aa133484e3670e922810b25ab511177targetblankcf90f32a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -563,10 +563,6 @@ Ignored files:
 
 Untracked files:
     Untracked:  output/tr2g_hgmm.tsv
-
-Unstaged changes:
-    Modified:   README.md
-    Modified:   analysis/10xv3.Rmd
 
 </code></pre>
 <p>
@@ -605,6 +601,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/cf90f3283aa133484e3670e922810b25ab511177/analysis/10xv2.Rmd" target="_blank">cf90f32</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-06-22
+</td>
+<td>
+Changed site name and slightly changed 10xv2 notebook
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/68bd8fb21fc3dc4b807a1b62ba6bafa40be8a8f3/docs/10xv2.html" target="_blank">68bd8fb</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-06-22
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1247,8 +1277,8 @@ Initial commit, already with 10xv2 notebook
 <p>If you would like to rerun this notebook, you can git clone <a href="https://github.com/BUStools/BUS_notebooks_R">this repository</a> or directly download <a href="https://github.com/BUStools/BUS_notebooks_R/blob/master/analysis/10xv2.Rmd">this notebook from GitHub</a>.</p>
 <div id="install-packages" class="section level2">
 <h2>Install packages</h2>
-<p>The primary analysis section of this notebook demonstrates the use of command line tools <code>kallisto</code> and <code>bustools</code>. Please use <code>kallisto</code> &gt;= 0.45, whose binary can be downloaded <a href="https://pachterlab.github.io/kallisto/download">here</a>. The binary of <code>bustools</code> can be found <a href="https://github.com/BUStools/bustools/releases">here</a>.</p>
-<p>After you download the binary, you should decompress the file (if it is <code>tar.gz</code>) with <code>tar -xzvf file.tar.gz</code> in the <code>bash</code> terminal, and add the directory containing the binary to <code>PATH</code> by <code>export PATH=$PATH:/foo/bar</code>, where <code>/foo/bar</code> here is the directory of interest. Then you can directly invoke the binary on the command line as we will do in this notebook.</p>
+<p>This notebook demonstrates the use of command line tools <code>kallisto</code> and <code>bustools</code>. Please use <code>kallisto</code> &gt;= 0.46, whose binary can be downloaded <a href="https://pachterlab.github.io/kallisto/download">here</a>. The binary of <code>bustools</code> can be found <a href="https://github.com/BUStools/bustools/releases">here</a>.</p>
+<p>After you download the binary, you should decompress the file (if it is <code>tar.gz</code>) with <code>tar -xzvf file.tar.gz</code> in the <code>bash</code> terminal, and add the directory containing the binary to <code>PATH</code> by <code>export PATH=$PATH:/foo/bar</code>, where <code>/foo/bar</code> is the directory of interest. Then you can directly invoke the binary on the command line as we will do in this notebook.</p>
 <p>We will be using the R packages below. <code>BUSpaRse</code> is not yet on CRAN or Bioconductor. For Mac users, see the <a href="https://github.com/BUStools/BUSpaRse">installation note for <code>BUSpaRse</code></a>. <code>BUSpaRse</code> will be used to generate the transcript to gene file for <code>bustools</code> and to read output of <code>bustools</code> into R. We will also use <code>Seurat</code> version 3 which is now on CRAN.</p>
 <pre class="r"><code># Install devtools if it&#39;s not already installed
 if (!require(devtools)) {
@@ -1454,15 +1484,15 @@ summary(tot_counts)</code></pre>
 <p>The vast majority of “cells” have only a few UMI detected. Those are empty droplets. 10x claims to have cell capture rate of up to 65%, but in practice, depending on how many cells are in fact loaded, the rate can be much lower. A commonly used method to estimate the number of empty droplets is barcode ranking knee and inflection points, as those are often assumed to represent transition between two components of a distribution. While more sophisticated method exist (e.g. see <a href="https://www.bioconductor.org/packages/devel/bioc/vignettes/DropletUtils/inst/doc/DropletUtils.html#detecting-empty-droplets"><code>emptyDrops</code> in <code>DropletUtils</code></a>), for simplicity, we will use the barcode ranking method here. However, whichever way we go, we don’t have the ground truth.</p>
 <pre class="r"><code># Compute barcode rank
 bc_rank &lt;- barcodeRanks(res_mat)</code></pre>
-<pre class="r"><code>qplot(bc_rank$rank, bc_rank$total, geom = &quot;line&quot;) +
-  geom_hline(yintercept = metadata(bc_rank)$knee, color = &quot;blue&quot;, linetype = 2) +
-  geom_hline(yintercept = metadata(bc_rank)$inflection, color = &quot;green&quot;, linetype = 2) +
-  annotate(&quot;text&quot;, x = 1000, y = 1.5 * c(metadata(bc_rank)$knee, metadata(bc_rank)$inflection),
+<pre class="r"><code>qplot(bc_rank$total, bc_rank$rank, geom = &quot;line&quot;) +
+  geom_vline(xintercept = metadata(bc_rank)$knee, color = &quot;blue&quot;, linetype = 2) +
+  geom_vline(xintercept = metadata(bc_rank)$inflection, color = &quot;green&quot;, linetype = 2) +
+  annotate(&quot;text&quot;, y = 1000, x = 1.5 * c(metadata(bc_rank)$knee, metadata(bc_rank)$inflection),
            label = c(&quot;knee&quot;, &quot;inflection&quot;), color = c(&quot;blue&quot;, &quot;green&quot;)) +
   scale_x_log10() +
   scale_y_log10() +
-  labs(x = &quot;Rank&quot;, y = &quot;Total reads&quot;)</code></pre>
-<pre><code>#&gt; Warning: Transformation introduced infinite values in continuous y-axis</code></pre>
+  labs(y = &quot;Barcode rank&quot;, x = &quot;Total UMI count&quot;)</code></pre>
+<pre><code>#&gt; Warning: Transformation introduced infinite values in continuous x-axis</code></pre>
 <p><img src="figure/10xv2.Rmd/rank-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-rank-1">
