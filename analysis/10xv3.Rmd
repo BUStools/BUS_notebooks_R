@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 knitr::opts_chunk$set(autodep = TRUE)
 ```
 
-This vignette demonstrates how to manipulate `bus` format in R with `BUSpaRse`. The most recent version of `bustools` can generate gene count matrices from `bus` files more efficiently; the purpose of the separate implementation in `BUSpaRse` is for advanced users to experiment with new ways to collapse UMIs mapped to multiple genes and to adapt `bus` format to purposes other than single cell RNA-seq. This implementation exists is is maintained because R and Rcpp code is easier to work with than pure C++.
+This vignette demonstrates how to manipulate `bus` format in R with `BUSpaRse`. The most recent version of `bustools` can generate gene count matrices from `bus` files more efficiently; the purpose of the separate implementation in `BUSpaRse` is for advanced users to experiment with new ways to collapse UMIs mapped to multiple genes and to adapt `bus` format to purposes other than single cell RNA-seq. This implementation is intended to facilitate exploration using R/Rcpp, which is easier to work with than C++.
 
 # Setup
 If you would like to rerun this notebook, you can git clone [this repository](https://github.com/BUStools/BUS_notebooks_R) or directly download [this notebook from GitHub](https://github.com/BUStools/BUS_notebooks_R/blob/master/analysis/10xv3.Rmd). 
@@ -135,14 +135,14 @@ bc_rank <- barcodeRanks(res_mat)
 ```
 
 ```{r rank}
-qplot(bc_rank$rank, bc_rank$total, geom = "line") +
-  geom_hline(yintercept = metadata(bc_rank)$knee, color = "blue", linetype = 2) +
-  geom_hline(yintercept = metadata(bc_rank)$inflection, color = "green", linetype = 2) +
-  annotate("text", x = 1000, y = 1.5 * c(metadata(bc_rank)$knee, metadata(bc_rank)$inflection),
+qplot(bc_rank$total, bc_rank$rank, geom = "line") +
+  geom_vline(xintercept = metadata(bc_rank)$knee, color = "blue", linetype = 2) +
+  geom_vline(xintercept = metadata(bc_rank)$inflection, color = "green", linetype = 2) +
+  annotate("text", y = 1000, x = 1.5 * c(metadata(bc_rank)$knee, metadata(bc_rank)$inflection),
            label = c("knee", "inflection"), color = c("blue", "green")) +
   scale_x_log10() +
   scale_y_log10() +
-  labs(x = "Rank", y = "Total reads")
+  labs(y = "Barcode rank", x = "Total UMI count")
 ```
 
 The inflection point looks like a reasonable number of cells.
@@ -153,7 +153,7 @@ dim(res_mat)
 ```
 
 ## Dimension reduction
-```{r seu, cache=TRUE}
+```{r seu}
 seu <- CreateSeuratObject(res_mat, min.cells = 3) %>% 
   NormalizeData(verbose = FALSE) %>% 
   ScaleData(verbose = FALSE) %>% 
