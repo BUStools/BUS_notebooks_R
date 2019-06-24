@@ -123,7 +123,14 @@ See what the outputs are
 list.files("./output/out_hgmm1k/")
 ```
 
-## Run `BUStools`
+Explaining the output:
+
+* `matrix.ec`: A text file with two columns. The first column is the 0 based index of equivalence classes. The second column is the set of transcripts (denoted by 0 based index based on order of appearance in the transcriptome fasta file) present in the corresponding equivalence class.
+* `output.bus`: The data represented in `bus` format. This is a binary file, so don't use something like `read.table` to read it into R.
+* `run_info.json`: Information about the call to `kallisto bus`, including the command used, number and percentage of reads pseudoaligned, version of `kallisto` used, and etc.
+* `transcript.txt`: A text file with one column, which is the transcripts present in the data, in the same order as in the transcriptome fasta file.
+
+## Run `bustools`
 ### Map transcripts to genes
 For the sparse matrix, most people are interested in how many UMIs per gene per cell, we here we will quantify this from the `bus` output, and to do so, we need to find which gene corresponds to each transcript. Remember in the output of `kallisto bus`, there's the file `transcripts.txt`. Those are the transcripts in the transcriptome index. 
 
