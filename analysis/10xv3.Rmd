@@ -65,6 +65,13 @@ fn <- TENxBUSData("./output", dataset = "pbmc1k")
 list.files(fn)
 ```
 
+Explaining the output:
+
+* `matrix.ec`: A text file with two columns. The first column is the 0 based index of equivalence classes. The second column is the set of transcripts (denoted by 0 based index based on order of appearance in the transcriptome fasta file) present in the corresponding equivalence class.
+* `output.sorted`: The data represented in `bus` format, sorted by barcode, UMI, and equivalence class. This is a binary, so can't be read into R with functions like `read.table`.
+* `output.sorted.txt`: `output.sorted` converted into text format, so can be easily read into R for exploration.
+* `transcript.txt`: A text file with one column, which is the transcripts present in the data, in the same order as in the transcriptome fasta file.
+
 # Sparse matrix
 ## Map transcripts to genes
 For the sparse matrix, most people are interested in how many UMIs per gene per cell, we here we will quantify this from the `bus` output, and to do so, we need to find which gene corresponds to each transcript. Remember in the output of `kallisto bus`, there's the file `transcripts.txt`. Those are the transcripts in the transcriptome index. Information on which transcript corresponds to which gene can be directly retrieved from Ensembl.
