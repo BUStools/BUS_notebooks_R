@@ -1,0 +1,327 @@
+---
+title: "Pseudotime analysis with Monocle 2"
+author: "Lambda Moses"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(comment = "#>")
+```
+
+In this vignette, we will process fastq files of the [10x 10k neurons from an E18 mouse](https://support.10xgenomics.com/single-cell-gene-expression/datasets/3.0.0/neuron_10k_v3), and perform pseudotime analysis with Monocle 2 on the neuronal cell types. Monocle 2 is deprecated, but it can be easily installed from Bioconductor and still has a user base. At present, Monocle 3 is at beta stage of development, and it can be hard to install on Linux servers due to gdal dependency.
+
+# Setup
+If you would like to rerun this notebook, you can git clone [this repository](https://github.com/BUStools/BUS_notebooks_R) or directly download [this notebook from GitHub](https://github.com/BUStools/BUS_notebooks_R/blob/master/analysis/monocle2.Rmd). 
+
+## Install packages
+This notebook demonstrates the use of command line tools `kallisto` and `bustools`. Please use `kallisto` >= 0.46, whose binary can be downloaded [here](https://pachterlab.github.io/kallisto/download). The binary of `bustools` can be found [here](https://github.com/BUStools/bustools/releases). 
+
+After you download the binary, you should decompress the file (if it is `tar.gz`) with `tar -xzvf file.tar.gz` in the `bash` terminal, and add the directory containing the binary to `PATH` by `export PATH=$PATH:/foo/bar`, where `/foo/bar` is the directory of interest. Then you can directly invoke the binary on the command line as we will do in this notebook.
+
+We will be using the R packages below. `BUSpaRse` is not yet on CRAN or Bioconductor. For Mac users, see the [installation note for `BUSpaRse`](https://github.com/BUStools/BUSpaRse). `BUSpaRse` will be used to generate the transcript to gene file for `bustools` and to read output of `bustools` into R. We will also use `Seurat` version 3 which is now on CRAN.
+
+```{r, eval=FALSE}
+# Install devtools if it's not already installed
+if (!require(devtools)) {
+  install.packages("devtools")
+}
+# Install from GitHub
+devtools::install_github("BUStools/BUSpaRse")
+```
+
+The package `SingleR`, which will be used for cell type inference, is only available on GitHub:
+```{r, eval=FALSE}
+devtools::install_github("dviraran/SingleR")
+```
+
+This vignette uses the version of `DropletUtils` from Bioconductor version 3.9; the version from Bioconductor 3.8 has a different user interface. If you are using a version of R older than 3.6.0 and want to rerun this vignette, then you can adapt the knee plot code to the older version of `DropletUtils` or install [`DropletUtils` from GitHub](https://github.com/MarioniLab/DropletUtils). The package `monocle` should also be installed from Bioconductor:
+
+```{r, eval = FALSE}
+if (!require(BiocManager)) {
+  install.packages("BiocManager")
+}
+BiocManager::install(c("DropletUtils", "monocle"))
+```
+
+The other R packages below are on CRAN.
+
+```{r, message=FALSE}
+library(BUSpaRse)
+library(DropletUtils)
+library(monocle)
+library(SingleR)
+library(Matrix)
+library(tidyverse)
+library(ggsci)
+theme_set(theme_bw())
+```
+
+## Download data
+The dataset we are using is [10x 10k neurons from an E18 mouse](https://support.10xgenomics.com/single-cell-gene-expression/datasets/3.0.0/neuron_10k_v3) (almost 25 GB).
+
+```{r dl_data}
+# Download data
+if (!file.exists("./data/neuron_10k_fastqs.tar")) {
+  download.files("http://s3-us-west-2.amazonaws.com/10x.files/samples/cell-exp/3.0.0/neuron_10k_v3/neuron_10k_v3_fastqs.tar", "./data/neuron_10k_fastqs.tar", method = "wget", quiet = TRUE)
+}
+```
+
+```{r, include=FALSE}
+do_untar <- !dir.exists("./data/neuron_10k_v3_fastqs")
+```
+
+```{bash, eval=do_untar}
+cd ./data
+tar -xvf ./neuron_10k_fastqs.tar
+```
+
+# Generate the gene count matrix
+## Build the `kallisto` index
+Here we use [kallisto](https://pachterlab.github.io/kallisto/about) to pseudoalign the reads to the transcriptome and then to create the `bus` file to be converted to a sparse matrix. The first step is to build an index of the mouse transcriptome. The transcriptome downloaded here are from Ensembl version 94, released in October 2018. 
+```{r dl_tx}
+# Mouse transcriptome
+if (!file.exists("./data/mm_cdna.fa.gz")) {
+  download.file("ftp://ftp.ensembl.org/pub/release-94/fasta/mus_musculus/cdna/Mus_musculus.GRCm38.cdna.all.fa.gz", "./data/mm_cdna.fa.gz", method = "wget", quiet = TRUE)
+}
+```
+
+```{r, include=FALSE}
+do_index <- !file.exists("./output/mm_tr_index.idx")
+do_bus <- !file.exists("./output/neuron10k/output.bus")
+```
+
+```{bash index, eval=do_index}
+kallisto index -i ./output/mm_tr_index.idx ./data/mm_cdna.fa.gz
+```
+
+```{bash kallisto, eval=do_bus}
+cd ./data/neuron_10k_v3_fastqs
+kallisto bus -i ../../output/mm_tr_index.idx -o ../../output/neuron10k -x 10xv3 -t8 \
+neuron_10k_v3_S1_L002_R1_001.fastq.gz neuron_10k_v3_S1_L002_R2_001.fastq.gz \
+neuron_10k_v3_S1_L001_R1_001.fastq.gz neuron_10k_v3_S1_L001_R2_001.fastq.gz
+```
+
+## Run `bustools`
+### Map transcripts to genes
+For the sparse matrix, most people are interested in how many UMIs per gene per cell, we here we will quantify this from the `bus` output, and to do so, we need to find which gene corresponds to each transcript. Remember in the output of `kallisto bus`, there's the file `transcripts.txt`. Those are the transcripts in the transcriptome index. 
+
+Remember that we downloaded transcriptome FASTA file from Ensembl just now. In FASTA files, each entry is a sequence with a name. In Ensembl FASTA files, the sequence name has genome annotation of the corresponding sequence, so we can extract transcript IDs and corresponding gene IDs and gene names from there.
+```{r}
+tr2g <- transcript2gene(fasta_file = "./data/mm_cdna.fa.gz", 
+                        kallisto_out_path = "./output/neuron10k",
+                        verbose = FALSE)
+```
+
+```{r}
+head(tr2g)
+```
+
+`bustools` requires `tr2g` to be written into a tab delimited file of a specific format: No headers, first column is transcript ID, and second column is the corresponding gene ID. Transcript IDs must be in the same order as in the `kallisto` index.
+```{r, eval}
+# Write tr2g to format required by bustools
+save_tr2g_bustools(tr2g, file_save = "./output/tr2g_mm.tsv")
+```
+
+A whitelist that contains all the barcodes known to be present in the kit is provided by 10x and comes with CellRanger. A CellRanger installation is required, though we will not run CellRanger here.
+```{r, include=FALSE}
+do_copy <- !file.exists("./data/whitelist_v3.txt")
+do_bustools <- !file.exists("./output/neuron10k/genes.mtx")
+```
+
+```{bash, eval=do_copy}
+cp ~/cellranger-3.0.2/cellranger-cs/3.0.2/lib/python/cellranger/barcodes/3M-february-2018.txt.gz \
+./data/whitelist_v3.txt.gz
+gunzip ./data/whitelist_v3.txt.gz
+```
+
+Then we're ready to make the gene count matrix. First, `bustools` runs barcode error correction on the `bus` file. Then, the corrected `bus` file is sorted by barcode, UMI, and equivalence classes. Then the UMIs are counted and the counts are collapsed into gene level. Here the `|` is pipe in bash, just like the magrittr pipe `%>%` in R, that pipes the output of one command to the next.
+
+```{bash bustools, eval=do_bustools}
+mkdir ./tmp
+bustools correct -w ./data/whitelist_v3.txt -p ./output/neuron10k/output.bus | \
+bustools sort -T tmp/ -t4 -p - | \
+bustools count -o ./output/neuron10k/genes -g ./output/tr2g_mm.tsv \
+-e ./output/neuron10k/matrix.ec -t ./output/neuron10k/transcripts.txt --genecounts -
+rm -r ./tmp
+```
+
+The outputs are explained in the [10xv2 vignette](https://bustools.github.io/BUS_notebooks_R/10xv2.html).
+
+# Preprocessing
+Now we can load the matrix into R for analysis.
+```{r read}
+res_mat <- read_count_output("./output/neuron10k", name = "genes", tcc = FALSE)
+```
+
+## Remove empty droplets
+```{r}
+dim(res_mat)
+```
+The number of genes seems reasonable. The number of barcodes is way larger than the expected ~10k.
+
+```{r}
+tot_counts <- Matrix::colSums(res_mat)
+summary(tot_counts)
+```
+
+The vast majority of "cells" have only no or just a few UMI detected. Those are empty droplets. 10x claims to have cell capture rate of up to 65%, but in practice, depending on how many cells are in fact loaded, the rate can be much lower. A commonly used method to estimate the number of empty droplets is barcode ranking knee and inflection points, as those are often assumed to represent transition between two components of a distribution. While more sophisticated methods exist (e.g. see [`emptyDrops` in `DropletUtils`](https://www.bioconductor.org/packages/devel/bioc/vignettes/DropletUtils/inst/doc/DropletUtils.html#detecting-empty-droplets)), for simplicity, we will use the barcode ranking method here. However, whichever way we go, we don't have the ground truth.
+```{r}
+# Compute barcode rank
+bc_rank <- barcodeRanks(res_mat, lower = 1000)
+```
+
+Here the knee plot is transposed, because this is more generalizable to multi-modal data, such that those with not only RNA-seq but also abundance of cell surface markers. In that case, we can plot number of UMIs on the x axis, number of cell surface protein tags on the y axis, and barcode rank based on both UMI and protein tag counts on the z axis; it makes more sense to make barcode rank the dependent variable. See [this blog post by Lior Pachter](https://liorpachter.wordpress.com/2019/06/24/rotating-the-knee-plot-and-related-yoga/) for a more detailed explanation.
+```{r knee}
+tibble(total = bc_rank$total, rank = bc_rank$rank) %>% 
+  distinct() %>% 
+  ggplot(aes(total, rank)) +
+  geom_line() +
+  geom_vline(xintercept = metadata(bc_rank)$knee, color = "blue", linetype = 2) +
+  geom_vline(xintercept = metadata(bc_rank)$inflection, color = "green", linetype = 2) +
+  annotate("text", y = 1000, x = 1.5 * c(metadata(bc_rank)$knee, metadata(bc_rank)$inflection),
+           label = c("knee", "inflection"), color = c("blue", "green")) +
+  scale_x_log10() +
+  scale_y_log10() +
+  labs(y = "Barcode rank", x = "Total UMI count")
+```
+
+```{r filter}
+# Remove genes that are not detected and empty droplets
+res_mat <- res_mat[Matrix::rowSums(res_mat) > 0, tot_counts > metadata(bc_rank)$inflection]
+dim(res_mat)
+```
+
+Now the number of cells is closer to expectation.
+
+## Cell type inference
+Monocle 2 only infers one trajectory for the entire dataset, so non-neuronal cells like endothelial cells and erythrocytes may be mistaken as highly differentiated cells from the neuronal lineage. So we will remove non-neuronal cell types. Cell types are also helpful to orient the trajectory; neuronal progenitor cells must come before neurons. Here cell type inference is done with [`SingleR`](https://github.com/dviraran/SingleR), which compares gene expression profiles of individual cells to bulk RNA-seq data of purified known cell types.
+```{r ref}
+data("mouse.rnaseq")
+# Convert from gene symbols to Ensembl gene ID
+ref_use <- mouse.rnaseq$data
+rownames(ref_use) <- tr2g$gene[match(rownames(ref_use), tr2g$gene_name)]
+ref_use <- ref_use[!is.na(rownames(ref_use)),]
+```
+
+Then `SingleR` will assign each cell a label based on Spearman correlation with known cell types from bulk RNA-seq. These are the labels we want:
+
+* NPCs: Neuronal progenitor cells
+* aNSCs: Active neuronal stem cells
+* qNSCs: Quiescent neuronal stem cells
+* Neurons
+```{r singlr, results='hide'}
+annots <- SingleR("single", res_mat, ref_data = ref_use, types = mouse.rnaseq$types)
+inds <- annots$labels %in% c("NPCs", "aNSCs", "qNSCs", "Neurons")
+# Only keep these 4 cell types
+cells_use <- annots$cell.names[inds]
+mat_neu <- res_mat[,cells_use]
+```
+
+```{r, include=FALSE, eval=FALSE}
+saveRDS(mat_neu, "./output/neuron10k/mat_neu.rds")
+saveRDS(annots, "./output/neuron10k/cell_types.rds")
+saveRDS(res_mat, "./output/neuron10k/mat_filtered.rds")
+```
+
+## QC
+```{r}
+df <- data.frame(nGene = Matrix::colSums(mat_neu > 0),
+                 nUMIs = Matrix::colSums(mat_neu))
+```
+
+```{r vln}
+df %>% 
+  gather(key = "variable") %>% 
+  ggplot(aes(variable, value)) +
+  geom_violin() +
+  geom_jitter(size = 0.1, alpha = 0.1, width = 0.3) +
+  scale_y_log10()
+```
+
+```{r gene_umi}
+ggplot(df, aes(nUMIs, nGene)) +
+  geom_point(size = 0.5, alpha = 0.3) +
+  scale_x_log10() +
+  scale_y_log10()
+```
+
+# Monocle 2
+```{r cds}
+# Construct CellDataSet object
+pd <- data.frame(cell_id = cells_use, 
+                 cell_type = annots$labels[inds],
+                 row.names = cells_use)
+pd <- new("AnnotatedDataFrame", data = pd)
+fd <- data.frame(gene_id = rownames(mat_neu), 
+                 gene_short_name = tr2g$gene_name[match(rownames(mat_neu), tr2g$gene)],
+                 row.names = row.names(mat_neu))
+fd <- new("AnnotatedDataFrame", data = fd)
+cds <- newCellDataSet(mat_neu, phenoData = pd, featureData = fd)
+```
+
+Size factor and dispersion will be used to normalize data and select genes for clustering.
+```{r}
+cds <- estimateSizeFactors(cds)
+cds <- estimateDispersions(cds)
+```
+
+Genes that aren't highly expressed enough will not be used for clustering, since they may not give meaningful signal and would only add noise.
+```{r}
+disp_table <- dispersionTable(cds)
+clustering_genes <- subset(disp_table, mean_expression >= 0.1)
+cds <- setOrderingFilter(cds, clustering_genes$gene_id)
+```
+
+```{r tsne1}
+cds <- reduceDimension(cds, num_dim = 40, reduction_method = 'tSNE')
+cds <- clusterCells(cds, method = "louvain")
+plot_cell_clusters(cds, cell_size = 0.5) +
+  theme(legend.position = "none") +
+  labs(x = "tSNE1", y = "tSNE2")
+```
+
+See where the annotated cell types are
+```{rtsne2}
+plot_cell_clusters(cds, cell_size = 0.5, color_by = "cell_type") +
+  scale_color_d3(name = "cell type") +
+  labs(x = "tSNE1", y = "tSNE2") +
+  theme(legend.position = "right")
+```
+
+Genes likely to be informative of ordering of cells along the pseudotime trajectory will be selected for pseudotime inference.
+```{r, results='hide'}
+diff_genes <- differentialGeneTest(cds, fullModelFormulaStr = "~ Cluster + cell_type",
+                                   cores = 4)
+# Use top 3000 differentially expressed genes
+ordering_genes <- row.names(subset(diff_genes, qval < 1e-3))[order(diff_genes$qval)][1:3000]
+cds <- setOrderingFilter(cds, ordering_genes)
+```
+
+Here Monocle 2 will first project the data to 2 dimensions with `DDRTree`, and then do trajectory inference (`orderCells`).
+```{r}
+cds <- reduceDimension(cds, max_components = 2, method = 'DDRTree')
+cds <- orderCells(cds)
+```
+
+See what the trajectory looks like. This projection is `DDRTree`.
+```{r traj1}
+plot_cell_trajectory(cds, color_by = "cell_type", cell_size = 1) +
+  scale_color_d3(name = "cell type")
+```
+
+In the [kallisto | bustools paper](https://www.biorxiv.org/content/10.1101/673285v1), I used `slingshot` for pseudotime analysis (Supplementary Figure 6.5) of this dataset, and found two neuronal end points. The result from Monocle 2 here also shows two main branches. Also, as expected, the stem cells are at the very beginning of the trajectory.
+
+```{r traj2}
+plot_cell_trajectory(cds, color_by = "Pseudotime", cell_size = 1) +
+  scale_color_viridis_c()
+```
+
+The pseudotime values are inverted.
+```{r traj3}
+cds <- orderCells(cds, reverse = TRUE)
+plot_cell_trajectory(cds, color_by = "Pseudotime", cell_size = 1) +
+  scale_color_viridis_c()
+```
+
+Monocle 2 can also be used to find genes differentially expressed along the pseudotime trajectory and clusters of such genes. See [David Tang's excellent Monocle 2 tutorial](https://davetang.org/muse/2017/10/01/getting-started-monocle/) for how to use these functionalities.
