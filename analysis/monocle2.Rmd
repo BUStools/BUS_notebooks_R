@@ -95,6 +95,7 @@ do_bus <- !file.exists("./output/neuron10k/output.bus")
 kallisto index -i ./output/mm_tr_index.idx ./data/mm_cdna.fa.gz
 ```
 
+With the index and the fastq files, the `kallisto bus` command generates a binary `bus` file called `output.bus`, which will be sorted and processed to generate a gene count matrix.
 ```{bash kallisto, eval=do_bus}
 cd ./data/neuron_10k_v3_fastqs
 kallisto bus -i ../../output/mm_tr_index.idx -o ../../output/neuron10k -x 10xv3 -t8 \
@@ -195,7 +196,7 @@ dim(res_mat)
 Now the number of cells is closer to expectation.
 
 ## Cell type inference
-Monocle 2 only infers one trajectory for the entire dataset, so non-neuronal cells like endothelial cells and erythrocytes may be mistaken as highly differentiated cells from the neuronal lineage. So we will remove non-neuronal cell types. Cell types are also helpful to orient the trajectory; neuronal progenitor cells must come before neurons. Here cell type inference is done with [`SingleR`](https://github.com/dviraran/SingleR), which compares gene expression profiles of individual cells to bulk RNA-seq data of purified known cell types.
+Monocle 2 only infers one trajectory for the entire dataset, so non-neuronal cells like endothelial cells and erythrocytes may be mistaken as highly differentiated cells from the neuronal lineage. So we will remove non-neuronal cell types. Cell types are also helpful to orient the trajectory; neuronal progenitor cells must come before neurons. Here cell type inference is done programatically with [`SingleR`](https://github.com/dviraran/SingleR), which compares gene expression profiles of individual cells to bulk RNA-seq data of purified known cell types.
 ```{r ref}
 data("mouse.rnaseq")
 # Convert from gene symbols to Ensembl gene ID
@@ -282,7 +283,7 @@ plot_cell_clusters(cds, cell_size = 0.5) +
 ```
 
 See where the annotated cell types are
-```{rtsne2}
+```{r tsne2}
 plot_cell_clusters(cds, cell_size = 0.5, color_by = "cell_type") +
   scale_color_d3(name = "cell type") +
   labs(x = "tSNE1", y = "tSNE2") +
