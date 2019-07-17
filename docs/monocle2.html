@@ -579,10 +579,10 @@ environment
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree3cf75fe28a1852364770b5dd229a64f8be512137targetblank3cf75fea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/3cf75fe28a1852364770b5dd229a64f8be512137" target="_blank">3cf75fe</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree6edf827aa1ec65a5dacfde7108f5de069670ae47targetblank6edf827a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/6edf827aa1ec65a5dacfde7108f5de069670ae47" target="_blank">6edf827</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree3cf75fe28a1852364770b5dd229a64f8be512137targetblank3cf75fea" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree6edf827aa1ec65a5dacfde7108f5de069670ae47targetblank6edf827a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -592,6 +592,7 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    BUS_notebooks_R.Rproj
+    Ignored:    analysis/figure/
     Ignored:    data/cDNA_introns.t2g.txt
     Ignored:    data/cDNA_transcripts.to_capture.txt
     Ignored:    data/hgmm_1k_fastqs.tar
@@ -663,6 +664,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/62a20a3096ba5f1118bd961a85537df18599deae/docs/monocle2.html" target="_blank">62a20a3</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-17
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -740,6 +758,7 @@ if (!file.exists(&quot;./data/mm_cdna.fa.gz&quot;)) {
   download.file(&quot;ftp://ftp.ensembl.org/pub/release-94/fasta/mus_musculus/cdna/Mus_musculus.GRCm38.cdna.all.fa.gz&quot;, &quot;./data/mm_cdna.fa.gz&quot;, method = &quot;wget&quot;, quiet = TRUE)
 }</code></pre>
 <pre class="bash"><code>kallisto index -i ./output/mm_tr_index.idx ./data/mm_cdna.fa.gz</code></pre>
+<p>With the index and the fastq files, the <code>kallisto bus</code> command generates a binary <code>bus</code> file called <code>output.bus</code>, which will be sorted and processed to generate a gene count matrix.</p>
 <pre class="bash"><code>cd ./data/neuron_10k_v3_fastqs
 kallisto bus -i ../../output/mm_tr_index.idx -o ../../output/neuron10k -x 10xv3 -t8 \
 neuron_10k_v3_S1_L002_R1_001.fastq.gz neuron_10k_v3_S1_L002_R2_001.fastq.gz \
@@ -810,6 +829,43 @@ bc_rank &lt;- barcodeRanks(res_mat, lower = 1000)</code></pre>
   labs(y = &quot;Barcode rank&quot;, x = &quot;Total UMI count&quot;)</code></pre>
 <pre><code>#&gt; Warning: Transformation introduced infinite values in continuous x-axis</code></pre>
 <p><img src="figure/monocle2.Rmd/knee-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-knee-1">
+Past versions of knee-1.png
+</button>
+</p>
+<div id="fig-knee-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/62a20a3096ba5f1118bd961a85537df18599deae/docs/figure/monocle2.Rmd/knee-1.png" target="_blank">62a20a3</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># Remove genes that are not detected and empty droplets
 res_mat &lt;- res_mat[Matrix::rowSums(res_mat) &gt; 0, tot_counts &gt; metadata(bc_rank)$inflection]
 dim(res_mat)</code></pre>
@@ -818,7 +874,7 @@ dim(res_mat)</code></pre>
 </div>
 <div id="cell-type-inference" class="section level2">
 <h2>Cell type inference</h2>
-<p>Monocle 2 only infers one trajectory for the entire dataset, so non-neuronal cells like endothelial cells and erythrocytes may be mistaken as highly differentiated cells from the neuronal lineage. So we will remove non-neuronal cell types. Cell types are also helpful to orient the trajectory; neuronal progenitor cells must come before neurons. Here cell type inference is done with <a href="https://github.com/dviraran/SingleR"><code>SingleR</code></a>, which compares gene expression profiles of individual cells to bulk RNA-seq data of purified known cell types.</p>
+<p>Monocle 2 only infers one trajectory for the entire dataset, so non-neuronal cells like endothelial cells and erythrocytes may be mistaken as highly differentiated cells from the neuronal lineage. So we will remove non-neuronal cell types. Cell types are also helpful to orient the trajectory; neuronal progenitor cells must come before neurons. Here cell type inference is done programatically with <a href="https://github.com/dviraran/SingleR"><code>SingleR</code></a>, which compares gene expression profiles of individual cells to bulk RNA-seq data of purified known cell types.</p>
 <pre class="r"><code>data(&quot;mouse.rnaseq&quot;)
 # Convert from gene symbols to Ensembl gene ID
 ref_use &lt;- mouse.rnaseq$data
@@ -848,11 +904,85 @@ mat_neu &lt;- res_mat[,cells_use]</code></pre>
   geom_jitter(size = 0.1, alpha = 0.1, width = 0.3) +
   scale_y_log10()</code></pre>
 <p><img src="figure/monocle2.Rmd/vln-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-vln-1">
+Past versions of vln-1.png
+</button>
+</p>
+<div id="fig-vln-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/62a20a3096ba5f1118bd961a85537df18599deae/docs/figure/monocle2.Rmd/vln-1.png" target="_blank">62a20a3</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ggplot(df, aes(nUMIs, nGene)) +
   geom_point(size = 0.5, alpha = 0.3) +
   scale_x_log10() +
   scale_y_log10()</code></pre>
 <p><img src="figure/monocle2.Rmd/gene_umi-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gene_umi-1">
+Past versions of gene_umi-1.png
+</button>
+</p>
+<div id="fig-gene_umi-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/62a20a3096ba5f1118bd961a85537df18599deae/docs/figure/monocle2.Rmd/gene_umi-1.png" target="_blank">62a20a3</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="monocle-2" class="section level1">
@@ -886,11 +1016,49 @@ plot_cell_clusters(cds, cell_size = 0.5) +
   theme(legend.position = &quot;none&quot;) +
   labs(x = &quot;tSNE1&quot;, y = &quot;tSNE2&quot;)</code></pre>
 <p><img src="figure/monocle2.Rmd/tsne1-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-tsne1-1">
+Past versions of tsne1-1.png
+</button>
+</p>
+<div id="fig-tsne1-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/62a20a3096ba5f1118bd961a85537df18599deae/docs/figure/monocle2.Rmd/tsne1-1.png" target="_blank">62a20a3</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>See where the annotated cell types are</p>
-<pre class="rtsne2"><code>plot_cell_clusters(cds, cell_size = 0.5, color_by = &quot;cell_type&quot;) +
+<pre class="r"><code>plot_cell_clusters(cds, cell_size = 0.5, color_by = &quot;cell_type&quot;) +
   scale_color_d3(name = &quot;cell type&quot;) +
   labs(x = &quot;tSNE1&quot;, y = &quot;tSNE2&quot;) +
   theme(legend.position = &quot;right&quot;)</code></pre>
+<p><img src="figure/monocle2.Rmd/tsne2-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Genes likely to be informative of ordering of cells along the pseudotime trajectory will be selected for pseudotime inference.</p>
 <pre class="r"><code>diff_genes &lt;- differentialGeneTest(cds, fullModelFormulaStr = &quot;~ Cluster + cell_type&quot;,
                                    cores = 4)
@@ -904,15 +1072,126 @@ cds &lt;- orderCells(cds)</code></pre>
 <pre class="r"><code>plot_cell_trajectory(cds, color_by = &quot;cell_type&quot;, cell_size = 1) +
   scale_color_d3(name = &quot;cell type&quot;)</code></pre>
 <p><img src="figure/monocle2.Rmd/traj1-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-traj1-1">
+Past versions of traj1-1.png
+</button>
+</p>
+<div id="fig-traj1-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/62a20a3096ba5f1118bd961a85537df18599deae/docs/figure/monocle2.Rmd/traj1-1.png" target="_blank">62a20a3</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>In the <a href="https://www.biorxiv.org/content/10.1101/673285v1">kallisto | bustools paper</a>, I used <code>slingshot</code> for pseudotime analysis (Supplementary Figure 6.5) of this dataset, and found two neuronal end points. The result from Monocle 2 here also shows two main branches. Also, as expected, the stem cells are at the very beginning of the trajectory.</p>
 <pre class="r"><code>plot_cell_trajectory(cds, color_by = &quot;Pseudotime&quot;, cell_size = 1) +
   scale_color_viridis_c()</code></pre>
 <p><img src="figure/monocle2.Rmd/traj2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-traj2-1">
+Past versions of traj2-1.png
+</button>
+</p>
+<div id="fig-traj2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/62a20a3096ba5f1118bd961a85537df18599deae/docs/figure/monocle2.Rmd/traj2-1.png" target="_blank">62a20a3</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>The pseudotime values are inverted.</p>
 <pre class="r"><code>cds &lt;- orderCells(cds, reverse = TRUE)
 plot_cell_trajectory(cds, color_by = &quot;Pseudotime&quot;, cell_size = 1) +
   scale_color_viridis_c()</code></pre>
 <p><img src="figure/monocle2.Rmd/traj3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-traj3-1">
+Past versions of traj3-1.png
+</button>
+</p>
+<div id="fig-traj3-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/62a20a3096ba5f1118bd961a85537df18599deae/docs/figure/monocle2.Rmd/traj3-1.png" target="_blank">62a20a3</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Monocle 2 can also be used to find genes differentially expressed along the pseudotime trajectory and clusters of such genes. See <a href="https://davetang.org/muse/2017/10/01/getting-started-monocle/">David Tang’s excellent Monocle 2 tutorial</a> for how to use these functionalities.</p>
 <br>
 <p>
