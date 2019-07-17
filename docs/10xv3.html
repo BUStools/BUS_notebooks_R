@@ -11,7 +11,7 @@
 
 <meta name="author" content="Lambda Moses" />
 
-<meta name="date" content="2019-06-22" />
+<meta name="date" content="2019-06-23" />
 
 <title>1k PBMCs from a Healthy Donor (10x v3 chemistry)</title>
 
@@ -419,7 +419,7 @@ div.section {
 
 <h1 class="title toc-ignore">1k PBMCs from a Healthy Donor (10x v3 chemistry)</h1>
 <h4 class="author">Lambda Moses</h4>
-<h4 class="date">2019-06-22</h4>
+<h4 class="date">2019-06-23</h4>
 
 </div>
 
@@ -444,7 +444,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2019-06-22
+<strong>Last updated:</strong> 2019-06-23
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -535,10 +535,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree2b6460d84d0123080d8aaf64c329dc0d1792bdaatargetblank2b6460da"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/2b6460d84d0123080d8aaf64c329dc0d1792bdaa" target="_blank">2b6460d</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtreeced765491640d968e2ac7d6fd01458ae8d3fe17ctargetblankced7654a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/ced765491640d968e2ac7d6fd01458ae8d3fe17c" target="_blank">ced7654</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree2b6460d84d0123080d8aaf64c329dc0d1792bdaatargetblank2b6460da" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtreeced765491640d968e2ac7d6fd01458ae8d3fe17ctargetblankced7654a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -550,10 +550,6 @@ Ignored files:
     Ignored:    BUS_notebooks_R.Rproj
     Ignored:    data/whitelist_v3.txt.gz
     Ignored:    output/out_pbmc1k/
-
-Unstaged changes:
-    Modified:   analysis/10xv2.Rmd
-    Modified:   analysis/_site.yml
 
 </code></pre>
 <p>
@@ -592,6 +588,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/ced765491640d968e2ac7d6fd01458ae8d3fe17c/analysis/10xv3.Rmd" target="_blank">ced7654</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-06-23
+</td>
+<td>
+Addded explanation of kallisto output
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/df6e9d6dba99db0113a4da73ced3bea9f36ffad2/docs/10xv3.html" target="_blank">df6e9d6</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-06-22
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1112,6 +1142,13 @@ theme_set(theme_bw())</code></pre>
 <pre class="r"><code>list.files(fn)</code></pre>
 <pre><code>#&gt; [1] &quot;matrix.ec&quot;         &quot;output.sorted&quot;     &quot;output.sorted.txt&quot;
 #&gt; [4] &quot;transcripts.txt&quot;</code></pre>
+<p>Explaining the output:</p>
+<ul>
+<li><code>matrix.ec</code>: A text file with two columns. The first column is the 0 based index of equivalence classes. The second column is the set of transcripts (denoted by 0 based index based on order of appearance in the transcriptome fasta file) present in the corresponding equivalence class.</li>
+<li><code>output.sorted</code>: The data represented in <code>bus</code> format, sorted by barcode, UMI, and equivalence class. This is a binary, so can’t be read into R with functions like <code>read.table</code>.</li>
+<li><code>output.sorted.txt</code>: <code>output.sorted</code> converted into text format, so can be easily read into R for exploration.</li>
+<li><code>transcript.txt</code>: A text file with one column, which is the transcripts present in the data, in the same order as in the transcriptome fasta file.</li>
+</ul>
 </div>
 </div>
 <div id="sparse-matrix" class="section level1">
@@ -1211,6 +1248,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/df6e9d6dba99db0113a4da73ced3bea9f36ffad2/docs/figure/10xv3.Rmd/rank-1.png" target="_blank">df6e9d6</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-06-22
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/3642b69dd6fea71a98430c4e0bc3201fee7684ab/docs/figure/10xv3.Rmd/rank-1.png" target="_blank">3642b69</a>
@@ -1447,6 +1495,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/df6e9d6dba99db0113a4da73ced3bea9f36ffad2/docs/figure/10xv3.Rmd/pca-1.png" target="_blank">df6e9d6</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-06-22
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/3642b69dd6fea71a98430c4e0bc3201fee7684ab/docs/figure/10xv3.Rmd/pca-1.png" target="_blank">3642b69</a>
 </td>
 <td>
@@ -1507,6 +1566,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/df6e9d6dba99db0113a4da73ced3bea9f36ffad2/docs/figure/10xv3.Rmd/tsne-1.png" target="_blank">df6e9d6</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-06-22
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/3642b69dd6fea71a98430c4e0bc3201fee7684ab/docs/figure/10xv3.Rmd/tsne-1.png" target="_blank">3642b69</a>
