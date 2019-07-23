@@ -497,10 +497,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree846cd231f4442d7263f0173abf27dce476cb1d23targetblank846cd23a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/846cd231f4442d7263f0173abf27dce476cb1d23" target="_blank">846cd23</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree5cb1030ac3cbc417d0f67f553ee3a7e7044a8d9ctargetblank5cb1030a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/5cb1030ac3cbc417d0f67f553ee3a7e7044a8d9c" target="_blank">5cb1030</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree846cd231f4442d7263f0173abf27dce476cb1d23targetblank846cd23a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree5cb1030ac3cbc417d0f67f553ee3a7e7044a8d9ctargetblank5cb1030a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -554,6 +554,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/5cb1030ac3cbc417d0f67f553ee3a7e7044a8d9c/analysis/monocle3.Rmd" target="_blank">5cb1030</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-23
+</td>
+<td>
+Don’t show progress bar of learn_graph
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/2e1a10489de38e4718e2cc304cf72b44879b55c5/docs/monocle3.html" target="_blank">2e1a104</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-23
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -693,12 +727,86 @@ cds &lt;- new_cell_data_set(mat_filtered, cell_metadata = cell_meta, gene_metada
 cds &lt;- preprocess_cds(cds, method = &quot;PCA&quot;, num_dim = 50)
 plot_pc_variance_explained(cds)</code></pre>
 <p><img src="figure/monocle3.Rmd/elbow-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-elbow-1">
+Past versions of elbow-1.png
+</button>
+</p>
+<div id="fig-elbow-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/2e1a10489de38e4718e2cc304cf72b44879b55c5/docs/figure/monocle3.Rmd/elbow-1.png" target="_blank">2e1a104</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-23
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot_cells(cds, reduction_method = &quot;PCA&quot;,
            color_cells_by = &quot;cell_type&quot;, group_label_size = 3.5,
            label_groups_by_cluster = FALSE) +
   scale_color_d3(palette = &quot;category20b&quot;)</code></pre>
 <pre><code>No trajectory to plot. Has learn_graph() been called yet?</code></pre>
 <p><img src="figure/monocle3.Rmd/pca-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-pca-1">
+Past versions of pca-1.png
+</button>
+</p>
+<div id="fig-pca-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/2e1a10489de38e4718e2cc304cf72b44879b55c5/docs/figure/monocle3.Rmd/pca-1.png" target="_blank">2e1a104</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-23
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># Seed for random initiation of UMAP
 set.seed(4837)
 cds &lt;- reduce_dimension(cds, reduction_method = &quot;UMAP&quot;, preprocess_method = &quot;PCA&quot;, init = &quot;random&quot;)
@@ -707,54 +815,177 @@ plot_cells(cds, color_cells_by = &quot;cell_type&quot;, group_label_size = 3.5,
   scale_color_d3(palette = &quot;category20b&quot;)</code></pre>
 <pre><code>No trajectory to plot. Has learn_graph() been called yet?</code></pre>
 <p><img src="figure/monocle3.Rmd/umap-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-umap-1">
+Past versions of umap-1.png
+</button>
+</p>
+<div id="fig-umap-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/2e1a10489de38e4718e2cc304cf72b44879b55c5/docs/figure/monocle3.Rmd/umap-1.png" target="_blank">2e1a104</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-23
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Monocle 3 does Louvain clustering and partitions the dataset for separate trajectories based on Louvain clustering.</p>
 <pre class="r"><code>cds &lt;- cluster_cells(cds)
 plot_cells(cds, color_cells_by = &quot;partition&quot;, group_cells_by = &quot;partition&quot;,
            group_label_size = 4)</code></pre>
 <pre><code>No trajectory to plot. Has learn_graph() been called yet?</code></pre>
 <p><img src="figure/monocle3.Rmd/part-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-part-1">
+Past versions of part-1.png
+</button>
+</p>
+<div id="fig-part-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/2e1a10489de38e4718e2cc304cf72b44879b55c5/docs/figure/monocle3.Rmd/part-1.png" target="_blank">2e1a104</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-23
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="trajectory-inference" class="section level1">
 <h1>Trajectory inference</h1>
 <p>Monocle 3’s trajectory inference is inspired by PAGA.</p>
 <pre class="r"><code>cds &lt;- learn_graph(cds, verbose = FALSE)</code></pre>
-<pre><code>
-  |                                                                       
-  |                                                                 |   0%
-  |                                                                       
-  |=================================================================| 100%
-
-  |                                                                       
-  |                                                                 |   0%
-  |                                                                       
-  |=================================================================| 100%
-
-  |                                                                       
-  |                                                                 |   0%
-  |                                                                       
-  |=================================================================| 100%
-
-  |                                                                       
-  |                                                                 |   0%
-  |                                                                       
-  |=================================================================| 100%
-
-  |                                                                       
-  |                                                                 |   0%
-  |                                                                       
-  |=================================================================| 100%</code></pre>
 <pre><code>Warning in min(data_df$weight[data_df$weight &gt; 0]): no non-missing
 arguments to min; returning Inf</code></pre>
 <pre class="r"><code>plot_cells(cds, color_cells_by = &quot;cell_type&quot;, label_groups_by_cluster = FALSE,
            group_label_size = 3.5, graph_label_size = 2) +
   scale_color_d3(palette = &quot;category20b&quot;)</code></pre>
 <p><img src="figure/monocle3.Rmd/ti-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-ti-1">
+Past versions of ti-1.png
+</button>
+</p>
+<div id="fig-ti-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/2e1a10489de38e4718e2cc304cf72b44879b55c5/docs/figure/monocle3.Rmd/ti-1.png" target="_blank">2e1a104</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-23
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>The cells are not ordered on the graph. To compute pseudotime, we should supply a root node or a vector of root cells that we know are the earliest stage of the trajectory. The function <code>order_cells</code> can also open a shiny app to choose root node interactively.</p>
 <pre class="r"><code>qnscs &lt;- cell_meta$cell[cell_meta$cell_type == &quot;qNSCs&quot;]
 cds &lt;- order_cells(cds, root_cells = qnscs)
 plot_cells(cds, color_cells_by = &quot;pseudotime&quot;, label_branch_points = FALSE, label_leaves = FALSE, label_roots = FALSE)</code></pre>
 <pre><code>Cells aren&#39;t colored in a way that allows them to be grouped.</code></pre>
 <p><img src="figure/monocle3.Rmd/pseudo-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-pseudo-1">
+Past versions of pseudo-1.png
+</button>
+</p>
+<div id="fig-pseudo-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/2e1a10489de38e4718e2cc304cf72b44879b55c5/docs/figure/monocle3.Rmd/pseudo-1.png" target="_blank">2e1a104</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-23
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>For the trajectory for which pseudotime is computed, Monocle 3 can find genes differentially expressed along the trajectory.</p>
 <pre class="r"><code>de_res &lt;- graph_test(cds, neighbor_graph = &quot;principal_graph&quot;, cores = 3)</code></pre>
 <p>These are some of the most significant genes differentially expressed along the trajectory.</p>
@@ -764,6 +995,43 @@ plot_cells(cds, genes = genes_plt,
            label_cell_groups = FALSE,
            label_leaves = FALSE)</code></pre>
 <p><img src="figure/monocle3.Rmd/genes-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-genes-1">
+Past versions of genes-1.png
+</button>
+</p>
+<div id="fig-genes-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/2e1a10489de38e4718e2cc304cf72b44879b55c5/docs/figure/monocle3.Rmd/genes-1.png" target="_blank">2e1a104</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-23
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
