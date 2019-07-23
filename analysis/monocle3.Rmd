@@ -1,0 +1,133 @@
+---
+title: "Monocle 3"
+author: "Lambda Moses"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+This notebook does pseudotime analysis of the [10x 10k neurons from an E18 mouse](https://support.10xgenomics.com/single-cell-gene-expression/datasets/3.0.0/neuron_10k_v3) with [Monocle 3](https://cole-trapnell-lab.github.io/monocle3/). Please refer to the [Monocle 3 website](https://cole-trapnell-lab.github.io/monocle3/monocle3_docs/#installing-monocle) for installation instruction. Gdal is required for Monocle 3 due to the `sf` dependency. The Python package `louvain` (which requires Python `igraph`, which requires compilation) is recommended, though not strictly required.
+
+Monocle 3 has a few improvements compared to Monocle 2: Monocle 3 infers trajectory much faster, supports partitioning of the data into separate trajectories in case of different cell lineages,  supports large datasets on disk, allows cycles in the trajectory, and supports 3D plotting. Monocle 3 has been used on over 2 million cells for the [Mouse Organogenesis Cell Atlas (MOCA)](https://www.nature.com/articles/s41586-019-0969-x?WT.ec_id=NATURE-201902&sap-outbound-id=3D6B78CB95C498488E0AB2A140F1B7A311607DA1).
+
+The gene count matrix of the 10k neuron dataset has already been generated with the kallisto | bustools pipeline and filtered for the [Monocle 2 notebook](https://bustools.github.io/BUS_notebooks_R/monocle2.html). Cell types have also been annotated with `SingleR` in that notebook. Please refer to the first 3 main sections of that notebook for instructions on how to use kallisto | bustools, remove empty droplets, and annotate cell types. So this notebook will start with Monocle 3 analysis right away.
+
+The package `biomaRt` is from Bioconductor. `BUSpaRse` and `monocle3` are on GitHub. Packages `tidyverse` and `ggsci` (just for the D3 palette) are on CRAN.
+
+```{r}
+library(monocle3)
+library(biomaRt)
+library(BUSpaRse)
+library(tidyverse)
+library(ggsci)
+```
+
+# Create a `cell_data_set` object
+The filtered gene count matrix and the cell annotation were saved from the Monocle 2 notebook.
+```{r}
+annot <- readRDS("./output/neuron10k/cell_types.rds")
+mat_filtered <- readRDS("./output/neuron10k/mat_filtered.rds")
+```
+
+Just to show the structures of those 2 objects:
+```{r}
+dim(mat_filtered)
+class(mat_filtered)
+```
+
+Row names are Ensembl gene IDs.
+```{r}
+head(rownames(mat_filtered))
+head(colnames(mat_filtered))
+```
+
+```{r}
+str(annot)
+```
+
+Since we will do differential expression and gene symbols are more human readable than Ensembl gene IDs, we will get the corresponding gene symbols from Ensembl.
+```{r}
+gns <- tr2g_ensembl(species = "Mus musculus", use_gene_name = TRUE, 
+                    ensembl_version = 94)[,c("gene", "gene_name")] %>% 
+  distinct()
+```
+
+Just like how the `Seurat` workflow is centered around the `Seurat` object, Monocle 3 workflow is centered around the `cell_data_set` object. To create a `cell_data_set` object, we at least need the gene count matrix, and optionally need cell and gene metadata. Note that this is different from the `CellDataSet` object for Monocle 2. Cell metadata must have the column `cell`, for cell names or barcodes. Gene metadata must have the `id` column for gene ID (here Ensembl gene ID), and a column `gene_short_name`, for gene symbols, is recommended and is required for some functions. In addition, cell metadata must have cell names as row names and gene metadata must have gene IDs as gene names when initializing the `cell_data_set` object. 
+
+```{r}
+cell_meta <- data.frame(cell = colnames(mat_filtered),
+                        cell_type = annot$labels[match(colnames(mat_filtered), annot$cell.names)],
+                        stringsAsFactors = FALSE)
+rownames(cell_meta) <- colnames(mat_filtered)
+gene_meta <- gns %>% 
+  filter(gene %in% rownames(mat_filtered), !is.na(gene)) %>% 
+  rename(id = gene, gene_short_name = gene_name)
+rownames(gene_meta) <- gene_meta$id
+gene_meta <- gene_meta[rownames(mat_filtered),]
+cds <- new_cell_data_set(mat_filtered, cell_metadata = cell_meta, gene_metadata = gene_meta)
+```
+
+# Dimension reduction
+Part of the analysis is quite similar to a basic Seurat analysis: beginning with data normalization, then PCA, and then clustering and non-linear dimension reduction. Here the `preprocess_cds` will log1p normalize (default, uses log2) the data and perform PCA (default) or LSI (latent semantic indexing). 
+```{r}
+# Run PCA
+cds <- preprocess_cds(cds, method = "PCA", num_dim = 50)
+plot_pc_variance_explained(cds)
+```
+
+```{r}
+plot_cells(cds, reduction_method = "PCA",
+           color_cells_by = "cell_type", group_label_size = 3.5,
+           label_groups_by_cluster = FALSE) +
+  scale_color_d3(palette = "category20b")
+```
+
+```{r}
+# Seed for random initiation of UMAP
+set.seed(4837)
+cds <- reduce_dimension(cds, reduction_method = "UMAP", preprocess_method = "PCA", init = "random")
+plot_cells(cds, color_cells_by = "cell_type", group_label_size = 3.5,
+           label_groups_by_cluster = FALSE) +
+  scale_color_d3(palette = "category20b")
+```
+
+Monocle 3 does Louvain clustering and partitions the dataset for separate trajectories based on Louvain clustering.
+```{r}
+cds <- cluster_cells(cds)
+plot_cells(cds, color_cells_by = "partition", group_cells_by = "partition",
+           group_label_size = 4)
+```
+
+# Trajectory inference
+Monocle 3's trajectory inference is inspired by PAGA.
+```{r}
+cds <- learn_graph(cds)
+plot_cells(cds, color_cells_by = "cell_type", label_groups_by_cluster = FALSE,
+           group_label_size = 3.5, graph_label_size = 2) +
+  scale_color_d3(palette = "category20b")
+```
+
+The cells are not ordered on the graph. To compute pseudotime, we should supply a root node or a vector of root cells that we know are the earliest stage of the trajectory. The function `order_cells` can also open a shiny app to choose root node interactively. 
+```{r}
+qnscs <- cell_meta$cell[cell_meta$cell_type == "qNSCs"]
+cds <- order_cells(cds, root_cells = qnscs)
+plot_cells(cds, color_cells_by = "pseudotime", label_branch_points = FALSE, label_leaves = FALSE, label_roots = FALSE)
+```
+
+For the trajectory for which pseudotime is computed, Monocle 3 can find genes differentially expressed along the trajectory.
+```{r, eval = FALSE}
+de_res <- graph_test(cds, neighbor_graph = "principal_graph", cores = 3)
+```
+
+These are some of the most significant genes differentially expressed along the trajectory.
+```{r}
+genes_plt <- c("mt-Nd6", "Actr1a", "Ss18", "Hspa12a")
+plot_cells(cds, genes = genes_plt,
+           show_trajectory_graph = FALSE,
+           label_cell_groups = FALSE,
+           label_leaves = FALSE)
+```
