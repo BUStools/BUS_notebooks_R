@@ -497,10 +497,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree84b76531cfed90f15a49ca25c29982517e454a3btargetblank84b7653a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/84b76531cfed90f15a49ca25c29982517e454a3b" target="_blank">84b7653</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree846cd231f4442d7263f0173abf27dce476cb1d23targetblank846cd23a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/846cd231f4442d7263f0173abf27dce476cb1d23" target="_blank">846cd23</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree84b76531cfed90f15a49ca25c29982517e454a3btargetblank84b7653a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree846cd231f4442d7263f0173abf27dce476cb1d23targetblank846cd23a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -559,6 +559,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/846cd231f4442d7263f0173abf27dce476cb1d23/analysis/monocle3.Rmd" target="_blank">846cd23</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-23
+</td>
+<td>
+Don’t show package loading messages
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/002b84d7ef371d2c72be546fa303cbd0e6c2c971/docs/monocle3.html" target="_blank">002b84d</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-23
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/84b76531cfed90f15a49ca25c29982517e454a3b/analysis/monocle3.Rmd" target="_blank">84b7653</a>
 </td>
 <td>
@@ -584,91 +618,11 @@ Monocle 3 notebook
 <p>Monocle 3 has a few improvements compared to Monocle 2: Monocle 3 infers trajectory much faster, supports partitioning of the data into separate trajectories in case of different cell lineages, supports large datasets on disk, allows cycles in the trajectory, and supports 3D plotting. Monocle 3 has been used on over 2 million cells for the <a href="https://www.nature.com/articles/s41586-019-0969-x?WT.ec_id=NATURE-201902&amp;sap-outbound-id=3D6B78CB95C498488E0AB2A140F1B7A311607DA1">Mouse Organogenesis Cell Atlas (MOCA)</a>.</p>
 <p>The gene count matrix of the 10k neuron dataset has already been generated with the kallisto | bustools pipeline and filtered for the <a href="https://bustools.github.io/BUS_notebooks_R/monocle2.html">Monocle 2 notebook</a>. Cell types have also been annotated with <code>SingleR</code> in that notebook. Please refer to the first 3 main sections of that notebook for instructions on how to use kallisto | bustools, remove empty droplets, and annotate cell types. So this notebook will start with Monocle 3 analysis right away.</p>
 <p>The package <code>biomaRt</code> is from Bioconductor. <code>BUSpaRse</code> and <code>monocle3</code> are on GitHub. Packages <code>tidyverse</code> and <code>ggsci</code> (just for the D3 palette) are on CRAN.</p>
-<pre class="r"><code>library(monocle3)</code></pre>
-<pre><code>Loading required package: Biobase</code></pre>
-<pre><code>Loading required package: BiocGenerics</code></pre>
-<pre><code>Loading required package: parallel</code></pre>
-<pre><code>
-Attaching package: &#39;BiocGenerics&#39;</code></pre>
-<pre><code>The following objects are masked from &#39;package:parallel&#39;:
-
-    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
-    clusterExport, clusterMap, parApply, parCapply, parLapply,
-    parLapplyLB, parRapply, parSapply, parSapplyLB</code></pre>
-<pre><code>The following objects are masked from &#39;package:stats&#39;:
-
-    IQR, mad, sd, var, xtabs</code></pre>
-<pre><code>The following objects are masked from &#39;package:base&#39;:
-
-    anyDuplicated, append, as.data.frame, basename, cbind,
-    colnames, dirname, do.call, duplicated, eval, evalq, Filter,
-    Find, get, grep, grepl, intersect, is.unsorted, lapply, Map,
-    mapply, match, mget, order, paste, pmax, pmax.int, pmin,
-    pmin.int, Position, rank, rbind, Reduce, rownames, sapply,
-    setdiff, sort, table, tapply, union, unique, unsplit, which,
-    which.max, which.min</code></pre>
-<pre><code>Welcome to Bioconductor
-
-    Vignettes contain introductory material; view with
-    &#39;browseVignettes()&#39;. To cite Bioconductor, see
-    &#39;citation(&quot;Biobase&quot;)&#39;, and for packages &#39;citation(&quot;pkgname&quot;)&#39;.</code></pre>
-<pre><code>Loading required package: SingleCellExperiment</code></pre>
-<pre><code>Loading required package: SummarizedExperiment</code></pre>
-<pre><code>Loading required package: GenomicRanges</code></pre>
-<pre><code>Loading required package: stats4</code></pre>
-<pre><code>Loading required package: S4Vectors</code></pre>
-<pre><code>
-Attaching package: &#39;S4Vectors&#39;</code></pre>
-<pre><code>The following object is masked from &#39;package:base&#39;:
-
-    expand.grid</code></pre>
-<pre><code>Loading required package: IRanges</code></pre>
-<pre><code>Loading required package: GenomeInfoDb</code></pre>
-<pre><code>Loading required package: DelayedArray</code></pre>
-<pre><code>Loading required package: matrixStats</code></pre>
-<pre><code>
-Attaching package: &#39;matrixStats&#39;</code></pre>
-<pre><code>The following objects are masked from &#39;package:Biobase&#39;:
-
-    anyMissing, rowMedians</code></pre>
-<pre><code>Loading required package: BiocParallel</code></pre>
-<pre><code>
-Attaching package: &#39;DelayedArray&#39;</code></pre>
-<pre><code>The following objects are masked from &#39;package:matrixStats&#39;:
-
-    colMaxs, colMins, colRanges, rowMaxs, rowMins, rowRanges</code></pre>
-<pre><code>The following objects are masked from &#39;package:base&#39;:
-
-    aperm, apply, rowsum</code></pre>
-<pre><code>
-Attaching package: &#39;monocle3&#39;</code></pre>
-<pre><code>The following objects are masked from &#39;package:Biobase&#39;:
-
-    exprs, fData, fData&lt;-, pData, pData&lt;-</code></pre>
-<pre class="r"><code>library(biomaRt)
+<pre class="r"><code>library(monocle3)
+library(biomaRt)
 library(BUSpaRse)
-library(tidyverse)</code></pre>
-<pre><code>── Attaching packages ─────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
-<pre><code>✔ ggplot2 3.2.0     ✔ purrr   0.3.2
-✔ tibble  2.1.3     ✔ dplyr   0.8.3
-✔ tidyr   0.8.3     ✔ stringr 1.4.0
-✔ readr   1.3.1     ✔ forcats 0.4.0</code></pre>
-<pre><code>── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::collapse()   masks IRanges::collapse()
-✖ dplyr::combine()    masks Biobase::combine(), BiocGenerics::combine()
-✖ dplyr::count()      masks matrixStats::count()
-✖ dplyr::desc()       masks IRanges::desc()
-✖ tidyr::expand()     masks S4Vectors::expand()
-✖ dplyr::filter()     masks stats::filter()
-✖ dplyr::first()      masks S4Vectors::first()
-✖ dplyr::lag()        masks stats::lag()
-✖ ggplot2::Position() masks BiocGenerics::Position(), base::Position()
-✖ purrr::reduce()     masks GenomicRanges::reduce(), IRanges::reduce()
-✖ dplyr::rename()     masks S4Vectors::rename()
-✖ dplyr::select()     masks biomaRt::select()
-✖ purrr::simplify()   masks DelayedArray::simplify()
-✖ dplyr::slice()      masks IRanges::slice()</code></pre>
-<pre class="r"><code>library(ggsci)</code></pre>
+library(tidyverse)
+library(ggsci)</code></pre>
 </div>
 <div id="create-a-cell_data_set-object" class="section level1">
 <h1>Create a <code>cell_data_set</code> object</h1>
@@ -738,13 +692,13 @@ cds &lt;- new_cell_data_set(mat_filtered, cell_metadata = cell_meta, gene_metada
 <pre class="r"><code># Run PCA
 cds &lt;- preprocess_cds(cds, method = &quot;PCA&quot;, num_dim = 50)
 plot_pc_variance_explained(cds)</code></pre>
-<p><img src="figure/monocle3.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/monocle3.Rmd/elbow-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>plot_cells(cds, reduction_method = &quot;PCA&quot;,
            color_cells_by = &quot;cell_type&quot;, group_label_size = 3.5,
            label_groups_by_cluster = FALSE) +
   scale_color_d3(palette = &quot;category20b&quot;)</code></pre>
 <pre><code>No trajectory to plot. Has learn_graph() been called yet?</code></pre>
-<p><img src="figure/monocle3.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/monocle3.Rmd/pca-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code># Seed for random initiation of UMAP
 set.seed(4837)
 cds &lt;- reduce_dimension(cds, reduction_method = &quot;UMAP&quot;, preprocess_method = &quot;PCA&quot;, init = &quot;random&quot;)
@@ -752,18 +706,18 @@ plot_cells(cds, color_cells_by = &quot;cell_type&quot;, group_label_size = 3.5,
            label_groups_by_cluster = FALSE) +
   scale_color_d3(palette = &quot;category20b&quot;)</code></pre>
 <pre><code>No trajectory to plot. Has learn_graph() been called yet?</code></pre>
-<p><img src="figure/monocle3.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/monocle3.Rmd/umap-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Monocle 3 does Louvain clustering and partitions the dataset for separate trajectories based on Louvain clustering.</p>
 <pre class="r"><code>cds &lt;- cluster_cells(cds)
 plot_cells(cds, color_cells_by = &quot;partition&quot;, group_cells_by = &quot;partition&quot;,
            group_label_size = 4)</code></pre>
 <pre><code>No trajectory to plot. Has learn_graph() been called yet?</code></pre>
-<p><img src="figure/monocle3.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/monocle3.Rmd/part-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="trajectory-inference" class="section level1">
 <h1>Trajectory inference</h1>
 <p>Monocle 3’s trajectory inference is inspired by PAGA.</p>
-<pre class="r"><code>cds &lt;- learn_graph(cds)</code></pre>
+<pre class="r"><code>cds &lt;- learn_graph(cds, verbose = FALSE)</code></pre>
 <pre><code>
   |                                                                       
   |                                                                 |   0%
@@ -794,13 +748,13 @@ arguments to min; returning Inf</code></pre>
 <pre class="r"><code>plot_cells(cds, color_cells_by = &quot;cell_type&quot;, label_groups_by_cluster = FALSE,
            group_label_size = 3.5, graph_label_size = 2) +
   scale_color_d3(palette = &quot;category20b&quot;)</code></pre>
-<p><img src="figure/monocle3.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/monocle3.Rmd/ti-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>The cells are not ordered on the graph. To compute pseudotime, we should supply a root node or a vector of root cells that we know are the earliest stage of the trajectory. The function <code>order_cells</code> can also open a shiny app to choose root node interactively.</p>
 <pre class="r"><code>qnscs &lt;- cell_meta$cell[cell_meta$cell_type == &quot;qNSCs&quot;]
 cds &lt;- order_cells(cds, root_cells = qnscs)
 plot_cells(cds, color_cells_by = &quot;pseudotime&quot;, label_branch_points = FALSE, label_leaves = FALSE, label_roots = FALSE)</code></pre>
 <pre><code>Cells aren&#39;t colored in a way that allows them to be grouped.</code></pre>
-<p><img src="figure/monocle3.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/monocle3.Rmd/pseudo-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>For the trajectory for which pseudotime is computed, Monocle 3 can find genes differentially expressed along the trajectory.</p>
 <pre class="r"><code>de_res &lt;- graph_test(cds, neighbor_graph = &quot;principal_graph&quot;, cores = 3)</code></pre>
 <p>These are some of the most significant genes differentially expressed along the trajectory.</p>
@@ -809,7 +763,7 @@ plot_cells(cds, genes = genes_plt,
            show_trajectory_graph = FALSE,
            label_cell_groups = FALSE,
            label_leaves = FALSE)</code></pre>
-<p><img src="figure/monocle3.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/monocle3.Rmd/genes-1.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
