@@ -104,7 +104,7 @@ plot_cells(cds, color_cells_by = "partition", group_cells_by = "partition",
 
 # Trajectory inference
 Monocle 3's trajectory inference is inspired by PAGA.
-```{r ti}
+```{r ti, results='hide', fig.keep='all'}
 cds <- learn_graph(cds, verbose = FALSE)
 plot_cells(cds, color_cells_by = "cell_type", label_groups_by_cluster = FALSE,
            group_label_size = 3.5, graph_label_size = 2) +
