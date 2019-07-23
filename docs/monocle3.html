@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Lambda Moses" />
+
+<meta name="date" content="2019-07-23" />
+
+<title>Monocle 3</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">kallisto | bustools R Notebooks</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/BUStools/BUS_notebooks_R">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Monocle 3</h1>
+<h4 class="author">Lambda Moses</h4>
+<h4 class="date">2019-07-23</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2019-07-23
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>BUS_notebooks_R/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.4.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20181214code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20181214)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20181214code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20181214)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree84b76531cfed90f15a49ca25c29982517e454a3btargetblank84b7653a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/84b76531cfed90f15a49ca25c29982517e454a3b" target="_blank">84b7653</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree84b76531cfed90f15a49ca25c29982517e454a3btargetblank84b7653a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    BUS_notebooks_R.Rproj
+    Ignored:    data/whitelist_v3.txt.gz
+    Ignored:    output/out_pbmc1k/
+
+Untracked files:
+    Untracked:  ensembl/
+    Untracked:  output/neuron10k/
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the R Markdown and HTML files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view them.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/84b76531cfed90f15a49ca25c29982517e454a3b/analysis/monocle3.Rmd" target="_blank">84b7653</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-23
+</td>
+<td>
+Monocle 3 notebook
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>This notebook does pseudotime analysis of the <a href="https://support.10xgenomics.com/single-cell-gene-expression/datasets/3.0.0/neuron_10k_v3">10x 10k neurons from an E18 mouse</a> with <a href="https://cole-trapnell-lab.github.io/monocle3/">Monocle 3</a>. Please refer to the <a href="https://cole-trapnell-lab.github.io/monocle3/monocle3_docs/#installing-monocle">Monocle 3 website</a> for installation instruction. Gdal is required for Monocle 3 due to the <code>sf</code> dependency. The Python package <code>louvain</code> (which requires Python <code>igraph</code>, which requires compilation) is recommended, though not strictly required.</p>
+<p>Monocle 3 has a few improvements compared to Monocle 2: Monocle 3 infers trajectory much faster, supports partitioning of the data into separate trajectories in case of different cell lineages, supports large datasets on disk, allows cycles in the trajectory, and supports 3D plotting. Monocle 3 has been used on over 2 million cells for the <a href="https://www.nature.com/articles/s41586-019-0969-x?WT.ec_id=NATURE-201902&amp;sap-outbound-id=3D6B78CB95C498488E0AB2A140F1B7A311607DA1">Mouse Organogenesis Cell Atlas (MOCA)</a>.</p>
+<p>The gene count matrix of the 10k neuron dataset has already been generated with the kallisto | bustools pipeline and filtered for the <a href="https://bustools.github.io/BUS_notebooks_R/monocle2.html">Monocle 2 notebook</a>. Cell types have also been annotated with <code>SingleR</code> in that notebook. Please refer to the first 3 main sections of that notebook for instructions on how to use kallisto | bustools, remove empty droplets, and annotate cell types. So this notebook will start with Monocle 3 analysis right away.</p>
+<p>The package <code>biomaRt</code> is from Bioconductor. <code>BUSpaRse</code> and <code>monocle3</code> are on GitHub. Packages <code>tidyverse</code> and <code>ggsci</code> (just for the D3 palette) are on CRAN.</p>
+<pre class="r"><code>library(monocle3)</code></pre>
+<pre><code>Loading required package: Biobase</code></pre>
+<pre><code>Loading required package: BiocGenerics</code></pre>
+<pre><code>Loading required package: parallel</code></pre>
+<pre><code>
+Attaching package: &#39;BiocGenerics&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:parallel&#39;:
+
+    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
+    clusterExport, clusterMap, parApply, parCapply, parLapply,
+    parLapplyLB, parRapply, parSapply, parSapplyLB</code></pre>
+<pre><code>The following objects are masked from &#39;package:stats&#39;:
+
+    IQR, mad, sd, var, xtabs</code></pre>
+<pre><code>The following objects are masked from &#39;package:base&#39;:
+
+    anyDuplicated, append, as.data.frame, basename, cbind,
+    colnames, dirname, do.call, duplicated, eval, evalq, Filter,
+    Find, get, grep, grepl, intersect, is.unsorted, lapply, Map,
+    mapply, match, mget, order, paste, pmax, pmax.int, pmin,
+    pmin.int, Position, rank, rbind, Reduce, rownames, sapply,
+    setdiff, sort, table, tapply, union, unique, unsplit, which,
+    which.max, which.min</code></pre>
+<pre><code>Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    &#39;browseVignettes()&#39;. To cite Bioconductor, see
+    &#39;citation(&quot;Biobase&quot;)&#39;, and for packages &#39;citation(&quot;pkgname&quot;)&#39;.</code></pre>
+<pre><code>Loading required package: SingleCellExperiment</code></pre>
+<pre><code>Loading required package: SummarizedExperiment</code></pre>
+<pre><code>Loading required package: GenomicRanges</code></pre>
+<pre><code>Loading required package: stats4</code></pre>
+<pre><code>Loading required package: S4Vectors</code></pre>
+<pre><code>
+Attaching package: &#39;S4Vectors&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:base&#39;:
+
+    expand.grid</code></pre>
+<pre><code>Loading required package: IRanges</code></pre>
+<pre><code>Loading required package: GenomeInfoDb</code></pre>
+<pre><code>Loading required package: DelayedArray</code></pre>
+<pre><code>Loading required package: matrixStats</code></pre>
+<pre><code>
+Attaching package: &#39;matrixStats&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:Biobase&#39;:
+
+    anyMissing, rowMedians</code></pre>
+<pre><code>Loading required package: BiocParallel</code></pre>
+<pre><code>
+Attaching package: &#39;DelayedArray&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:matrixStats&#39;:
+
+    colMaxs, colMins, colRanges, rowMaxs, rowMins, rowRanges</code></pre>
+<pre><code>The following objects are masked from &#39;package:base&#39;:
+
+    aperm, apply, rowsum</code></pre>
+<pre><code>
+Attaching package: &#39;monocle3&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:Biobase&#39;:
+
+    exprs, fData, fData&lt;-, pData, pData&lt;-</code></pre>
+<pre class="r"><code>library(biomaRt)
+library(BUSpaRse)
+library(tidyverse)</code></pre>
+<pre><code>── Attaching packages ─────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>✔ ggplot2 3.2.0     ✔ purrr   0.3.2
+✔ tibble  2.1.3     ✔ dplyr   0.8.3
+✔ tidyr   0.8.3     ✔ stringr 1.4.0
+✔ readr   1.3.1     ✔ forcats 0.4.0</code></pre>
+<pre><code>── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::collapse()   masks IRanges::collapse()
+✖ dplyr::combine()    masks Biobase::combine(), BiocGenerics::combine()
+✖ dplyr::count()      masks matrixStats::count()
+✖ dplyr::desc()       masks IRanges::desc()
+✖ tidyr::expand()     masks S4Vectors::expand()
+✖ dplyr::filter()     masks stats::filter()
+✖ dplyr::first()      masks S4Vectors::first()
+✖ dplyr::lag()        masks stats::lag()
+✖ ggplot2::Position() masks BiocGenerics::Position(), base::Position()
+✖ purrr::reduce()     masks GenomicRanges::reduce(), IRanges::reduce()
+✖ dplyr::rename()     masks S4Vectors::rename()
+✖ dplyr::select()     masks biomaRt::select()
+✖ purrr::simplify()   masks DelayedArray::simplify()
+✖ dplyr::slice()      masks IRanges::slice()</code></pre>
+<pre class="r"><code>library(ggsci)</code></pre>
+</div>
+<div id="create-a-cell_data_set-object" class="section level1">
+<h1>Create a <code>cell_data_set</code> object</h1>
+<p>The filtered gene count matrix and the cell annotation were saved from the Monocle 2 notebook.</p>
+<pre class="r"><code>annot &lt;- readRDS(&quot;./output/neuron10k/cell_types.rds&quot;)
+mat_filtered &lt;- readRDS(&quot;./output/neuron10k/mat_filtered.rds&quot;)</code></pre>
+<p>Just to show the structures of those 2 objects:</p>
+<pre class="r"><code>dim(mat_filtered)</code></pre>
+<pre><code>[1] 23342 11031</code></pre>
+<pre class="r"><code>class(mat_filtered)</code></pre>
+<pre><code>[1] &quot;dgCMatrix&quot;
+attr(,&quot;package&quot;)
+[1] &quot;Matrix&quot;</code></pre>
+<p>Row names are Ensembl gene IDs.</p>
+<pre class="r"><code>head(rownames(mat_filtered))</code></pre>
+<pre><code>[1] &quot;ENSMUSG00000094619.2&quot;  &quot;ENSMUSG00000095646.1&quot;  &quot;ENSMUSG00000073406.10&quot;
+[4] &quot;ENSMUSG00000079491.9&quot;  &quot;ENSMUSG00000046808.17&quot; &quot;ENSMUSG00000092300.7&quot; </code></pre>
+<pre class="r"><code>head(colnames(mat_filtered))</code></pre>
+<pre><code>[1] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot;
+[4] &quot;AAACCCAGTCGCACAC&quot; &quot;AAACCCAGTGCACATT&quot; &quot;AAACCCAGTGGTAATA&quot;</code></pre>
+<pre class="r"><code>str(annot)</code></pre>
+<pre><code>List of 10
+ $ scores       : num [1:11031, 1:28] 0.188 0.192 0.183 0.265 0.186 ...
+  ..- attr(*, &quot;dimnames&quot;)=List of 2
+  .. ..$ : chr [1:11031] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot; &quot;AAACCCAGTCGCACAC&quot; ...
+  .. ..$ : chr [1:28] &quot;Adipocytes&quot; &quot;aNSCs&quot; &quot;Astrocytes&quot; &quot;Astrocytes activated&quot; ...
+ $ labels       : chr [1:11031, 1] &quot;NPCs&quot; &quot;NPCs&quot; &quot;NPCs&quot; &quot;NPCs&quot; ...
+  ..- attr(*, &quot;dimnames&quot;)=List of 2
+  .. ..$ : chr [1, 1:11031] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot; &quot;AAACCCAGTCGCACAC&quot; ...
+  .. ..$ : NULL
+ $ r            : num [1:11031, 1:358] 0.186 0.195 0.18 0.25 0.17 ...
+  ..- attr(*, &quot;dimnames&quot;)=List of 2
+  .. ..$ : chr [1:11031] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot; &quot;AAACCCAGTCGCACAC&quot; ...
+  .. ..$ : chr [1:358] &quot;ERR525589Aligned&quot; &quot;ERR525592Aligned&quot; &quot;SRR275532Aligned&quot; &quot;SRR275534Aligned&quot; ...
+ $ pval         : Named num [1:11031] 0.0396 0.0582 0.0366 0.0107 0.0329 ...
+  ..- attr(*, &quot;names&quot;)= chr [1:11031] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot; &quot;AAACCCAGTCGCACAC&quot; ...
+ $ labels1      : chr [1:11031, 1] &quot;NPCs&quot; &quot;NPCs&quot; &quot;NPCs&quot; &quot;NPCs&quot; ...
+  ..- attr(*, &quot;dimnames&quot;)=List of 2
+  .. ..$ : chr [1:11031] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot; &quot;AAACCCAGTCGCACAC&quot; ...
+  .. ..$ : NULL
+ $ labels1.thres: chr [1:11031] &quot;NPCs&quot; &quot;X&quot; &quot;NPCs&quot; &quot;NPCs&quot; ...
+ $ cell.names   : chr [1:11031] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot; &quot;AAACCCAGTCGCACAC&quot; ...
+ $ quantile.use : num 0.8
+ $ types        : chr [1:358] &quot;Adipocytes&quot; &quot;Adipocytes&quot; &quot;Adipocytes&quot; &quot;Adipocytes&quot; ...
+ $ method       : chr &quot;single&quot;</code></pre>
+<p>Since we will do differential expression and gene symbols are more human readable than Ensembl gene IDs, we will get the corresponding gene symbols from Ensembl.</p>
+<pre class="r"><code>gns &lt;- tr2g_ensembl(species = &quot;Mus musculus&quot;, use_gene_name = TRUE, 
+                    ensembl_version = 94)[,c(&quot;gene&quot;, &quot;gene_name&quot;)] %&gt;% 
+  distinct()</code></pre>
+<pre><code>Querying biomart for transcript and gene IDs of Mus musculus</code></pre>
+<pre><code>Cache found</code></pre>
+<p>Just like how the <code>Seurat</code> workflow is centered around the <code>Seurat</code> object, Monocle 3 workflow is centered around the <code>cell_data_set</code> object. To create a <code>cell_data_set</code> object, we at least need the gene count matrix, and optionally need cell and gene metadata. Note that this is different from the <code>CellDataSet</code> object for Monocle 2. Cell metadata must have the column <code>cell</code>, for cell names or barcodes. Gene metadata must have the <code>id</code> column for gene ID (here Ensembl gene ID), and a column <code>gene_short_name</code>, for gene symbols, is recommended and is required for some functions. In addition, cell metadata must have cell names as row names and gene metadata must have gene IDs as gene names when initializing the <code>cell_data_set</code> object.</p>
+<pre class="r"><code>cell_meta &lt;- data.frame(cell = colnames(mat_filtered),
+                        cell_type = annot$labels[match(colnames(mat_filtered), annot$cell.names)],
+                        stringsAsFactors = FALSE)
+rownames(cell_meta) &lt;- colnames(mat_filtered)
+gene_meta &lt;- gns %&gt;% 
+  filter(gene %in% rownames(mat_filtered), !is.na(gene)) %&gt;% 
+  rename(id = gene, gene_short_name = gene_name)
+rownames(gene_meta) &lt;- gene_meta$id
+gene_meta &lt;- gene_meta[rownames(mat_filtered),]
+cds &lt;- new_cell_data_set(mat_filtered, cell_metadata = cell_meta, gene_metadata = gene_meta)</code></pre>
+</div>
+<div id="dimension-reduction" class="section level1">
+<h1>Dimension reduction</h1>
+<p>Part of the analysis is quite similar to a basic Seurat analysis: beginning with data normalization, then PCA, and then clustering and non-linear dimension reduction. Here the <code>preprocess_cds</code> will log1p normalize (default, uses log2) the data and perform PCA (default) or LSI (latent semantic indexing).</p>
+<pre class="r"><code># Run PCA
+cds &lt;- preprocess_cds(cds, method = &quot;PCA&quot;, num_dim = 50)
+plot_pc_variance_explained(cds)</code></pre>
+<p><img src="figure/monocle3.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot_cells(cds, reduction_method = &quot;PCA&quot;,
+           color_cells_by = &quot;cell_type&quot;, group_label_size = 3.5,
+           label_groups_by_cluster = FALSE) +
+  scale_color_d3(palette = &quot;category20b&quot;)</code></pre>
+<pre><code>No trajectory to plot. Has learn_graph() been called yet?</code></pre>
+<p><img src="figure/monocle3.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Seed for random initiation of UMAP
+set.seed(4837)
+cds &lt;- reduce_dimension(cds, reduction_method = &quot;UMAP&quot;, preprocess_method = &quot;PCA&quot;, init = &quot;random&quot;)
+plot_cells(cds, color_cells_by = &quot;cell_type&quot;, group_label_size = 3.5,
+           label_groups_by_cluster = FALSE) +
+  scale_color_d3(palette = &quot;category20b&quot;)</code></pre>
+<pre><code>No trajectory to plot. Has learn_graph() been called yet?</code></pre>
+<p><img src="figure/monocle3.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Monocle 3 does Louvain clustering and partitions the dataset for separate trajectories based on Louvain clustering.</p>
+<pre class="r"><code>cds &lt;- cluster_cells(cds)
+plot_cells(cds, color_cells_by = &quot;partition&quot;, group_cells_by = &quot;partition&quot;,
+           group_label_size = 4)</code></pre>
+<pre><code>No trajectory to plot. Has learn_graph() been called yet?</code></pre>
+<p><img src="figure/monocle3.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="trajectory-inference" class="section level1">
+<h1>Trajectory inference</h1>
+<p>Monocle 3’s trajectory inference is inspired by PAGA.</p>
+<pre class="r"><code>cds &lt;- learn_graph(cds)</code></pre>
+<pre><code>
+  |                                                                       
+  |                                                                 |   0%
+  |                                                                       
+  |=================================================================| 100%
+
+  |                                                                       
+  |                                                                 |   0%
+  |                                                                       
+  |=================================================================| 100%
+
+  |                                                                       
+  |                                                                 |   0%
+  |                                                                       
+  |=================================================================| 100%
+
+  |                                                                       
+  |                                                                 |   0%
+  |                                                                       
+  |=================================================================| 100%
+
+  |                                                                       
+  |                                                                 |   0%
+  |                                                                       
+  |=================================================================| 100%</code></pre>
+<pre><code>Warning in min(data_df$weight[data_df$weight &gt; 0]): no non-missing
+arguments to min; returning Inf</code></pre>
+<pre class="r"><code>plot_cells(cds, color_cells_by = &quot;cell_type&quot;, label_groups_by_cluster = FALSE,
+           group_label_size = 3.5, graph_label_size = 2) +
+  scale_color_d3(palette = &quot;category20b&quot;)</code></pre>
+<p><img src="figure/monocle3.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The cells are not ordered on the graph. To compute pseudotime, we should supply a root node or a vector of root cells that we know are the earliest stage of the trajectory. The function <code>order_cells</code> can also open a shiny app to choose root node interactively.</p>
+<pre class="r"><code>qnscs &lt;- cell_meta$cell[cell_meta$cell_type == &quot;qNSCs&quot;]
+cds &lt;- order_cells(cds, root_cells = qnscs)
+plot_cells(cds, color_cells_by = &quot;pseudotime&quot;, label_branch_points = FALSE, label_leaves = FALSE, label_roots = FALSE)</code></pre>
+<pre><code>Cells aren&#39;t colored in a way that allows them to be grouped.</code></pre>
+<p><img src="figure/monocle3.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>For the trajectory for which pseudotime is computed, Monocle 3 can find genes differentially expressed along the trajectory.</p>
+<pre class="r"><code>de_res &lt;- graph_test(cds, neighbor_graph = &quot;principal_graph&quot;, cores = 3)</code></pre>
+<p>These are some of the most significant genes differentially expressed along the trajectory.</p>
+<pre class="r"><code>genes_plt &lt;- c(&quot;mt-Nd6&quot;, &quot;Actr1a&quot;, &quot;Ss18&quot;, &quot;Hspa12a&quot;)
+plot_cells(cds, genes = genes_plt,
+           show_trajectory_graph = FALSE,
+           label_cell_groups = FALSE,
+           label_leaves = FALSE)</code></pre>
+<p><img src="figure/monocle3.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.6.1 (2019-07-05)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS Mojave 10.14.5
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats4    parallel  stats     graphics  grDevices utils     datasets 
+[8] methods   base     
+
+other attached packages:
+ [1] ggsci_2.9                   forcats_0.4.0              
+ [3] stringr_1.4.0               dplyr_0.8.3                
+ [5] purrr_0.3.2                 readr_1.3.1                
+ [7] tidyr_0.8.3                 tibble_2.1.3               
+ [9] ggplot2_3.2.0               tidyverse_1.2.1            
+[11] BUSpaRse_0.99.18            biomaRt_2.41.6             
+[13] monocle3_0.1.2              SingleCellExperiment_1.7.0 
+[15] SummarizedExperiment_1.15.5 DelayedArray_0.11.4        
+[17] BiocParallel_1.19.0         matrixStats_0.54.0         
+[19] GenomicRanges_1.37.14       GenomeInfoDb_1.21.1        
+[21] IRanges_2.19.10             S4Vectors_0.23.17          
+[23] Biobase_2.45.0              BiocGenerics_0.31.5        
+
+loaded via a namespace (and not attached):
+  [1] colorspace_1.4-1         rprojroot_1.3-2         
+  [3] XVector_0.25.0           fs_1.3.1                
+  [5] proxy_0.4-23             rstudioapi_0.10         
+  [7] ggrepel_0.8.1            bit64_0.9-7             
+  [9] AnnotationDbi_1.47.0     lubridate_1.7.4         
+ [11] xml2_1.2.0               codetools_0.2-16        
+ [13] knitr_1.23               zeallot_0.1.0           
+ [15] jsonlite_1.6             workflowr_1.4.0         
+ [17] Rsamtools_2.1.3          broom_0.5.2             
+ [19] dbplyr_1.4.2             uwot_0.1.3              
+ [21] compiler_3.6.1           httr_1.4.0              
+ [23] backports_1.1.4          assertthat_0.2.1        
+ [25] Matrix_1.2-17            lazyeval_0.2.2          
+ [27] cli_1.1.0                htmltools_0.3.6         
+ [29] prettyunits_1.0.2        tools_3.6.1             
+ [31] igraph_1.2.4.1           gtable_0.3.0            
+ [33] glue_1.3.1               GenomeInfoDbData_1.2.1  
+ [35] RANN_2.6.1               reshape2_1.4.3          
+ [37] rappdirs_0.3.1           Rcpp_1.0.1              
+ [39] cellranger_1.1.0         vctrs_0.2.0             
+ [41] Biostrings_2.53.1        nlme_3.1-140            
+ [43] rtracklayer_1.45.1       DelayedMatrixStats_1.7.1
+ [45] xfun_0.8                 plyranges_1.5.11        
+ [47] rvest_0.3.4              irlba_2.3.3             
+ [49] ensembldb_2.9.2          XML_3.98-1.20           
+ [51] zlibbioc_1.31.0          scales_1.0.0            
+ [53] BSgenome_1.53.0          hms_0.5.0               
+ [55] ProtGenerics_1.17.2      AnnotationFilter_1.9.0  
+ [57] yaml_2.2.0               curl_3.3                
+ [59] memoise_1.1.0            gridExtra_2.3           
+ [61] stringi_1.4.3            RSQLite_2.1.1           
+ [63] GenomicFeatures_1.37.3   rlang_0.4.0             
+ [65] pkgconfig_2.0.2          bitops_1.0-6            
+ [67] evaluate_0.14            lattice_0.20-38         
+ [69] GenomicAlignments_1.21.4 labeling_0.3            
+ [71] bit_1.1-14               tidyselect_0.2.5        
+ [73] RcppAnnoy_0.0.12         plyr_1.8.4              
+ [75] magrittr_1.5             R6_2.4.0                
+ [77] generics_0.0.2           DBI_1.0.0               
+ [79] pillar_1.4.2             haven_2.1.1             
+ [81] whisker_0.3-2            withr_2.1.2             
+ [83] RCurl_1.95-4.12          modelr_0.1.4            
+ [85] crayon_1.3.4             BiocFileCache_1.9.1     
+ [87] rmarkdown_1.14           viridis_0.5.1           
+ [89] progress_1.2.2           grid_3.6.1              
+ [91] readxl_1.3.1             data.table_1.12.2       
+ [93] blob_1.2.0               git2r_0.26.1            
+ [95] digest_0.6.20            openssl_1.4.1           
+ [97] RcppParallel_4.4.3       munsell_0.5.0           
+ [99] viridisLite_0.3.0        askpass_1.1             </code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
