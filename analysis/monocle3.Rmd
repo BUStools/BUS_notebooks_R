@@ -18,7 +18,7 @@ The gene count matrix of the 10k neuron dataset has already been generated with 
 
 The package `biomaRt` is from Bioconductor. `BUSpaRse` and `monocle3` are on GitHub. Packages `tidyverse` and `ggsci` (just for the D3 palette) are on CRAN.
 
-```{r}
+```{r, message=FALSE}
 library(monocle3)
 library(biomaRt)
 library(BUSpaRse)
@@ -73,20 +73,20 @@ cds <- new_cell_data_set(mat_filtered, cell_metadata = cell_meta, gene_metadata 
 
 # Dimension reduction
 Part of the analysis is quite similar to a basic Seurat analysis: beginning with data normalization, then PCA, and then clustering and non-linear dimension reduction. Here the `preprocess_cds` will log1p normalize (default, uses log2) the data and perform PCA (default) or LSI (latent semantic indexing). 
-```{r}
+```{r elbow}
 # Run PCA
 cds <- preprocess_cds(cds, method = "PCA", num_dim = 50)
 plot_pc_variance_explained(cds)
 ```
 
-```{r}
+```{r pca}
 plot_cells(cds, reduction_method = "PCA",
            color_cells_by = "cell_type", group_label_size = 3.5,
            label_groups_by_cluster = FALSE) +
   scale_color_d3(palette = "category20b")
 ```
 
-```{r}
+```{r umap}
 # Seed for random initiation of UMAP
 set.seed(4837)
 cds <- reduce_dimension(cds, reduction_method = "UMAP", preprocess_method = "PCA", init = "random")
@@ -96,7 +96,7 @@ plot_cells(cds, color_cells_by = "cell_type", group_label_size = 3.5,
 ```
 
 Monocle 3 does Louvain clustering and partitions the dataset for separate trajectories based on Louvain clustering.
-```{r}
+```{r part}
 cds <- cluster_cells(cds)
 plot_cells(cds, color_cells_by = "partition", group_cells_by = "partition",
            group_label_size = 4)
@@ -104,15 +104,15 @@ plot_cells(cds, color_cells_by = "partition", group_cells_by = "partition",
 
 # Trajectory inference
 Monocle 3's trajectory inference is inspired by PAGA.
-```{r}
-cds <- learn_graph(cds)
+```{r ti}
+cds <- learn_graph(cds, verbose = FALSE)
 plot_cells(cds, color_cells_by = "cell_type", label_groups_by_cluster = FALSE,
            group_label_size = 3.5, graph_label_size = 2) +
   scale_color_d3(palette = "category20b")
 ```
 
 The cells are not ordered on the graph. To compute pseudotime, we should supply a root node or a vector of root cells that we know are the earliest stage of the trajectory. The function `order_cells` can also open a shiny app to choose root node interactively. 
-```{r}
+```{r pseudo}
 qnscs <- cell_meta$cell[cell_meta$cell_type == "qNSCs"]
 cds <- order_cells(cds, root_cells = qnscs)
 plot_cells(cds, color_cells_by = "pseudotime", label_branch_points = FALSE, label_leaves = FALSE, label_roots = FALSE)
@@ -124,7 +124,7 @@ de_res <- graph_test(cds, neighbor_graph = "principal_graph", cores = 3)
 ```
 
 These are some of the most significant genes differentially expressed along the trajectory.
-```{r}
+```{r genes}
 genes_plt <- c("mt-Nd6", "Actr1a", "Ss18", "Hspa12a")
 plot_cells(cds, genes = genes_plt,
            show_trajectory_graph = FALSE,
