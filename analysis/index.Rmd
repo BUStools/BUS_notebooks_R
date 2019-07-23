@@ -41,8 +41,16 @@ This repository has example notebooks that demonstrate usage of [`kallisto bus`]
 
 ----------
 
-RNA velocity with 10k E18 mouse neurons from 10x (coming soon)
+<center>
 
-Monocle 3 pseudotime analysis with 10k E18 mouse neurons from 10x (coming soon)
+[![](https://bustools.github.io/BUS_notebooks_R/figure/monocle3.Rmd/ti-1.png){width=600px}](https://bustools.github.io/BUS_notebooks_R/monocle3.html)
+
+[Monocle 3 pseudotime analysis with 10k E18 mouse neurons from 10x](https://bustools.github.io/BUS_notebooks_R/monocle3.html)
+
+</center>
+
+-----------
+
+RNA velocity with 10k E18 mouse neurons from 10x (coming soon)
 
 Differential expression with equivalence classes in TCC matrix (coming soon)
