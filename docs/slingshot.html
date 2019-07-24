@@ -497,10 +497,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree5e16aa3869c353a1808453b97f5ecbb323d0e211targetblank5e16aa3a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/5e16aa3869c353a1808453b97f5ecbb323d0e211" target="_blank">5e16aa3</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree63e0c03aa7048083fe7d9a72c8f351b82f35243ftargetblank63e0c03a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/63e0c03aa7048083fe7d9a72c8f351b82f35243f" target="_blank">63e0c03</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree5e16aa3869c353a1808453b97f5ecbb323d0e211targetblank5e16aa3a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree63e0c03aa7048083fe7d9a72c8f351b82f35243ftargetblank63e0c03a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -510,7 +510,6 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    BUS_notebooks_R.Rproj
-    Ignored:    analysis/figure/
     Ignored:    data/whitelist_v3.txt.gz
     Ignored:    output/out_pbmc1k/
 
@@ -558,6 +557,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/63e0c03aa7048083fe7d9a72c8f351b82f35243f/analysis/slingshot.Rmd" target="_blank">63e0c03</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-24
+</td>
+<td>
+slingshot notebook
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/df34d05137c8df23b272650d0e14a8becfe6ad76/docs/slingshot.html" target="_blank">df34d05</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-24
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -671,6 +704,43 @@ seu &lt;- AddMetaData(seu, setNames(annot$labels[ind], cells_use),
                    col.name = &quot;cell_type&quot;)</code></pre>
 <pre class="r"><code>VlnPlot(seu, c(&quot;nCount_RNA&quot;, &quot;nFeature_RNA&quot;), pt.size = 0.1, ncol = 1, group.by = &quot;cell_type&quot;)</code></pre>
 <p><img src="figure/slingshot.Rmd/vln-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-vln-1">
+Past versions of vln-1.png
+</button>
+</p>
+<div id="fig-vln-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/df34d05137c8df23b272650d0e14a8becfe6ad76/docs/figure/slingshot.Rmd/vln-1.png" target="_blank">df34d05</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-24
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>There is only one cell labeled ependymal.</p>
 <pre class="r"><code>ggplot(seu@meta.data, aes(nCount_RNA, nFeature_RNA, color = cell_type)) +
   geom_point(size = 0.5) +
@@ -682,26 +752,255 @@ seu &lt;- AddMetaData(seu, setNames(annot$labels[ind], cells_use),
   guides(color = guide_legend(override.aes = list(size = 3))) +
   labs(x = &quot;Total UMI counts&quot;, y = &quot;Number of genes detected&quot;)</code></pre>
 <p><img src="figure/slingshot.Rmd/qc-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-qc-1">
+Past versions of qc-1.png
+</button>
+</p>
+<div id="fig-qc-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/df34d05137c8df23b272650d0e14a8becfe6ad76/docs/figure/slingshot.Rmd/qc-1.png" target="_blank">df34d05</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-24
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="dimension-reduction" class="section level2">
 <h2>Dimension reduction</h2>
 <pre class="r"><code>seu &lt;- RunPCA(seu, npcs = 70, verbose = FALSE)
 ElbowPlot(seu, ndims = 70)</code></pre>
 <p><img src="figure/slingshot.Rmd/elbow-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-elbow-1">
+Past versions of elbow-1.png
+</button>
+</p>
+<div id="fig-elbow-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/df34d05137c8df23b272650d0e14a8becfe6ad76/docs/figure/slingshot.Rmd/elbow-1.png" target="_blank">df34d05</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-24
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>The y axis is standard deviation (not variance), or the singular values from singular value decomposition on the data performed for PCA.</p>
 <pre class="r"><code>PCAPlot(seu, group.by = &quot;cell_type&quot;, pt.size = 0.5, label = TRUE, repel = TRUE) +
   scale_color_brewer(type = &quot;qual&quot;, palette = &quot;Set2&quot;)</code></pre>
+<pre><code>#&gt; Warning: Using `as.character()` on a quosure is deprecated as of rlang 0.3.0.
+#&gt; Please use `as_label()` or `as_name()` instead.
+#&gt; This warning is displayed once per session.</code></pre>
+<p><img src="figure/slingshot.Rmd/pca-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-pca-1">
+Past versions of pca-1.png
+</button>
+</p>
+<div id="fig-pca-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/df34d05137c8df23b272650d0e14a8becfe6ad76/docs/figure/slingshot.Rmd/pca-1.png" target="_blank">df34d05</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-24
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>seu &lt;- RunTSNE(seu, dims = 1:50, verbose = FALSE)
 TSNEPlot(seu, group.by = &quot;cell_type&quot;, pt.size = 0.5, label = TRUE, repel = TRUE) +
   scale_color_brewer(type = &quot;qual&quot;, palette = &quot;Set2&quot;)</code></pre>
+<p><img src="figure/slingshot.Rmd/tsne-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-tsne-1">
+Past versions of tsne-1.png
+</button>
+</p>
+<div id="fig-tsne-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/df34d05137c8df23b272650d0e14a8becfe6ad76/docs/figure/slingshot.Rmd/tsne-1.png" target="_blank">df34d05</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-24
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>UMAP can better preserve pairwise distance of cells than tSNE and can better separate cell populations than the first 2 PCs of PCA (<a href="https://doi.org/10.1038/nbt.4314">Becht et al. 2018</a>), so the TI will be done on UMAP rather than tSNE or PCA.</p>
 <pre class="r"><code>seu &lt;- RunUMAP(seu, dims = 1:50)
 UMAPPlot(seu, group.by = &quot;cell_type&quot;, pt.size = 0.5, label = TRUE, repel = TRUE) +
   scale_color_brewer(type = &quot;qual&quot;, palette = &quot;Set2&quot;)</code></pre>
+<p><img src="figure/slingshot.Rmd/umap-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-umap-1">
+Past versions of umap-1.png
+</button>
+</p>
+<div id="fig-umap-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/df34d05137c8df23b272650d0e14a8becfe6ad76/docs/figure/slingshot.Rmd/umap-1.png" target="_blank">df34d05</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-24
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Cell type annotation with <code>SingleR</code> requires a reference with bulk RNA seq data for isolated known cell types. The reference used for cell type annotation here does not differentiate between different types of neural progenitor cells; clustering can further partition the neural progenitor cells. Furthermore, <code>slingshot</code> is based on cluster-wise minimum spanning tree, so finding a good clustering is important to good trajectory inference with <code>slingshot</code>. The clustering algorithm used here is <a href="https://www.nature.com/articles/s41598-019-41695-z">Leiden</a>, which is an improvement over the commonly used Louvain; Leiden communities are guaranteed to be well-connected, while Louvain can lead to poorly connected communities.</p>
 <pre class="r"><code>seu &lt;- FindNeighbors(seu, verbose = FALSE) %&gt;% 
   FindClusters(algorithm = 4, resolution = 1) # Leiden clustering
 UMAPPlot(seu, pt.size = 0.5)</code></pre>
+<p><img src="figure/slingshot.Rmd/umap_clust-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-umap_clust-1">
+Past versions of umap_clust-1.png
+</button>
+</p>
+<div id="fig-umap_clust-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/df34d05137c8df23b272650d0e14a8becfe6ad76/docs/figure/slingshot.Rmd/umap_clust-1.png" target="_blank">df34d05</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-24
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="slingshot" class="section level1">
@@ -736,16 +1035,127 @@ cell_colors_clust &lt;- cell_pal(seu$SCT_snn_res.1, hue_pal())</code></pre>
 <pre class="r"><code>plot(reducedDim(sds), col = cell_colors, pch = 16, cex = 0.5)
 lines(sds, lwd = 2, type = &#39;lineages&#39;, col = &#39;black&#39;)</code></pre>
 <p><img src="figure/slingshot.Rmd/lin1-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-lin1-1">
+Past versions of lin1-1.png
+</button>
+</p>
+<div id="fig-lin1-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/df34d05137c8df23b272650d0e14a8becfe6ad76/docs/figure/slingshot.Rmd/lin1-1.png" target="_blank">df34d05</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-24
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Again, the qNSCs are the brown points near the bottom left, NPCs are green, and neurons are pink. It seems that multiple neural lineages formed. This is a much more complicated picture than the two branches of neurons projected on the first two PCs in the pseudotime figure in the <a href="https://www.biorxiv.org/content/10.1101/673285v1">kallisto | bustools paper</a> (Supplementary Figure 6.5). It also seems that <code>slingshot</code> did not pick up the glial lineage (oligodendrocytes and astrocytes), as the vast majority of cells here are NPCs or neurons.</p>
 <p>See how this looks with Leiden clusters.</p>
 <pre class="r"><code>plot(reducedDim(sds), col = cell_colors_clust, pch = 16, cex = 0.5)
 lines(sds, lwd = 2, type = &#39;lineages&#39;, col = &#39;black&#39;)</code></pre>
 <p><img src="figure/slingshot.Rmd/lin2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-lin2-1">
+Past versions of lin2-1.png
+</button>
+</p>
+<div id="fig-lin2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/df34d05137c8df23b272650d0e14a8becfe6ad76/docs/figure/slingshot.Rmd/lin2-1.png" target="_blank">df34d05</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-24
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Here <code>slingshot</code> thinks that cluster 3 is a point where multiple neural lineages diverge.</p>
 <p>Principal curves are smoothed representations of each lineage; pseudotime values are computed by projecting the cells onto the principal curves. What do the principal curves look like?</p>
 <pre class="r"><code>plot(reducedDim(sds), col = cell_colors, pch = 16, cex = 0.5)
 lines(sds, lwd = 2, col = &#39;black&#39;)</code></pre>
 <p><img src="figure/slingshot.Rmd/curves-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-curves-1">
+Past versions of curves-1.png
+</button>
+</p>
+<div id="fig-curves-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/df34d05137c8df23b272650d0e14a8becfe6ad76/docs/figure/slingshot.Rmd/curves-1.png" target="_blank">df34d05</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-24
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Which cells are in which lineage? Here we plot the pseudotime values for each lineage.</p>
 <pre class="r"><code>nc &lt;- 2
 pt &lt;- slingPseudotime(sds)
@@ -759,6 +1169,43 @@ for (i in nms) {
   lines(sds, lwd = 2, col = &#39;black&#39;, type = &#39;lineages&#39;)
 }</code></pre>
 <p><img src="figure/slingshot.Rmd/pt-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-pt-1">
+Past versions of pt-1.png
+</button>
+</p>
+<div id="fig-pt-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/df34d05137c8df23b272650d0e14a8becfe6ad76/docs/figure/slingshot.Rmd/pt-1.png" target="_blank">df34d05</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-24
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>I still wonder if lineages 1 and 6 are real. Monocle 3 would have assigned disconnected trajectories to the separate clusters in lineages 1 and 6, but those clusters have been labeled NPCs or neurons, which must have come from neural stem cells. Perhaps they are so differentiated that it would make sense to consider them separately from the main lineage as Monocle 3 does.</p>
 </div>
 <div id="differential-expression" class="section level2">
@@ -810,6 +1257,43 @@ for (i in seq_along(top_genes)) {
   lines(sds, lwd = 2, col = &#39;black&#39;, type = &#39;lineages&#39;)
 }</code></pre>
 <p><img src="figure/slingshot.Rmd/genes-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-genes-1">
+Past versions of genes-1.png
+</button>
+</p>
+<div id="fig-genes-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/df34d05137c8df23b272650d0e14a8becfe6ad76/docs/figure/slingshot.Rmd/genes-1.png" target="_blank">df34d05</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-24
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>These genes do highlight different parts of the trajectory. A quick search on PubMed did show relevance of these genes to development of the central nervous system in mice.</p>
 <br>
 <p>
