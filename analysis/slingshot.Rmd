@@ -1,0 +1,320 @@
+---
+title: "Pseudotime analysis with slingshot"
+author: "Lambda Moses"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(comment = "#>")
+```
+
+# Introduction
+This notebook does pseudotime analysis of the [10x 10k neurons from an E18 mouse](https://support.10xgenomics.com/single-cell-gene-expression/datasets/3.0.0/neuron_10k_v3) with [`slingshot`](https://bioconductor.org/packages/release/bioc/html/slingshot.html), which is on Bioconductor. Like Monocle 2 DDRTree, `slingshot` builds a minimum spanning tree, but while Monocle 2 builds the tree from individual cells, `slingshot` does so with clusters. `slingshot` is also the top rated trajectory inference method in the [`dynverse` paper](https://doi.org/10.1038/s41587-019-0071-9). 
+
+In the [kallisto | bustools paper](https://www.biorxiv.org/content/10.1101/673285v1), I used the docker container for `slingshot` provided by `dynverse` for pseudotime analysis, because `dynverse` provides unified interface to dozens of different trajectory inference (TI) methods via docker containers, making it easy to try other methods without worrying about installing dependencies. Furthermore, `dynverse` provides metrics to evaluate TI methods. However, the docker images provided by `dynverse` do not provide users with the full range of options available from the TI methods themselves. For instance, while any dimension reduction and any kind of clustering can be used for `slingshot`, `dynverse` chose PCA and partition around medoids (PAM) clustering for us (see the source code [here](https://github.com/dynverse/ti_slingshot/blob/master/package/R/ti_slingshot.R)). So in this notebook, we will directly use `slingshot` rather than via `dynverse`.
+
+The gene count matrix of the 10k neuron dataset has already been generated with the kallisto | bustools pipeline and filtered for the [Monocle 2 notebook](https://bustools.github.io/BUS_notebooks_R/monocle2.html). Cell types have also been annotated with `SingleR` in that notebook. Please refer to the first 3 main sections of that notebook for instructions on how to use kallisto | bustools, remove empty droplets, and annotate cell types. 
+
+Packages `slingshot`, `biomaRt` and `SingleCellExperiment` are from Bioconductor. `BUSpaRse` is on GitHub. The other packages are on CRAN.
+
+```{r, message=FALSE}
+library(slingshot)
+library(biomaRt)
+library(BUSpaRse)
+library(tidyverse)
+library(tidymodels)
+library(Seurat)
+library(scales)
+library(viridis)
+```
+
+# Loading the matrix
+The filtered gene count matrix and the cell annotation were saved from the Monocle 2 notebook.
+```{r}
+annot <- readRDS("./output/neuron10k/cell_types.rds")
+mat_filtered <- readRDS("./output/neuron10k/mat_filtered.rds")
+```
+
+Just to show the structures of those 2 objects:
+```{r}
+dim(mat_filtered)
+class(mat_filtered)
+```
+
+Row names are Ensembl gene IDs.
+```{r}
+head(rownames(mat_filtered))
+head(colnames(mat_filtered))
+```
+
+```{r}
+str(annot)
+```
+
+To prevent endothelial cells, erythrocytes, immune cells, and fibroblasts from being mistaken as very differentiated cell types derived from neural stem cells, we will only keep cells with a label for the neural or glial lineage. This can be a problem as `slingshot` does not support multiple disconnected trajectories.
+```{r}
+ind <- annot$labels %in% c("NPCs", "Neurons", "OPCs", "Oligodendrocytes", 
+                           "qNSCs", "aNSCs", "Astrocytes", "Ependymal")
+cells_use <- annot$cell.names[ind]
+mat_filtered <- mat_filtered[, cells_use]
+```
+
+Meaning of the acronyms:
+
+* NPCs: Neural progenitor cells
+* OPCs: Oligodendrocyte progenitor cells
+* qNSCs: Quiescent neural stem cells
+* aNSCs: Active neural stem cells
+
+Since we will do differential expression and gene symbols are more human readable than Ensembl gene IDs, we will get the corresponding gene symbols from Ensembl.
+```{r}
+gns <- tr2g_ensembl(species = "Mus musculus", use_gene_name = TRUE, 
+                    ensembl_version = 94)[,c("gene", "gene_name")] %>% 
+  distinct()
+```
+
+# Preprocessing
+## QC
+```{r, include=FALSE}
+do_seu <- !file.exists("./output/neuron10k/seu_ng.rds")
+if (!do_seu) {
+  seu <- readRDS("./output/neuron10k/seu_ng.rds")
+}
+```
+
+```{r, results='hide', message=FALSE, warning=FALSE, eval=do_seu}
+seu <- CreateSeuratObject(mat_filtered) %>% 
+  SCTransform() # normalize and scale
+# Add cell type annotation to metadata
+seu <- AddMetaData(seu, setNames(annot$labels[ind], cells_use), 
+                   col.name = "cell_type")
+```
+
+```{r vln, fig.height=6, fig.width=6}
+VlnPlot(seu, c("nCount_RNA", "nFeature_RNA"), pt.size = 0.1, ncol = 1, group.by = "cell_type")
+```
+
+There is only one cell labeled ependymal.
+
+```{r qc}
+ggplot(seu@meta.data, aes(nCount_RNA, nFeature_RNA, color = cell_type)) +
+  geom_point(size = 0.5) +
+  scale_color_brewer(type = "qual", palette = "Set2", name = "cell type") +
+  scale_x_log10() +
+  scale_y_log10() +
+  theme_bw() +
+  # Make points larger in legend
+  guides(color = guide_legend(override.aes = list(size = 3))) +
+  labs(x = "Total UMI counts", y = "Number of genes detected")
+```
+
+## Dimension reduction
+```{r elbow}
+seu <- RunPCA(seu, npcs = 70, verbose = FALSE)
+ElbowPlot(seu, ndims = 70)
+```
+
+The y axis is standard deviation (not variance), or the singular values from singular value decomposition on the data performed for PCA.
+
+```{r, eval=FALSE}
+PCAPlot(seu, group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) +
+  scale_color_brewer(type = "qual", palette = "Set2")
+```
+
+```{r pca, include=FALSE}
+# Need to use DimPlot due to weird workflowr problem with PCAPlot that calls seu[[wflow.build]]
+# and eats up memory. I suspect this is due to the sys.call() in 
+# Seurat:::SpecificDimPlot. I still want to display the standard way though
+DimPlot(seu, reduction = "pca",
+        group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) +
+  scale_color_brewer(type = "qual", palette = "Set2")
+```
+
+```{r, eval=FALSE}
+seu <- RunTSNE(seu, dims = 1:50, verbose = FALSE)
+TSNEPlot(seu, group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) +
+  scale_color_brewer(type = "qual", palette = "Set2")
+```
+
+```{r tsne, include=FALSE}
+seu <- RunTSNE(seu, dims = 1:50, verbose = FALSE)
+DimPlot(seu, reduction = "tsne",
+        group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) +
+  scale_color_brewer(type = "qual", palette = "Set2")
+```
+
+UMAP can better preserve pairwise distance of cells than tSNE and can better separate cell populations than the first 2 PCs of PCA ([Becht et al. 2018](https://doi.org/10.1038/nbt.4314)), so the TI will be done on UMAP rather than tSNE or PCA.
+```{r, eval=FALSE}
+seu <- RunUMAP(seu, dims = 1:50)
+UMAPPlot(seu, group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) +
+  scale_color_brewer(type = "qual", palette = "Set2")
+```
+
+```{r umap, include=FALSE}
+seu <- RunUMAP(seu, dims = 1:50)
+DimPlot(seu, reduction = "umap",
+        group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) +
+  scale_color_brewer(type = "qual", palette = "Set2")
+```
+
+Cell type annotation with `SingleR` requires a reference with bulk RNA seq data for isolated known cell types. The reference used for cell type annotation here does not differentiate between different types of neural progenitor cells; clustering can further partition the neural progenitor cells. Furthermore, `slingshot` is based on cluster-wise minimum spanning tree, so finding a good clustering is important to good trajectory inference with `slingshot`. The clustering algorithm used here is [Leiden](https://www.nature.com/articles/s41598-019-41695-z), which is an improvement over the commonly used Louvain; Leiden communities are guaranteed to be well-connected, while Louvain can lead to poorly connected communities.
+```{r, eval=FALSE}
+seu <- FindNeighbors(seu, verbose = FALSE) %>% 
+  FindClusters(algorithm = 4, resolution = 1) # Leiden clustering
+UMAPPlot(seu, pt.size = 0.5)
+```
+
+```{r umap_clust, include=FALSE}
+seu <- FindNeighbors(seu, verbose = FALSE) %>% 
+  FindClusters(algorithm = 4, resolution = 1) # Leiden clustering
+DimPlot(seu, pt.size = 0.5, reduction = "umap")
+```
+
+# Slingshot
+## Trajectory inference
+While the `slingshot` vignette uses `SingleCellExperiment`, `slingshot` can also take a matrix of cell embeddings in reduced dimension as input. We can optionally specify the cluster to start or end the trajectory based on biological knowledge. Here, since quiescent neural stem cells are in cluster 10, the starting cluster would be 10 near the bottom left of the previous plot.
+```{r, include=FALSE}
+do_sling <- !file.exists("./output/neuron10k/slingshot.rds")
+if (!do_sling) {
+  sds <- readRDS("./output/neuron10k/slingshot.rds")
+}
+```
+
+```{r, eval=do_sling}
+sds <- slingshot(Embeddings(seu, "umap"), clusterLabels = seu$seurat_clusters, 
+                 start.clus = "10")
+```
+
+Unfortunately, `slingshot` does not natively support `ggplot2`. So this is a function that assigns colors to each cell in base R graphics.
+```{r}
+#' Assign a color to each cell based on some value
+#' 
+#' @param cell_vars Vector indicating the value of a variable associated with cells.
+#' @param pal_fun Palette function that returns a vector of hex colors, whose
+#' argument is the length of such a vector.
+#' @param ... Extra arguments for pal_fun.
+#' @return A vector of hex colors with one entry for each cell.
+cell_pal <- function(cell_vars, pal_fun,...) {
+  if (is.numeric(cell_vars)) {
+    pal <- pal_fun(100, ...)
+    return(pal[cut(cell_vars, breaks = 100)])
+  } else {
+    categories <- sort(unique(cell_vars))
+    pal <- setNames(pal_fun(length(categories), ...), categories)
+    return(pal[cell_vars])
+  }
+}
+```
+
+We need color palettes for both cell types and Leiden clusters. These would be the same colors seen in the Seurat plots.
+```{r}
+cell_colors <- cell_pal(seu$cell_type, brewer_pal("qual", "Set2"))
+cell_colors_clust <- cell_pal(seu$SCT_snn_res.1, hue_pal())
+```
+
+What does the inferred trajectory look like compared to cell types?
+```{r lin1}
+plot(reducedDim(sds), col = cell_colors, pch = 16, cex = 0.5)
+lines(sds, lwd = 2, type = 'lineages', col = 'black')
+```
+
+Again, the qNSCs are the brown points near the bottom left, NPCs are green, and neurons are pink. It seems that multiple neural lineages formed. This is a much more complicated picture than the two branches of neurons projected on the first two PCs in the pseudotime figure in the [kallisto | bustools paper](https://www.biorxiv.org/content/10.1101/673285v1) (Supplementary Figure 6.5). It also seems that `slingshot` did not pick up the glial lineage (oligodendrocytes and astrocytes), as the vast majority of cells here are NPCs or neurons. 
+
+See how this looks with Leiden clusters.
+```{r lin2}
+plot(reducedDim(sds), col = cell_colors_clust, pch = 16, cex = 0.5)
+lines(sds, lwd = 2, type = 'lineages', col = 'black')
+```
+
+Here `slingshot` thinks that cluster 3 is a point where multiple neural lineages diverge.
+
+Principal curves are smoothed representations of each lineage; pseudotime values are computed by projecting the cells onto the principal curves. What do the principal curves look like?
+```{r curves}
+plot(reducedDim(sds), col = cell_colors, pch = 16, cex = 0.5)
+lines(sds, lwd = 2, col = 'black')
+```
+
+Which cells are in which lineage? Here we plot the pseudotime values for each lineage.
+```{r pt, fig.height=8, fig.width=6}
+nc <- 2
+pt <- slingPseudotime(sds)
+nms <- colnames(pt)
+nr <- ceiling(length(nms)/nc)
+pal <- viridis(100, end = 0.95)
+par(mfrow = c(nr, nc))
+for (i in nms) {
+  colors <- pal[cut(pt[,i], breaks = 100)]
+  plot(reducedDim(sds), col = colors, pch = 16, cex = 0.5, main = i)
+  lines(sds, lwd = 2, col = 'black', type = 'lineages')
+}
+```
+
+I still wonder if lineages 1 and 6 are real. Monocle 3 would have assigned disconnected trajectories to the separate clusters in lineages 1 and 6, but those clusters have been labeled NPCs or neurons, which must have come from neural stem cells. Perhaps they are so differentiated that it would make sense to consider them separately from the main lineage as Monocle 3 does.
+
+```{r, include=FALSE}
+saveRDS(sds, "./output/neuron10k/slingshot.rds")
+```
+
+## Differential expression
+Let's look at which genes are differentially expressed along one of the 6 lineages. In `dynverse`, feature (gene) importance is calculated by using gene expression to predict pseudotime value with random forest and finding genes that contribute the most to the accuracy of the response. Since it's really not straightforward to convert existing pseudotime results to `dynverse` format, it would be easier to build a random forest model. Variable importance will be calculated for the top 100 highly variable genes here, with [`tidymodels`](https://github.com/tidymodels).
+
+```{r}
+# Get top highly variable genes
+top_hvg <- HVFInfo(seu) %>% 
+  mutate(., bc = rownames(.)) %>% 
+  arrange(desc(residual_variance)) %>% 
+  top_n(100, residual_variance) %>% 
+  pull(bc)
+# Prepare data for random forest
+dat_use <- t(GetAssayData(seu, slot = "scale.data")[top_hvg,])
+dat_use_df <- cbind(slingPseudotime(sds)[,5], dat_use)
+colnames(dat_use_df)[1] <- "pseudotime5"
+dat_use_df <- as.data.frame(dat_use_df[!is.na(dat_use_df[,1]),])
+```
+
+The subset of data is randomly split into training and validation; the model fitted on the training set will be evaluated on the validation set.
+```{r}
+dat_split <- initial_split(dat_use_df)
+dat_train <- training(dat_split)
+dat_val <- testing(dat_split)
+```
+
+`tidymodels` is a unified interface to different machine learning models, a "tidier" version of `caret`. The code chunk below can easily be adjusted to use other random forest packages as the back end, so no need to learn new syntax for those packages.
+```{r}
+model <- rand_forest(mtry = 40, trees = 1000, min_n = 15) %>%
+  set_engine("ranger", importance = "impurity", num.threads = 3) %>%
+  fit(pseudotime5 ~ ., data = dat_train)
+```
+
+The model is evaluated on the validation set with 3 metrics: room mean squared error (RMSE), coefficient of determination using correlation (rsq, between 0 and 1), and mean absolute error (MAE).
+```{r}
+val_results <- dat_val %>% 
+  mutate(estimate = predict(model, .[,-1]) %>% pull()) %>% 
+  select(truth = pseudotime5, estimate)
+metrics(data = val_results, truth, estimate)
+```
+
+RMSE and MAE should have the same unit as the data. As pseudotime values here usually have values much larger than 2, the error isn't too bad. Correlation (rsq) between `slingshot`'s pseudotime and random forest's prediction is very high, also showing good prediction from the top 100 highly variable genes.
+```{r}
+summary(dat_use_df$pseudotime5)
+```
+
+Now it's time to plot some genes deemed the most important to predicting pseudotime:
+```{r}
+var_imp <- sort(model$fit$variable.importance, decreasing = TRUE)
+top_genes <- names(var_imp)[1:6]
+# Convert to gene symbol
+top_gene_name <- gns$gene_name[match(top_genes, gns$gene)]
+```
+
+```{r genes, fig.width=6, fig.height=8}
+par(mfrow = c(nr, nc))
+for (i in seq_along(top_genes)) {
+  colors <- pal[cut(dat_use[,top_genes[i]], breaks = 100)]
+  plot(reducedDim(sds), col = colors, pch = 16, cex = 0.5, main = top_gene_name[i])
+  lines(sds, lwd = 2, col = 'black', type = 'lineages')
+}
+```
+
+These genes do highlight different parts of the trajectory. A quick search on PubMed did show relevance of these genes to development of the central nervous system in mice. 
