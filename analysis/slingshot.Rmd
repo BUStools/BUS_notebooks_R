@@ -122,7 +122,7 @@ PCAPlot(seu, group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) 
   scale_color_brewer(type = "qual", palette = "Set2")
 ```
 
-```{r pca, include=FALSE}
+```{r pca, echo=FALSE}
 # Need to use DimPlot due to weird workflowr problem with PCAPlot that calls seu[[wflow.build]]
 # and eats up memory. I suspect this is due to the sys.call() in 
 # Seurat:::SpecificDimPlot. I still want to display the standard way though
@@ -137,7 +137,7 @@ TSNEPlot(seu, group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE)
   scale_color_brewer(type = "qual", palette = "Set2")
 ```
 
-```{r tsne, include=FALSE}
+```{r tsne, echo=FALSE}
 seu <- RunTSNE(seu, dims = 1:50, verbose = FALSE)
 DimPlot(seu, reduction = "tsne",
         group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) +
@@ -151,7 +151,7 @@ UMAPPlot(seu, group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE)
   scale_color_brewer(type = "qual", palette = "Set2")
 ```
 
-```{r umap, include=FALSE}
+```{r umap, echo=FALSE}
 seu <- RunUMAP(seu, dims = 1:50)
 DimPlot(seu, reduction = "umap",
         group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) +
@@ -165,7 +165,7 @@ seu <- FindNeighbors(seu, verbose = FALSE) %>%
 UMAPPlot(seu, pt.size = 0.5)
 ```
 
-```{r umap_clust, include=FALSE}
+```{r umap_clust, echo=FALSE}
 seu <- FindNeighbors(seu, verbose = FALSE) %>% 
   FindClusters(algorithm = 4, resolution = 1) # Leiden clustering
 DimPlot(seu, pt.size = 0.5, reduction = "umap")
