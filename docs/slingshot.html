@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Lambda Moses" />
+
+<meta name="date" content="2019-07-24" />
+
+<title>Pseudotime analysis with slingshot</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">kallisto | bustools R Notebooks</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/BUStools/BUS_notebooks_R">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Pseudotime analysis with slingshot</h1>
+<h4 class="author">Lambda Moses</h4>
+<h4 class="date">2019-07-24</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2019-07-24
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>BUS_notebooks_R/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.4.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20181214code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20181214)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20181214code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20181214)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree5e16aa3869c353a1808453b97f5ecbb323d0e211targetblank5e16aa3a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/5e16aa3869c353a1808453b97f5ecbb323d0e211" target="_blank">5e16aa3</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree5e16aa3869c353a1808453b97f5ecbb323d0e211targetblank5e16aa3a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    BUS_notebooks_R.Rproj
+    Ignored:    analysis/figure/
+    Ignored:    data/whitelist_v3.txt.gz
+    Ignored:    output/out_pbmc1k/
+
+Untracked files:
+    Untracked:  ensembl/
+    Untracked:  output/neuron10k/
+
+Unstaged changes:
+    Modified:   analysis/index.Rmd
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the R Markdown and HTML files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view them.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/5e16aa3869c353a1808453b97f5ecbb323d0e211/analysis/slingshot.Rmd" target="_blank">5e16aa3</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-24
+</td>
+<td>
+slingshot notebook
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>This notebook does pseudotime analysis of the <a href="https://support.10xgenomics.com/single-cell-gene-expression/datasets/3.0.0/neuron_10k_v3">10x 10k neurons from an E18 mouse</a> with <a href="https://bioconductor.org/packages/release/bioc/html/slingshot.html"><code>slingshot</code></a>, which is on Bioconductor. Like Monocle 2 DDRTree, <code>slingshot</code> builds a minimum spanning tree, but while Monocle 2 builds the tree from individual cells, <code>slingshot</code> does so with clusters. <code>slingshot</code> is also the top rated trajectory inference method in the <a href="https://doi.org/10.1038/s41587-019-0071-9"><code>dynverse</code> paper</a>.</p>
+<p>In the <a href="https://www.biorxiv.org/content/10.1101/673285v1">kallisto | bustools paper</a>, I used the docker container for <code>slingshot</code> provided by <code>dynverse</code> for pseudotime analysis, because <code>dynverse</code> provides unified interface to dozens of different trajectory inference (TI) methods via docker containers, making it easy to try other methods without worrying about installing dependencies. Furthermore, <code>dynverse</code> provides metrics to evaluate TI methods. However, the docker images provided by <code>dynverse</code> do not provide users with the full range of options available from the TI methods themselves. For instance, while any dimension reduction and any kind of clustering can be used for <code>slingshot</code>, <code>dynverse</code> chose PCA and partition around medoids (PAM) clustering for us (see the source code <a href="https://github.com/dynverse/ti_slingshot/blob/master/package/R/ti_slingshot.R">here</a>). So in this notebook, we will directly use <code>slingshot</code> rather than via <code>dynverse</code>.</p>
+<p>The gene count matrix of the 10k neuron dataset has already been generated with the kallisto | bustools pipeline and filtered for the <a href="https://bustools.github.io/BUS_notebooks_R/monocle2.html">Monocle 2 notebook</a>. Cell types have also been annotated with <code>SingleR</code> in that notebook. Please refer to the first 3 main sections of that notebook for instructions on how to use kallisto | bustools, remove empty droplets, and annotate cell types.</p>
+<p>Packages <code>slingshot</code>, <code>biomaRt</code> and <code>SingleCellExperiment</code> are from Bioconductor. <code>BUSpaRse</code> is on GitHub. The other packages are on CRAN.</p>
+<pre class="r"><code>library(slingshot)
+library(biomaRt)
+library(BUSpaRse)
+library(tidyverse)
+library(tidymodels)
+library(Seurat)
+library(scales)
+library(viridis)</code></pre>
+</div>
+<div id="loading-the-matrix" class="section level1">
+<h1>Loading the matrix</h1>
+<p>The filtered gene count matrix and the cell annotation were saved from the Monocle 2 notebook.</p>
+<pre class="r"><code>annot &lt;- readRDS(&quot;./output/neuron10k/cell_types.rds&quot;)
+mat_filtered &lt;- readRDS(&quot;./output/neuron10k/mat_filtered.rds&quot;)</code></pre>
+<p>Just to show the structures of those 2 objects:</p>
+<pre class="r"><code>dim(mat_filtered)</code></pre>
+<pre><code>#&gt; [1] 23342 11031</code></pre>
+<pre class="r"><code>class(mat_filtered)</code></pre>
+<pre><code>#&gt; [1] &quot;dgCMatrix&quot;
+#&gt; attr(,&quot;package&quot;)
+#&gt; [1] &quot;Matrix&quot;</code></pre>
+<p>Row names are Ensembl gene IDs.</p>
+<pre class="r"><code>head(rownames(mat_filtered))</code></pre>
+<pre><code>#&gt; [1] &quot;ENSMUSG00000094619.2&quot;  &quot;ENSMUSG00000095646.1&quot;  &quot;ENSMUSG00000073406.10&quot;
+#&gt; [4] &quot;ENSMUSG00000079491.9&quot;  &quot;ENSMUSG00000046808.17&quot; &quot;ENSMUSG00000092300.7&quot;</code></pre>
+<pre class="r"><code>head(colnames(mat_filtered))</code></pre>
+<pre><code>#&gt; [1] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot;
+#&gt; [4] &quot;AAACCCAGTCGCACAC&quot; &quot;AAACCCAGTGCACATT&quot; &quot;AAACCCAGTGGTAATA&quot;</code></pre>
+<pre class="r"><code>str(annot)</code></pre>
+<pre><code>#&gt; List of 10
+#&gt;  $ scores       : num [1:11031, 1:28] 0.188 0.192 0.183 0.265 0.186 ...
+#&gt;   ..- attr(*, &quot;dimnames&quot;)=List of 2
+#&gt;   .. ..$ : chr [1:11031] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot; &quot;AAACCCAGTCGCACAC&quot; ...
+#&gt;   .. ..$ : chr [1:28] &quot;Adipocytes&quot; &quot;aNSCs&quot; &quot;Astrocytes&quot; &quot;Astrocytes activated&quot; ...
+#&gt;  $ labels       : chr [1:11031, 1] &quot;NPCs&quot; &quot;NPCs&quot; &quot;NPCs&quot; &quot;NPCs&quot; ...
+#&gt;   ..- attr(*, &quot;dimnames&quot;)=List of 2
+#&gt;   .. ..$ : chr [1, 1:11031] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot; &quot;AAACCCAGTCGCACAC&quot; ...
+#&gt;   .. ..$ : NULL
+#&gt;  $ r            : num [1:11031, 1:358] 0.186 0.195 0.18 0.25 0.17 ...
+#&gt;   ..- attr(*, &quot;dimnames&quot;)=List of 2
+#&gt;   .. ..$ : chr [1:11031] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot; &quot;AAACCCAGTCGCACAC&quot; ...
+#&gt;   .. ..$ : chr [1:358] &quot;ERR525589Aligned&quot; &quot;ERR525592Aligned&quot; &quot;SRR275532Aligned&quot; &quot;SRR275534Aligned&quot; ...
+#&gt;  $ pval         : Named num [1:11031] 0.0396 0.0582 0.0366 0.0107 0.0329 ...
+#&gt;   ..- attr(*, &quot;names&quot;)= chr [1:11031] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot; &quot;AAACCCAGTCGCACAC&quot; ...
+#&gt;  $ labels1      : chr [1:11031, 1] &quot;NPCs&quot; &quot;NPCs&quot; &quot;NPCs&quot; &quot;NPCs&quot; ...
+#&gt;   ..- attr(*, &quot;dimnames&quot;)=List of 2
+#&gt;   .. ..$ : chr [1:11031] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot; &quot;AAACCCAGTCGCACAC&quot; ...
+#&gt;   .. ..$ : NULL
+#&gt;  $ labels1.thres: chr [1:11031] &quot;NPCs&quot; &quot;X&quot; &quot;NPCs&quot; &quot;NPCs&quot; ...
+#&gt;  $ cell.names   : chr [1:11031] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot; &quot;AAACCCAGTCGCACAC&quot; ...
+#&gt;  $ quantile.use : num 0.8
+#&gt;  $ types        : chr [1:358] &quot;Adipocytes&quot; &quot;Adipocytes&quot; &quot;Adipocytes&quot; &quot;Adipocytes&quot; ...
+#&gt;  $ method       : chr &quot;single&quot;</code></pre>
+<p>To prevent endothelial cells, erythrocytes, immune cells, and fibroblasts from being mistaken as very differentiated cell types derived from neural stem cells, we will only keep cells with a label for the neural or glial lineage. This can be a problem as <code>slingshot</code> does not support multiple disconnected trajectories.</p>
+<pre class="r"><code>ind &lt;- annot$labels %in% c(&quot;NPCs&quot;, &quot;Neurons&quot;, &quot;OPCs&quot;, &quot;Oligodendrocytes&quot;, 
+                           &quot;qNSCs&quot;, &quot;aNSCs&quot;, &quot;Astrocytes&quot;, &quot;Ependymal&quot;)
+cells_use &lt;- annot$cell.names[ind]
+mat_filtered &lt;- mat_filtered[, cells_use]</code></pre>
+<p>Meaning of the acronyms:</p>
+<ul>
+<li>NPCs: Neural progenitor cells</li>
+<li>OPCs: Oligodendrocyte progenitor cells</li>
+<li>qNSCs: Quiescent neural stem cells</li>
+<li>aNSCs: Active neural stem cells</li>
+</ul>
+<p>Since we will do differential expression and gene symbols are more human readable than Ensembl gene IDs, we will get the corresponding gene symbols from Ensembl.</p>
+<pre class="r"><code>gns &lt;- tr2g_ensembl(species = &quot;Mus musculus&quot;, use_gene_name = TRUE, 
+                    ensembl_version = 94)[,c(&quot;gene&quot;, &quot;gene_name&quot;)] %&gt;% 
+  distinct()</code></pre>
+<pre><code>#&gt; Querying biomart for transcript and gene IDs of Mus musculus</code></pre>
+<pre><code>#&gt; Cache found</code></pre>
+</div>
+<div id="preprocessing" class="section level1">
+<h1>Preprocessing</h1>
+<div id="qc" class="section level2">
+<h2>QC</h2>
+<pre class="r"><code>seu &lt;- CreateSeuratObject(mat_filtered) %&gt;% 
+  SCTransform() # normalize and scale
+# Add cell type annotation to metadata
+seu &lt;- AddMetaData(seu, setNames(annot$labels[ind], cells_use), 
+                   col.name = &quot;cell_type&quot;)</code></pre>
+<pre class="r"><code>VlnPlot(seu, c(&quot;nCount_RNA&quot;, &quot;nFeature_RNA&quot;), pt.size = 0.1, ncol = 1, group.by = &quot;cell_type&quot;)</code></pre>
+<p><img src="figure/slingshot.Rmd/vln-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>There is only one cell labeled ependymal.</p>
+<pre class="r"><code>ggplot(seu@meta.data, aes(nCount_RNA, nFeature_RNA, color = cell_type)) +
+  geom_point(size = 0.5) +
+  scale_color_brewer(type = &quot;qual&quot;, palette = &quot;Set2&quot;, name = &quot;cell type&quot;) +
+  scale_x_log10() +
+  scale_y_log10() +
+  theme_bw() +
+  # Make points larger in legend
+  guides(color = guide_legend(override.aes = list(size = 3))) +
+  labs(x = &quot;Total UMI counts&quot;, y = &quot;Number of genes detected&quot;)</code></pre>
+<p><img src="figure/slingshot.Rmd/qc-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dimension-reduction" class="section level2">
+<h2>Dimension reduction</h2>
+<pre class="r"><code>seu &lt;- RunPCA(seu, npcs = 70, verbose = FALSE)
+ElbowPlot(seu, ndims = 70)</code></pre>
+<p><img src="figure/slingshot.Rmd/elbow-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The y axis is standard deviation (not variance), or the singular values from singular value decomposition on the data performed for PCA.</p>
+<pre class="r"><code>PCAPlot(seu, group.by = &quot;cell_type&quot;, pt.size = 0.5, label = TRUE, repel = TRUE) +
+  scale_color_brewer(type = &quot;qual&quot;, palette = &quot;Set2&quot;)</code></pre>
+<pre class="r"><code>seu &lt;- RunTSNE(seu, dims = 1:50, verbose = FALSE)
+TSNEPlot(seu, group.by = &quot;cell_type&quot;, pt.size = 0.5, label = TRUE, repel = TRUE) +
+  scale_color_brewer(type = &quot;qual&quot;, palette = &quot;Set2&quot;)</code></pre>
+<p>UMAP can better preserve pairwise distance of cells than tSNE and can better separate cell populations than the first 2 PCs of PCA (<a href="https://doi.org/10.1038/nbt.4314">Becht et al. 2018</a>), so the TI will be done on UMAP rather than tSNE or PCA.</p>
+<pre class="r"><code>seu &lt;- RunUMAP(seu, dims = 1:50)
+UMAPPlot(seu, group.by = &quot;cell_type&quot;, pt.size = 0.5, label = TRUE, repel = TRUE) +
+  scale_color_brewer(type = &quot;qual&quot;, palette = &quot;Set2&quot;)</code></pre>
+<p>Cell type annotation with <code>SingleR</code> requires a reference with bulk RNA seq data for isolated known cell types. The reference used for cell type annotation here does not differentiate between different types of neural progenitor cells; clustering can further partition the neural progenitor cells. Furthermore, <code>slingshot</code> is based on cluster-wise minimum spanning tree, so finding a good clustering is important to good trajectory inference with <code>slingshot</code>. The clustering algorithm used here is <a href="https://www.nature.com/articles/s41598-019-41695-z">Leiden</a>, which is an improvement over the commonly used Louvain; Leiden communities are guaranteed to be well-connected, while Louvain can lead to poorly connected communities.</p>
+<pre class="r"><code>seu &lt;- FindNeighbors(seu, verbose = FALSE) %&gt;% 
+  FindClusters(algorithm = 4, resolution = 1) # Leiden clustering
+UMAPPlot(seu, pt.size = 0.5)</code></pre>
+</div>
+</div>
+<div id="slingshot" class="section level1">
+<h1>Slingshot</h1>
+<div id="trajectory-inference" class="section level2">
+<h2>Trajectory inference</h2>
+<p>While the <code>slingshot</code> vignette uses <code>SingleCellExperiment</code>, <code>slingshot</code> can also take a matrix of cell embeddings in reduced dimension as input. We can optionally specify the cluster to start or end the trajectory based on biological knowledge. Here, since quiescent neural stem cells are in cluster 10, the starting cluster would be 10 near the bottom left of the previous plot.</p>
+<pre class="r"><code>sds &lt;- slingshot(Embeddings(seu, &quot;umap&quot;), clusterLabels = seu$seurat_clusters, 
+                 start.clus = &quot;10&quot;)</code></pre>
+<p>Unfortunately, <code>slingshot</code> does not natively support <code>ggplot2</code>. So this is a function that assigns colors to each cell in base R graphics.</p>
+<pre class="r"><code>#&#39; Assign a color to each cell based on some value
+#&#39; 
+#&#39; @param cell_vars Vector indicating the value of a variable associated with cells.
+#&#39; @param pal_fun Palette function that returns a vector of hex colors, whose
+#&#39; argument is the length of such a vector.
+#&#39; @param ... Extra arguments for pal_fun.
+#&#39; @return A vector of hex colors with one entry for each cell.
+cell_pal &lt;- function(cell_vars, pal_fun,...) {
+  if (is.numeric(cell_vars)) {
+    pal &lt;- pal_fun(100, ...)
+    return(pal[cut(cell_vars, breaks = 100)])
+  } else {
+    categories &lt;- sort(unique(cell_vars))
+    pal &lt;- setNames(pal_fun(length(categories), ...), categories)
+    return(pal[cell_vars])
+  }
+}</code></pre>
+<p>We need color palettes for both cell types and Leiden clusters. These would be the same colors seen in the Seurat plots.</p>
+<pre class="r"><code>cell_colors &lt;- cell_pal(seu$cell_type, brewer_pal(&quot;qual&quot;, &quot;Set2&quot;))
+cell_colors_clust &lt;- cell_pal(seu$SCT_snn_res.1, hue_pal())</code></pre>
+<p>What does the inferred trajectory look like compared to cell types?</p>
+<pre class="r"><code>plot(reducedDim(sds), col = cell_colors, pch = 16, cex = 0.5)
+lines(sds, lwd = 2, type = &#39;lineages&#39;, col = &#39;black&#39;)</code></pre>
+<p><img src="figure/slingshot.Rmd/lin1-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Again, the qNSCs are the brown points near the bottom left, NPCs are green, and neurons are pink. It seems that multiple neural lineages formed. This is a much more complicated picture than the two branches of neurons projected on the first two PCs in the pseudotime figure in the <a href="https://www.biorxiv.org/content/10.1101/673285v1">kallisto | bustools paper</a> (Supplementary Figure 6.5). It also seems that <code>slingshot</code> did not pick up the glial lineage (oligodendrocytes and astrocytes), as the vast majority of cells here are NPCs or neurons.</p>
+<p>See how this looks with Leiden clusters.</p>
+<pre class="r"><code>plot(reducedDim(sds), col = cell_colors_clust, pch = 16, cex = 0.5)
+lines(sds, lwd = 2, type = &#39;lineages&#39;, col = &#39;black&#39;)</code></pre>
+<p><img src="figure/slingshot.Rmd/lin2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Here <code>slingshot</code> thinks that cluster 3 is a point where multiple neural lineages diverge.</p>
+<p>Principal curves are smoothed representations of each lineage; pseudotime values are computed by projecting the cells onto the principal curves. What do the principal curves look like?</p>
+<pre class="r"><code>plot(reducedDim(sds), col = cell_colors, pch = 16, cex = 0.5)
+lines(sds, lwd = 2, col = &#39;black&#39;)</code></pre>
+<p><img src="figure/slingshot.Rmd/curves-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Which cells are in which lineage? Here we plot the pseudotime values for each lineage.</p>
+<pre class="r"><code>nc &lt;- 2
+pt &lt;- slingPseudotime(sds)
+nms &lt;- colnames(pt)
+nr &lt;- ceiling(length(nms)/nc)
+pal &lt;- viridis(100, end = 0.95)
+par(mfrow = c(nr, nc))
+for (i in nms) {
+  colors &lt;- pal[cut(pt[,i], breaks = 100)]
+  plot(reducedDim(sds), col = colors, pch = 16, cex = 0.5, main = i)
+  lines(sds, lwd = 2, col = &#39;black&#39;, type = &#39;lineages&#39;)
+}</code></pre>
+<p><img src="figure/slingshot.Rmd/pt-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>I still wonder if lineages 1 and 6 are real. Monocle 3 would have assigned disconnected trajectories to the separate clusters in lineages 1 and 6, but those clusters have been labeled NPCs or neurons, which must have come from neural stem cells. Perhaps they are so differentiated that it would make sense to consider them separately from the main lineage as Monocle 3 does.</p>
+</div>
+<div id="differential-expression" class="section level2">
+<h2>Differential expression</h2>
+<p>Let’s look at which genes are differentially expressed along one of the 6 lineages. In <code>dynverse</code>, feature (gene) importance is calculated by using gene expression to predict pseudotime value with random forest and finding genes that contribute the most to the accuracy of the response. Since it’s really not straightforward to convert existing pseudotime results to <code>dynverse</code> format, it would be easier to build a random forest model. Variable importance will be calculated for the top 100 highly variable genes here, with <a href="https://github.com/tidymodels"><code>tidymodels</code></a>.</p>
+<pre class="r"><code># Get top highly variable genes
+top_hvg &lt;- HVFInfo(seu) %&gt;% 
+  mutate(., bc = rownames(.)) %&gt;% 
+  arrange(desc(residual_variance)) %&gt;% 
+  top_n(100, residual_variance) %&gt;% 
+  pull(bc)
+# Prepare data for random forest
+dat_use &lt;- t(GetAssayData(seu, slot = &quot;scale.data&quot;)[top_hvg,])
+dat_use_df &lt;- cbind(slingPseudotime(sds)[,5], dat_use)
+colnames(dat_use_df)[1] &lt;- &quot;pseudotime5&quot;
+dat_use_df &lt;- as.data.frame(dat_use_df[!is.na(dat_use_df[,1]),])</code></pre>
+<p>The subset of data is randomly split into training and validation; the model fitted on the training set will be evaluated on the validation set.</p>
+<pre class="r"><code>dat_split &lt;- initial_split(dat_use_df)
+dat_train &lt;- training(dat_split)
+dat_val &lt;- testing(dat_split)</code></pre>
+<p><code>tidymodels</code> is a unified interface to different machine learning models, a “tidier” version of <code>caret</code>. The code chunk below can easily be adjusted to use other random forest packages as the back end, so no need to learn new syntax for those packages.</p>
+<pre class="r"><code>model &lt;- rand_forest(mtry = 40, trees = 1000, min_n = 15) %&gt;%
+  set_engine(&quot;ranger&quot;, importance = &quot;impurity&quot;, num.threads = 3) %&gt;%
+  fit(pseudotime5 ~ ., data = dat_train)</code></pre>
+<p>The model is evaluated on the validation set with 3 metrics: room mean squared error (RMSE), coefficient of determination using correlation (rsq, between 0 and 1), and mean absolute error (MAE).</p>
+<pre class="r"><code>val_results &lt;- dat_val %&gt;% 
+  mutate(estimate = predict(model, .[,-1]) %&gt;% pull()) %&gt;% 
+  select(truth = pseudotime5, estimate)
+metrics(data = val_results, truth, estimate)</code></pre>
+<pre><code>#&gt; # A tibble: 3 x 3
+#&gt;   .metric .estimator .estimate
+#&gt;   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+#&gt; 1 rmse    standard       1.59 
+#&gt; 2 rsq     standard       0.944
+#&gt; 3 mae     standard       0.908</code></pre>
+<p>RMSE and MAE should have the same unit as the data. As pseudotime values here usually have values much larger than 2, the error isn’t too bad. Correlation (rsq) between <code>slingshot</code>’s pseudotime and random forest’s prediction is very high, also showing good prediction from the top 100 highly variable genes.</p>
+<pre class="r"><code>summary(dat_use_df$pseudotime5)</code></pre>
+<pre><code>#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#&gt;   0.000   8.814  14.519  14.069  18.427  26.777</code></pre>
+<p>Now it’s time to plot some genes deemed the most important to predicting pseudotime:</p>
+<pre class="r"><code>var_imp &lt;- sort(model$fit$variable.importance, decreasing = TRUE)
+top_genes &lt;- names(var_imp)[1:6]
+# Convert to gene symbol
+top_gene_name &lt;- gns$gene_name[match(top_genes, gns$gene)]</code></pre>
+<pre class="r"><code>par(mfrow = c(nr, nc))
+for (i in seq_along(top_genes)) {
+  colors &lt;- pal[cut(dat_use[,top_genes[i]], breaks = 100)]
+  plot(reducedDim(sds), col = colors, pch = 16, cex = 0.5, main = top_gene_name[i])
+  lines(sds, lwd = 2, col = &#39;black&#39;, type = &#39;lineages&#39;)
+}</code></pre>
+<p><img src="figure/slingshot.Rmd/genes-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>These genes do highlight different parts of the trajectory. A quick search on PubMed did show relevance of these genes to development of the central nervous system in mice.</p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>#&gt; R version 3.6.1 (2019-07-05)
+#&gt; Platform: x86_64-apple-darwin15.6.0 (64-bit)
+#&gt; Running under: macOS Mojave 10.14.5
+#&gt; 
+#&gt; Matrix products: default
+#&gt; BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
+#&gt; LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
+#&gt; 
+#&gt; locale:
+#&gt; [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+#&gt; 
+#&gt; attached base packages:
+#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     
+#&gt; 
+#&gt; other attached packages:
+#&gt;  [1] viridis_0.5.1     viridisLite_0.3.0 Seurat_3.0.2     
+#&gt;  [4] yardstick_0.0.3   rsample_0.0.5     recipes_0.1.6    
+#&gt;  [7] parsnip_0.0.2     infer_0.4.0.1     dials_0.0.2      
+#&gt; [10] scales_1.0.0      broom_0.5.2       tidymodels_0.0.2 
+#&gt; [13] forcats_0.4.0     stringr_1.4.0     dplyr_0.8.3      
+#&gt; [16] purrr_0.3.2       readr_1.3.1       tidyr_0.8.3      
+#&gt; [19] tibble_2.1.3      ggplot2_3.2.0     tidyverse_1.2.1  
+#&gt; [22] BUSpaRse_0.99.18  biomaRt_2.41.7    slingshot_1.3.1  
+#&gt; [25] princurve_2.1.4  
+#&gt; 
+#&gt; loaded via a namespace (and not attached):
+#&gt;   [1] rappdirs_0.3.1              SnowballC_0.6.0            
+#&gt;   [3] rtracklayer_1.45.2          R.methodsS3_1.7.1          
+#&gt;   [5] bit64_0.9-7                 knitr_1.23                 
+#&gt;   [7] irlba_2.3.3                 dygraphs_1.1.1.6           
+#&gt;   [9] DelayedArray_0.11.4         R.utils_2.9.0              
+#&gt;  [11] data.table_1.12.2           rpart_4.1-15               
+#&gt;  [13] inline_0.3.15               RCurl_1.95-4.12            
+#&gt;  [15] AnnotationFilter_1.9.0      generics_0.0.2             
+#&gt;  [17] metap_1.1                   BiocGenerics_0.31.5        
+#&gt;  [19] GenomicFeatures_1.37.4      callr_3.3.1                
+#&gt;  [21] cowplot_1.0.0               RSQLite_2.1.2              
+#&gt;  [23] RANN_2.6.1                  future_1.14.0              
+#&gt;  [25] bit_1.1-14                  tokenizers_0.2.1           
+#&gt;  [27] webshot_0.5.1               xml2_1.2.0                 
+#&gt;  [29] lubridate_1.7.4             httpuv_1.5.1               
+#&gt;  [31] StanHeaders_2.18.1-10       SummarizedExperiment_1.15.5
+#&gt;  [33] assertthat_0.2.1            gower_0.2.1                
+#&gt;  [35] xfun_0.8                    hms_0.5.0                  
+#&gt;  [37] bayesplot_1.7.0             evaluate_0.14              
+#&gt;  [39] promises_1.0.1              fansi_0.4.0                
+#&gt;  [41] progress_1.2.2              caTools_1.17.1.2           
+#&gt;  [43] dbplyr_1.4.2                readxl_1.3.1               
+#&gt;  [45] igraph_1.2.4.1              DBI_1.0.0                  
+#&gt;  [47] htmlwidgets_1.3             stats4_3.6.1               
+#&gt;  [49] crosstalk_1.0.0             backports_1.1.4            
+#&gt;  [51] markdown_1.0                gbRd_0.4-11                
+#&gt;  [53] RcppParallel_4.4.3          vctrs_0.2.0                
+#&gt;  [55] SingleCellExperiment_1.7.0  Biobase_2.45.0             
+#&gt;  [57] ensembldb_2.9.2             ROCR_1.0-7                 
+#&gt;  [59] withr_2.1.2                 BSgenome_1.53.0            
+#&gt;  [61] sctransform_0.2.0           GenomicAlignments_1.21.4   
+#&gt;  [63] xts_0.11-2                  prettyunits_1.0.2          
+#&gt;  [65] cluster_2.1.0               ape_5.3                    
+#&gt;  [67] lazyeval_0.2.2              crayon_1.3.4               
+#&gt;  [69] labeling_0.3                pkgconfig_2.0.2            
+#&gt;  [71] GenomeInfoDb_1.21.1         nlme_3.1-140               
+#&gt;  [73] ProtGenerics_1.17.2         nnet_7.3-12                
+#&gt;  [75] rlang_0.4.0                 globals_0.12.4             
+#&gt;  [77] miniUI_0.1.1.1              colourpicker_1.0           
+#&gt;  [79] BiocFileCache_1.9.1         rsvd_1.0.1                 
+#&gt;  [81] modelr_0.1.4                tidytext_0.2.1             
+#&gt;  [83] cellranger_1.1.0            rprojroot_1.3-2            
+#&gt;  [85] lmtest_0.9-37               matrixStats_0.54.0         
+#&gt;  [87] Matrix_1.2-17               loo_2.1.0                  
+#&gt;  [89] boot_1.3-23                 zoo_1.8-6                  
+#&gt;  [91] base64enc_0.1-3             whisker_0.3-2              
+#&gt;  [93] ggridges_0.5.1              processx_3.4.1             
+#&gt;  [95] png_0.1-7                   bitops_1.0-6               
+#&gt;  [97] R.oo_1.22.0                 KernSmooth_2.23-15         
+#&gt;  [99] pROC_1.15.3                 Biostrings_2.53.2          
+#&gt; [101] blob_1.2.0                  rgl_0.100.26               
+#&gt; [103] workflowr_1.4.0             manipulateWidget_0.10.0    
+#&gt; [105] shinystan_2.5.0             S4Vectors_0.23.17          
+#&gt; [107] ica_1.0-2                   memoise_1.1.0              
+#&gt; [109] magrittr_1.5                plyr_1.8.4                 
+#&gt; [111] gplots_3.0.1.1              bibtex_0.4.2               
+#&gt; [113] gdata_2.18.0                zlibbioc_1.31.0            
+#&gt; [115] threejs_0.3.1               compiler_3.6.1             
+#&gt; [117] lsei_1.2-0                  rstantools_1.5.1           
+#&gt; [119] RColorBrewer_1.1-2          lme4_1.1-21                
+#&gt; [121] fitdistrplus_1.0-14         Rsamtools_2.1.3            
+#&gt; [123] cli_1.1.0                   XVector_0.25.0             
+#&gt; [125] listenv_0.7.0               pbapply_1.4-1              
+#&gt; [127] janeaustenr_0.1.5           ps_1.3.0                   
+#&gt; [129] MASS_7.3-51.4               tidyselect_0.2.5           
+#&gt; [131] stringi_1.4.3               yaml_2.2.0                 
+#&gt; [133] askpass_1.1                 ggrepel_0.8.1              
+#&gt; [135] grid_3.6.1                  tidypredict_0.4.2          
+#&gt; [137] tools_3.6.1                 future.apply_1.3.0         
+#&gt; [139] parallel_3.6.1              rstudioapi_0.10            
+#&gt; [141] git2r_0.26.1                gridExtra_2.3              
+#&gt; [143] prodlim_2018.04.18          plyranges_1.5.12           
+#&gt; [145] Rtsne_0.15                  digest_0.6.20              
+#&gt; [147] shiny_1.3.2                 lava_1.6.5                 
+#&gt; [149] Rcpp_1.0.1                  GenomicRanges_1.37.14      
+#&gt; [151] SDMTools_1.1-221.1          later_0.8.0                
+#&gt; [153] httr_1.4.0                  AnnotationDbi_1.47.0       
+#&gt; [155] rsconnect_0.8.15            npsurv_0.4-0               
+#&gt; [157] Rdpack_0.11-0               colorspace_1.4-1           
+#&gt; [159] ranger_0.11.2               reticulate_1.12            
+#&gt; [161] rvest_0.3.4                 XML_3.98-1.20              
+#&gt; [163] fs_1.3.1                    IRanges_2.19.10            
+#&gt; [165] splines_3.6.1               shinythemes_1.1.2          
+#&gt; [167] plotly_4.9.0                xtable_1.8-4               
+#&gt; [169] rstanarm_2.18.2             jsonlite_1.6               
+#&gt; [171] nloptr_1.2.1                timeDate_3043.102          
+#&gt; [173] rstan_2.19.2                zeallot_0.1.0              
+#&gt; [175] ipred_0.9-9                 R6_2.4.0                   
+#&gt; [177] pillar_1.4.2                htmltools_0.3.6            
+#&gt; [179] mime_0.7                    glue_1.3.1                 
+#&gt; [181] minqa_1.2.4                 DT_0.7                     
+#&gt; [183] BiocParallel_1.19.0         class_7.3-15               
+#&gt; [185] codetools_0.2-16            utf8_1.1.4                 
+#&gt; [187] tsne_0.1-3                  pkgbuild_1.0.3             
+#&gt; [189] furrr_0.1.0                 lattice_0.20-38            
+#&gt; [191] curl_4.0                    gtools_3.8.1               
+#&gt; [193] tidyposterior_0.0.2         shinyjs_1.0                
+#&gt; [195] openssl_1.4.1               survival_2.44-1.1          
+#&gt; [197] rmarkdown_1.14              munsell_0.5.0              
+#&gt; [199] GenomeInfoDbData_1.2.1      haven_2.1.1                
+#&gt; [201] reshape2_1.4.3              gtable_0.3.0</code></pre>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
