@@ -497,10 +497,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree63e0c03aa7048083fe7d9a72c8f351b82f35243ftargetblank63e0c03a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/63e0c03aa7048083fe7d9a72c8f351b82f35243f" target="_blank">63e0c03</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree7c215a4bc97ef2b9a8aadab733032eab2769e735targetblank7c215a4a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/7c215a4bc97ef2b9a8aadab733032eab2769e735" target="_blank">7c215a4</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree63e0c03aa7048083fe7d9a72c8f351b82f35243ftargetblank63e0c03a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree7c215a4bc97ef2b9a8aadab733032eab2769e735targetblank7c215a4a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -516,9 +516,6 @@ Ignored files:
 Untracked files:
     Untracked:  ensembl/
     Untracked:  output/neuron10k/
-
-Unstaged changes:
-    Modified:   analysis/index.Rmd
 
 </code></pre>
 <p>
@@ -557,6 +554,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/7c215a4bc97ef2b9a8aadab733032eab2769e735/analysis/slingshot.Rmd" target="_blank">7c215a4</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-25
+</td>
+<td>
+Just realized that the Leiden clustering is not reproducible. Installed Seurat
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/906799efcbf68c48db57058869c4c360b772c270/docs/slingshot.html" target="_blank">906799e</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-24
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -628,7 +659,8 @@ library(tidyverse)
 library(tidymodels)
 library(Seurat)
 library(scales)
-library(viridis)</code></pre>
+library(viridis)
+library(reticulate)</code></pre>
 </div>
 <div id="loading-the-matrix" class="section level1">
 <h1>Loading the matrix</h1>
@@ -833,7 +865,11 @@ Lambda Moses
 </div>
 </div>
 <p>The y axis is standard deviation (not variance), or the singular values from singular value decomposition on the data performed for PCA.</p>
-<pre class="r"><code>PCAPlot(seu, group.by = &quot;cell_type&quot;, pt.size = 0.5, label = TRUE, repel = TRUE) +
+<pre class="r"><code># Need to use DimPlot due to weird workflowr problem with PCAPlot that calls seu[[wflow.build]]
+# and eats up memory. I suspect this is due to the sys.call() in 
+# Seurat:::SpecificDimPlot. 
+DimPlot(seu, reduction = &quot;pca&quot;,
+        group.by = &quot;cell_type&quot;, pt.size = 0.5, label = TRUE, repel = TRUE) +
   scale_color_brewer(type = &quot;qual&quot;, palette = &quot;Set2&quot;)</code></pre>
 <pre><code>#&gt; Warning: Using `as.character()` on a quosure is deprecated as of rlang 0.3.0.
 #&gt; Please use `as_label()` or `as_name()` instead.
@@ -877,7 +913,8 @@ Lambda Moses
 </div>
 </div>
 <pre class="r"><code>seu &lt;- RunTSNE(seu, dims = 1:50, verbose = FALSE)
-TSNEPlot(seu, group.by = &quot;cell_type&quot;, pt.size = 0.5, label = TRUE, repel = TRUE) +
+DimPlot(seu, reduction = &quot;tsne&quot;,
+        group.by = &quot;cell_type&quot;, pt.size = 0.5, label = TRUE, repel = TRUE) +
   scale_color_brewer(type = &quot;qual&quot;, palette = &quot;Set2&quot;)</code></pre>
 <p><img src="figure/slingshot.Rmd/tsne-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
@@ -919,7 +956,8 @@ Lambda Moses
 </div>
 <p>UMAP can better preserve pairwise distance of cells than tSNE and can better separate cell populations than the first 2 PCs of PCA (<a href="https://doi.org/10.1038/nbt.4314">Becht et al. 2018</a>), so the TI will be done on UMAP rather than tSNE or PCA.</p>
 <pre class="r"><code>seu &lt;- RunUMAP(seu, dims = 1:50)
-UMAPPlot(seu, group.by = &quot;cell_type&quot;, pt.size = 0.5, label = TRUE, repel = TRUE) +
+DimPlot(seu, reduction = &quot;umap&quot;,
+        group.by = &quot;cell_type&quot;, pt.size = 0.5, label = TRUE, repel = TRUE) +
   scale_color_brewer(type = &quot;qual&quot;, palette = &quot;Set2&quot;)</code></pre>
 <p><img src="figure/slingshot.Rmd/umap-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
@@ -961,8 +999,8 @@ Lambda Moses
 </div>
 <p>Cell type annotation with <code>SingleR</code> requires a reference with bulk RNA seq data for isolated known cell types. The reference used for cell type annotation here does not differentiate between different types of neural progenitor cells; clustering can further partition the neural progenitor cells. Furthermore, <code>slingshot</code> is based on cluster-wise minimum spanning tree, so finding a good clustering is important to good trajectory inference with <code>slingshot</code>. The clustering algorithm used here is <a href="https://www.nature.com/articles/s41598-019-41695-z">Leiden</a>, which is an improvement over the commonly used Louvain; Leiden communities are guaranteed to be well-connected, while Louvain can lead to poorly connected communities.</p>
 <pre class="r"><code>seu &lt;- FindNeighbors(seu, verbose = FALSE) %&gt;% 
-  FindClusters(algorithm = 4, resolution = 1) # Leiden clustering
-UMAPPlot(seu, pt.size = 0.5)</code></pre>
+  FindClusters(algorithm = 4, resolution = 1, random.seed = 256)
+DimPlot(seu, pt.size = 0.5, reduction = &quot;umap&quot;, group.by = &quot;seurat_clusters&quot;)</code></pre>
 <p><img src="figure/slingshot.Rmd/umap_clust-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-umap_clust-1">
@@ -988,6 +1026,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/906799efcbf68c48db57058869c4c360b772c270/docs/figure/slingshot.Rmd/umap_clust-1.png" target="_blank">906799e</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/df34d05137c8df23b272650d0e14a8becfe6ad76/docs/figure/slingshot.Rmd/umap_clust-1.png" target="_blank">df34d05</a>
 </td>
 <td>
@@ -1001,15 +1050,16 @@ Lambda Moses
 </table>
 </div>
 </div>
+<p>Note that in the current CRAN release of Seurat, Leiden clustering does not take the random seed and gives a somewhat different result every time it’s run. To make the random seed take effect, install the <a href="https://satijalab.org/seurat/install.html#development">development version of Seurat</a>.</p>
 </div>
 </div>
 <div id="slingshot" class="section level1">
 <h1>Slingshot</h1>
 <div id="trajectory-inference" class="section level2">
 <h2>Trajectory inference</h2>
-<p>While the <code>slingshot</code> vignette uses <code>SingleCellExperiment</code>, <code>slingshot</code> can also take a matrix of cell embeddings in reduced dimension as input. We can optionally specify the cluster to start or end the trajectory based on biological knowledge. Here, since quiescent neural stem cells are in cluster 10, the starting cluster would be 10 near the bottom left of the previous plot.</p>
+<p>While the <code>slingshot</code> vignette uses <code>SingleCellExperiment</code>, <code>slingshot</code> can also take a matrix of cell embeddings in reduced dimension as input. We can optionally specify the cluster to start or end the trajectory based on biological knowledge. Here, since quiescent neural stem cells are in cluster 12, the starting cluster would be 10 near the bottom left of the previous plot.</p>
 <pre class="r"><code>sds &lt;- slingshot(Embeddings(seu, &quot;umap&quot;), clusterLabels = seu$seurat_clusters, 
-                 start.clus = &quot;10&quot;)</code></pre>
+                 start.clus = &quot;12&quot;)</code></pre>
 <p>Unfortunately, <code>slingshot</code> does not natively support <code>ggplot2</code>. So this is a function that assigns colors to each cell in base R graphics.</p>
 <pre class="r"><code>#&#39; Assign a color to each cell based on some value
 #&#39; 
@@ -1030,7 +1080,7 @@ cell_pal &lt;- function(cell_vars, pal_fun,...) {
 }</code></pre>
 <p>We need color palettes for both cell types and Leiden clusters. These would be the same colors seen in the Seurat plots.</p>
 <pre class="r"><code>cell_colors &lt;- cell_pal(seu$cell_type, brewer_pal(&quot;qual&quot;, &quot;Set2&quot;))
-cell_colors_clust &lt;- cell_pal(seu$SCT_snn_res.1, hue_pal())</code></pre>
+cell_colors_clust &lt;- cell_pal(seu$seurat_clusters, hue_pal())</code></pre>
 <p>What does the inferred trajectory look like compared to cell types?</p>
 <pre class="r"><code>plot(reducedDim(sds), col = cell_colors, pch = 16, cex = 0.5)
 lines(sds, lwd = 2, type = &#39;lineages&#39;, col = &#39;black&#39;)</code></pre>
@@ -1101,6 +1151,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/906799efcbf68c48db57058869c4c360b772c270/docs/figure/slingshot.Rmd/lin2-1.png" target="_blank">906799e</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/df34d05137c8df23b272650d0e14a8becfe6ad76/docs/figure/slingshot.Rmd/lin2-1.png" target="_blank">df34d05</a>
 </td>
 <td>
@@ -1114,7 +1175,7 @@ Lambda Moses
 </table>
 </div>
 </div>
-<p>Here <code>slingshot</code> thinks that cluster 3 is a point where multiple neural lineages diverge.</p>
+<p>Here <code>slingshot</code> thinks that cluster 9 is a point where multiple neural lineages diverge. Different clustering (e.g. different random initiations of Louvain or Leiden algorithms) can lead to somewhat different trajectories, the the main structure is not affected. With different runs of Leiden clustering (without fixed seed), the branching point is placed in the region around its current location, near the small UMAP offshoot there.</p>
 <p>Principal curves are smoothed representations of each lineage; pseudotime values are computed by projecting the cells onto the principal curves. What do the principal curves look like?</p>
 <pre class="r"><code>plot(reducedDim(sds), col = cell_colors, pch = 16, cex = 0.5)
 lines(sds, lwd = 2, col = &#39;black&#39;)</code></pre>
@@ -1168,7 +1229,7 @@ for (i in nms) {
   plot(reducedDim(sds), col = colors, pch = 16, cex = 0.5, main = i)
   lines(sds, lwd = 2, col = &#39;black&#39;, type = &#39;lineages&#39;)
 }</code></pre>
-<p><img src="figure/slingshot.Rmd/pt-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="figure/slingshot.Rmd/pt-1.png" width="864" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-pt-1">
 Past versions of pt-1.png
@@ -1210,7 +1271,7 @@ Lambda Moses
 </div>
 <div id="differential-expression" class="section level2">
 <h2>Differential expression</h2>
-<p>Let’s look at which genes are differentially expressed along one of the 6 lineages. In <code>dynverse</code>, feature (gene) importance is calculated by using gene expression to predict pseudotime value with random forest and finding genes that contribute the most to the accuracy of the response. Since it’s really not straightforward to convert existing pseudotime results to <code>dynverse</code> format, it would be easier to build a random forest model. Variable importance will be calculated for the top 100 highly variable genes here, with <a href="https://github.com/tidymodels"><code>tidymodels</code></a>.</p>
+<p>Let’s look at which genes are differentially expressed along one of the 6 lineages (linage 2). In <code>dynverse</code>, feature (gene) importance is calculated by using gene expression to predict pseudotime value with random forest and finding genes that contribute the most to the accuracy of the response. Since it’s really not straightforward to convert existing pseudotime results to <code>dynverse</code> format, it would be easier to build a random forest model. Variable importance will be calculated for the top 100 highly variable genes here, with <a href="https://github.com/tidymodels"><code>tidymodels</code></a>.</p>
 <pre class="r"><code># Get top highly variable genes
 top_hvg &lt;- HVFInfo(seu) %&gt;% 
   mutate(., bc = rownames(.)) %&gt;% 
@@ -1219,44 +1280,45 @@ top_hvg &lt;- HVFInfo(seu) %&gt;%
   pull(bc)
 # Prepare data for random forest
 dat_use &lt;- t(GetAssayData(seu, slot = &quot;scale.data&quot;)[top_hvg,])
-dat_use_df &lt;- cbind(slingPseudotime(sds)[,5], dat_use)
-colnames(dat_use_df)[1] &lt;- &quot;pseudotime5&quot;
+dat_use_df &lt;- cbind(slingPseudotime(sds)[,2], dat_use)
+colnames(dat_use_df)[1] &lt;- &quot;pseudotime&quot;
 dat_use_df &lt;- as.data.frame(dat_use_df[!is.na(dat_use_df[,1]),])</code></pre>
 <p>The subset of data is randomly split into training and validation; the model fitted on the training set will be evaluated on the validation set.</p>
 <pre class="r"><code>dat_split &lt;- initial_split(dat_use_df)
 dat_train &lt;- training(dat_split)
 dat_val &lt;- testing(dat_split)</code></pre>
 <p><code>tidymodels</code> is a unified interface to different machine learning models, a “tidier” version of <code>caret</code>. The code chunk below can easily be adjusted to use other random forest packages as the back end, so no need to learn new syntax for those packages.</p>
-<pre class="r"><code>model &lt;- rand_forest(mtry = 40, trees = 1000, min_n = 15) %&gt;%
+<pre class="r"><code>model &lt;- rand_forest(mtry = 50, trees = 1200, min_n = 15) %&gt;%
   set_engine(&quot;ranger&quot;, importance = &quot;impurity&quot;, num.threads = 3) %&gt;%
-  fit(pseudotime5 ~ ., data = dat_train)</code></pre>
+  fit(pseudotime ~ ., data = dat_train)</code></pre>
 <p>The model is evaluated on the validation set with 3 metrics: room mean squared error (RMSE), coefficient of determination using correlation (rsq, between 0 and 1), and mean absolute error (MAE).</p>
 <pre class="r"><code>val_results &lt;- dat_val %&gt;% 
   mutate(estimate = predict(model, .[,-1]) %&gt;% pull()) %&gt;% 
-  select(truth = pseudotime5, estimate)
+  select(truth = pseudotime, estimate)
 metrics(data = val_results, truth, estimate)</code></pre>
 <pre><code>#&gt; # A tibble: 3 x 3
 #&gt;   .metric .estimator .estimate
 #&gt;   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-#&gt; 1 rmse    standard       1.59 
-#&gt; 2 rsq     standard       0.944
-#&gt; 3 mae     standard       0.908</code></pre>
+#&gt; 1 rmse    standard       1.68 
+#&gt; 2 rsq     standard       0.936
+#&gt; 3 mae     standard       0.939</code></pre>
 <p>RMSE and MAE should have the same unit as the data. As pseudotime values here usually have values much larger than 2, the error isn’t too bad. Correlation (rsq) between <code>slingshot</code>’s pseudotime and random forest’s prediction is very high, also showing good prediction from the top 100 highly variable genes.</p>
-<pre class="r"><code>summary(dat_use_df$pseudotime5)</code></pre>
+<pre class="r"><code>summary(dat_use_df$pseudotime)</code></pre>
 <pre><code>#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-#&gt;   0.000   8.814  14.519  14.069  18.427  26.777</code></pre>
+#&gt;   0.000   9.019  14.695  14.364  19.245  26.651</code></pre>
 <p>Now it’s time to plot some genes deemed the most important to predicting pseudotime:</p>
 <pre class="r"><code>var_imp &lt;- sort(model$fit$variable.importance, decreasing = TRUE)
 top_genes &lt;- names(var_imp)[1:6]
 # Convert to gene symbol
 top_gene_name &lt;- gns$gene_name[match(top_genes, gns$gene)]</code></pre>
-<pre class="r"><code>par(mfrow = c(nr, nc))
+<pre class="r"><code>nr &lt;- 3
+par(mfrow = c(nr, nc))
 for (i in seq_along(top_genes)) {
   colors &lt;- pal[cut(dat_use[,top_genes[i]], breaks = 100)]
   plot(reducedDim(sds), col = colors, pch = 16, cex = 0.5, main = top_gene_name[i])
   lines(sds, lwd = 2, col = &#39;black&#39;, type = &#39;lineages&#39;)
 }</code></pre>
-<p><img src="figure/slingshot.Rmd/genes-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="figure/slingshot.Rmd/genes-1.png" width="864" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-genes-1">
 Past versions of genes-1.png
@@ -1318,15 +1380,15 @@ Lambda Moses
 #&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     
 #&gt; 
 #&gt; other attached packages:
-#&gt;  [1] viridis_0.5.1     viridisLite_0.3.0 Seurat_3.0.2     
-#&gt;  [4] yardstick_0.0.3   rsample_0.0.5     recipes_0.1.6    
-#&gt;  [7] parsnip_0.0.2     infer_0.4.0.1     dials_0.0.2      
-#&gt; [10] scales_1.0.0      broom_0.5.2       tidymodels_0.0.2 
-#&gt; [13] forcats_0.4.0     stringr_1.4.0     dplyr_0.8.3      
-#&gt; [16] purrr_0.3.2       readr_1.3.1       tidyr_0.8.3      
-#&gt; [19] tibble_2.1.3      ggplot2_3.2.0     tidyverse_1.2.1  
-#&gt; [22] BUSpaRse_0.99.18  biomaRt_2.41.7    slingshot_1.3.1  
-#&gt; [25] princurve_2.1.4  
+#&gt;  [1] reticulate_1.13   viridis_0.5.1     viridisLite_0.3.0
+#&gt;  [4] Seurat_3.0.3.9016 yardstick_0.0.3   rsample_0.0.5    
+#&gt;  [7] recipes_0.1.6     parsnip_0.0.2     infer_0.4.0.1    
+#&gt; [10] dials_0.0.2       scales_1.0.0      broom_0.5.2      
+#&gt; [13] tidymodels_0.0.2  forcats_0.4.0     stringr_1.4.0    
+#&gt; [16] dplyr_0.8.3       purrr_0.3.2       readr_1.3.1      
+#&gt; [19] tidyr_0.8.3       tibble_2.1.3      ggplot2_3.2.0    
+#&gt; [22] tidyverse_1.2.1   BUSpaRse_0.99.18  biomaRt_2.41.7   
+#&gt; [25] slingshot_1.3.1   princurve_2.1.4  
 #&gt; 
 #&gt; loaded via a namespace (and not attached):
 #&gt;   [1] rappdirs_0.3.1              SnowballC_0.6.0            
@@ -1405,10 +1467,10 @@ Lambda Moses
 #&gt; [147] shiny_1.3.2                 lava_1.6.5                 
 #&gt; [149] Rcpp_1.0.1                  GenomicRanges_1.37.14      
 #&gt; [151] SDMTools_1.1-221.1          later_0.8.0                
-#&gt; [153] httr_1.4.0                  AnnotationDbi_1.47.0       
-#&gt; [155] rsconnect_0.8.15            npsurv_0.4-0               
-#&gt; [157] Rdpack_0.11-0               colorspace_1.4-1           
-#&gt; [159] ranger_0.11.2               reticulate_1.12            
+#&gt; [153] RcppAnnoy_0.0.12            httr_1.4.0                 
+#&gt; [155] AnnotationDbi_1.47.0        rsconnect_0.8.15           
+#&gt; [157] npsurv_0.4-0                Rdpack_0.11-0              
+#&gt; [159] colorspace_1.4-1            ranger_0.11.2              
 #&gt; [161] rvest_0.3.4                 XML_3.98-1.20              
 #&gt; [163] fs_1.3.1                    IRanges_2.19.10            
 #&gt; [165] splines_3.6.1               shinythemes_1.1.2          
