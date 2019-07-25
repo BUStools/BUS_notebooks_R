@@ -7,7 +7,6 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
-<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -247,6 +246,18 @@ $(document).ready(function () {
 }
 </style>
 
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
 <!-- code folding -->
 
 
@@ -363,10 +374,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtreefa934df4e6b25a2845322866dee75f83887cb2d0targetblankfa934dfa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/fa934df4e6b25a2845322866dee75f83887cb2d0" target="_blank">fa934df</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree9200d94cf3a76f75486c384954020d7634898f71targetblank9200d94a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/9200d94cf3a76f75486c384954020d7634898f71" target="_blank">9200d94</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtreefa934df4e6b25a2845322866dee75f83887cb2d0targetblankfa934dfa" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree9200d94cf3a76f75486c384954020d7634898f71targetblank9200d94a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -376,12 +387,43 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    BUS_notebooks_R.Rproj
-    Ignored:    data/whitelist_v3.txt.gz
-    Ignored:    output/out_pbmc1k/
+    Ignored:    data/cDNA_introns.t2g.txt
+    Ignored:    data/cDNA_transcripts.to_capture.txt
+    Ignored:    data/hgmm_1k_fastqs.tar
+    Ignored:    data/hs_cdna.fa.gz
+    Ignored:    data/introns_transcripts.to_capture.txt
+    Ignored:    data/mm_cdna.fa.gz
+    Ignored:    data/neuron_10k_fastqs.tar
+    Ignored:    data/neuron_10k_v3_fastqs/
+    Ignored:    data/whitelist_v2.txt
+    Ignored:    data/whitelist_v3.txt
+    Ignored:    output/hs_mm_tr_index.idx
+    Ignored:    output/hs_tr_index.idx
+    Ignored:    output/mm_cDNA_introns_94_collapse.idx
+    Ignored:    output/mm_cDNA_introns_ensembl94.idx
+    Ignored:    output/mm_tr_index.idx
+    Ignored:    output/out_hgmm1k/
 
 Untracked files:
+    Untracked:  ASpli_binFeatures.log
+    Untracked:  analysis/velocity1.Rmd
+    Untracked:  analysis/velocity2.Rmd
+    Untracked:  analysis/velocity3.Rmd
+    Untracked:  data/cDNA.correct_header.fa
+    Untracked:  data/fastqs/
+    Untracked:  data/hs_cdna.fa
+    Untracked:  data/hs_cellranger_38.gtf
+    Untracked:  data/introns.correct_header.fa
+    Untracked:  data/mm_cdna.fa
     Untracked:  ensembl/
+    Untracked:  output/cc_neuron10k_pca.rds
+    Untracked:  output/cc_neuron10k_tsne.rds
     Untracked:  output/neuron10k/
+    Untracked:  output/neuron10k_collapse/
+    Untracked:  output/neuron10k_velocity/
+    Untracked:  output/tr2g_hgmm.tsv
+    Untracked:  output/tr2g_mm.tsv
+    Untracked:  output/velo_neuron10k.rds
 
 </code></pre>
 <p>
@@ -420,6 +462,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/9200d94cf3a76f75486c384954020d7634898f71/analysis/index.Rmd" target="_blank">9200d94</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-25
+</td>
+<td>
+updated index for RNA velocity
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/1bcb3d88d72d637f6f46c5bb55354cd7fe23efe3/docs/index.html" target="_blank">1bcb3d8</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-24
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -537,23 +613,6 @@ Lambda Moses
 </td>
 <td>
 Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/BUStools/BUS_notebooks_R/blob/3cf75fe28a1852364770b5dd229a64f8be512137/analysis/index.Rmd" target="_blank">3cf75fe</a>
-</td>
-<td>
-Lambda Moses
-</td>
-<td>
-2019-07-17
-</td>
-<td>
-Added Monocle 2 notebook
 </td>
 </tr>
 <tr>
@@ -1182,11 +1241,11 @@ Start workflowr project.
 </center>
 </div>
 <div class="col-md-6">
-
+<p><a href="https://bustools.github.io/BUS_notebooks_R/velocity.html"><img src="https://bustools.github.io/BUS_notebooks_R/figure/velocity.Rmd/v1b-1.png" width="600" /></a></p>
+<p><a href="https://bustools.github.io/BUS_notebooks_R/velocity.html">RNA velocity analysis with 10k E18 mouse neurons from 10x</a></p>
 </div>
 </div>
 <hr />
-<p>RNA velocity with 10k E18 mouse neurons from 10x (coming soon)</p>
 <p>Differential expression with equivalence classes in TCC matrix (coming soon)</p>
 </div>
 </div>
@@ -1220,23 +1279,6 @@ $(document).ready(function () {
 
 
 </script>
-
-<!-- tabsets -->
-
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
-<!-- code folding -->
-
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
