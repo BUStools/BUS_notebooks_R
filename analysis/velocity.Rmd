@@ -1,5 +1,5 @@
 ---
-title: "velocity_collapse"
+title: "RNA velocity with kallisto | bus and velocyto.R"
 author: "Lambda Moses"
 date: "`r Sys.Date()`"
 output: html_document
@@ -82,7 +82,7 @@ cd ./data
 tar -xvf ./data/neuron_10k_fastqs.tar
 ```
 
-# Generate gene count matrices for spliced and unspliced transcripts
+# Generate spliced and unspliced matrices
 In order to know which reads come from spliced as opposed to unspliced transcripts, we need to see whether the reads contain intronic sequences. Thus we need to include intronic sequences in the kallisto index. This can be done with the `BUSpaRse` function `get_velocity_files`, which generates all files required to run RNA velocity with kallisto | bustools. First, we need a genome annotation to get intronic sequences. We can get genome annotation from GTF or GFF3 files from Ensembl with `getGTF` or `getGFF` from the R package `biomartr`, but Bioconductor provides genome annotations in its databases and package ecosystem as well. Here we use Ensembl version 94 annotation from Bioconductor's `AnnotationHub` (the most recent version from Bioconductor 3.8). UCSC annotation can be obtained from Bioconductor package `TxDb.Mmusculus.UCSC.mm10.knownGene`. 
 
 ```{r}
@@ -471,7 +471,7 @@ DimPlot(seu, pt.size = 0.5, reduction = "umap")
 ```
 
 # RNA velocity
-```{r}
+```{r, eval=do_seu}
 seu <- RunVelocity(seu, ncores = 10, reduction = "pca", verbose = FALSE)
 ```
 
