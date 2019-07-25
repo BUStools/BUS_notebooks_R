@@ -27,6 +27,7 @@ library(tidymodels)
 library(Seurat)
 library(scales)
 library(viridis)
+library(reticulate)
 ```
 
 # Loading the matrix
@@ -117,27 +118,16 @@ ElbowPlot(seu, ndims = 70)
 
 The y axis is standard deviation (not variance), or the singular values from singular value decomposition on the data performed for PCA.
 
-```{r, eval=FALSE}
-PCAPlot(seu, group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) +
-  scale_color_brewer(type = "qual", palette = "Set2")
-```
-
-```{r pca, echo=FALSE}
+```{r pca}
 # Need to use DimPlot due to weird workflowr problem with PCAPlot that calls seu[[wflow.build]]
 # and eats up memory. I suspect this is due to the sys.call() in 
-# Seurat:::SpecificDimPlot. I still want to display the standard way though
+# Seurat:::SpecificDimPlot. 
 DimPlot(seu, reduction = "pca",
         group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) +
   scale_color_brewer(type = "qual", palette = "Set2")
 ```
 
-```{r, eval=FALSE}
-seu <- RunTSNE(seu, dims = 1:50, verbose = FALSE)
-TSNEPlot(seu, group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) +
-  scale_color_brewer(type = "qual", palette = "Set2")
-```
-
-```{r tsne, echo=FALSE}
+```{r tsne}
 seu <- RunTSNE(seu, dims = 1:50, verbose = FALSE)
 DimPlot(seu, reduction = "tsne",
         group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) +
@@ -145,13 +135,8 @@ DimPlot(seu, reduction = "tsne",
 ```
 
 UMAP can better preserve pairwise distance of cells than tSNE and can better separate cell populations than the first 2 PCs of PCA ([Becht et al. 2018](https://doi.org/10.1038/nbt.4314)), so the TI will be done on UMAP rather than tSNE or PCA.
-```{r, eval=FALSE}
-seu <- RunUMAP(seu, dims = 1:50)
-UMAPPlot(seu, group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) +
-  scale_color_brewer(type = "qual", palette = "Set2")
-```
 
-```{r umap, echo=FALSE}
+```{r umap}
 seu <- RunUMAP(seu, dims = 1:50)
 DimPlot(seu, reduction = "umap",
         group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) +
@@ -159,21 +144,21 @@ DimPlot(seu, reduction = "umap",
 ```
 
 Cell type annotation with `SingleR` requires a reference with bulk RNA seq data for isolated known cell types. The reference used for cell type annotation here does not differentiate between different types of neural progenitor cells; clustering can further partition the neural progenitor cells. Furthermore, `slingshot` is based on cluster-wise minimum spanning tree, so finding a good clustering is important to good trajectory inference with `slingshot`. The clustering algorithm used here is [Leiden](https://www.nature.com/articles/s41598-019-41695-z), which is an improvement over the commonly used Louvain; Leiden communities are guaranteed to be well-connected, while Louvain can lead to poorly connected communities.
-```{r, eval=FALSE}
-seu <- FindNeighbors(seu, verbose = FALSE) %>% 
-  FindClusters(algorithm = 4, resolution = 1) # Leiden clustering
-UMAPPlot(seu, pt.size = 0.5)
-```
 
-```{r umap_clust, echo=FALSE}
+```{r umap_clust}
 seu <- FindNeighbors(seu, verbose = FALSE) %>% 
-  FindClusters(algorithm = 4, resolution = 1) # Leiden clustering
-DimPlot(seu, pt.size = 0.5, reduction = "umap")
+  FindClusters(algorithm = 4, resolution = 1, random.seed = 256)
+DimPlot(seu, pt.size = 0.5, reduction = "umap", group.by = "seurat_clusters")
+```
+Note that in the current CRAN release of Seurat, Leiden clustering does not take the random seed and gives a somewhat different result every time it's run. To make the random seed take effect, install the [development version of Seurat](https://satijalab.org/seurat/install.html#development).
+
+```{r, eval=FALSE, include=FALSE}
+saveRDS(seu, "./output/neuron10k/seu_ng.rds")
 ```
 
 # Slingshot
 ## Trajectory inference
-While the `slingshot` vignette uses `SingleCellExperiment`, `slingshot` can also take a matrix of cell embeddings in reduced dimension as input. We can optionally specify the cluster to start or end the trajectory based on biological knowledge. Here, since quiescent neural stem cells are in cluster 10, the starting cluster would be 10 near the bottom left of the previous plot.
+While the `slingshot` vignette uses `SingleCellExperiment`, `slingshot` can also take a matrix of cell embeddings in reduced dimension as input. We can optionally specify the cluster to start or end the trajectory based on biological knowledge. Here, since quiescent neural stem cells are in cluster 12, the starting cluster would be 10 near the bottom left of the previous plot.
 ```{r, include=FALSE}
 do_sling <- !file.exists("./output/neuron10k/slingshot.rds")
 if (!do_sling) {
@@ -183,7 +168,7 @@ if (!do_sling) {
 
 ```{r, eval=do_sling}
 sds <- slingshot(Embeddings(seu, "umap"), clusterLabels = seu$seurat_clusters, 
-                 start.clus = "10")
+                 start.clus = "12")
 ```
 
 Unfortunately, `slingshot` does not natively support `ggplot2`. So this is a function that assigns colors to each cell in base R graphics.
@@ -210,7 +195,7 @@ cell_pal <- function(cell_vars, pal_fun,...) {
 We need color palettes for both cell types and Leiden clusters. These would be the same colors seen in the Seurat plots.
 ```{r}
 cell_colors <- cell_pal(seu$cell_type, brewer_pal("qual", "Set2"))
-cell_colors_clust <- cell_pal(seu$SCT_snn_res.1, hue_pal())
+cell_colors_clust <- cell_pal(seu$seurat_clusters, hue_pal())
 ```
 
 What does the inferred trajectory look like compared to cell types?
@@ -227,7 +212,7 @@ plot(reducedDim(sds), col = cell_colors_clust, pch = 16, cex = 0.5)
 lines(sds, lwd = 2, type = 'lineages', col = 'black')
 ```
 
-Here `slingshot` thinks that cluster 3 is a point where multiple neural lineages diverge.
+Here `slingshot` thinks that cluster 9 is a point where multiple neural lineages diverge. Different clustering (e.g. different random initiations of Louvain or Leiden algorithms) can lead to somewhat different trajectories, the the main structure is not affected. With different runs of Leiden clustering (without fixed seed), the branching point is placed in the region around its current location, near the small UMAP offshoot there.
 
 Principal curves are smoothed representations of each lineage; pseudotime values are computed by projecting the cells onto the principal curves. What do the principal curves look like?
 ```{r curves}
@@ -236,7 +221,7 @@ lines(sds, lwd = 2, col = 'black')
 ```
 
 Which cells are in which lineage? Here we plot the pseudotime values for each lineage.
-```{r pt, fig.height=8, fig.width=6}
+```{r pt, fig.width=9, fig.height=12}
 nc <- 2
 pt <- slingPseudotime(sds)
 nms <- colnames(pt)
@@ -252,12 +237,12 @@ for (i in nms) {
 
 I still wonder if lineages 1 and 6 are real. Monocle 3 would have assigned disconnected trajectories to the separate clusters in lineages 1 and 6, but those clusters have been labeled NPCs or neurons, which must have come from neural stem cells. Perhaps they are so differentiated that it would make sense to consider them separately from the main lineage as Monocle 3 does.
 
-```{r, include=FALSE}
+```{r, include=FALSE, eval=FALSE}
 saveRDS(sds, "./output/neuron10k/slingshot.rds")
 ```
 
 ## Differential expression
-Let's look at which genes are differentially expressed along one of the 6 lineages. In `dynverse`, feature (gene) importance is calculated by using gene expression to predict pseudotime value with random forest and finding genes that contribute the most to the accuracy of the response. Since it's really not straightforward to convert existing pseudotime results to `dynverse` format, it would be easier to build a random forest model. Variable importance will be calculated for the top 100 highly variable genes here, with [`tidymodels`](https://github.com/tidymodels).
+Let's look at which genes are differentially expressed along one of the 6 lineages (linage 2). In `dynverse`, feature (gene) importance is calculated by using gene expression to predict pseudotime value with random forest and finding genes that contribute the most to the accuracy of the response. Since it's really not straightforward to convert existing pseudotime results to `dynverse` format, it would be easier to build a random forest model. Variable importance will be calculated for the top 100 highly variable genes here, with [`tidymodels`](https://github.com/tidymodels).
 
 ```{r}
 # Get top highly variable genes
@@ -268,8 +253,8 @@ top_hvg <- HVFInfo(seu) %>%
   pull(bc)
 # Prepare data for random forest
 dat_use <- t(GetAssayData(seu, slot = "scale.data")[top_hvg,])
-dat_use_df <- cbind(slingPseudotime(sds)[,5], dat_use)
-colnames(dat_use_df)[1] <- "pseudotime5"
+dat_use_df <- cbind(slingPseudotime(sds)[,2], dat_use)
+colnames(dat_use_df)[1] <- "pseudotime"
 dat_use_df <- as.data.frame(dat_use_df[!is.na(dat_use_df[,1]),])
 ```
 
@@ -282,22 +267,22 @@ dat_val <- testing(dat_split)
 
 `tidymodels` is a unified interface to different machine learning models, a "tidier" version of `caret`. The code chunk below can easily be adjusted to use other random forest packages as the back end, so no need to learn new syntax for those packages.
 ```{r}
-model <- rand_forest(mtry = 40, trees = 1000, min_n = 15) %>%
+model <- rand_forest(mtry = 50, trees = 1200, min_n = 15) %>%
   set_engine("ranger", importance = "impurity", num.threads = 3) %>%
-  fit(pseudotime5 ~ ., data = dat_train)
+  fit(pseudotime ~ ., data = dat_train)
 ```
 
 The model is evaluated on the validation set with 3 metrics: room mean squared error (RMSE), coefficient of determination using correlation (rsq, between 0 and 1), and mean absolute error (MAE).
 ```{r}
 val_results <- dat_val %>% 
   mutate(estimate = predict(model, .[,-1]) %>% pull()) %>% 
-  select(truth = pseudotime5, estimate)
+  select(truth = pseudotime, estimate)
 metrics(data = val_results, truth, estimate)
 ```
 
 RMSE and MAE should have the same unit as the data. As pseudotime values here usually have values much larger than 2, the error isn't too bad. Correlation (rsq) between `slingshot`'s pseudotime and random forest's prediction is very high, also showing good prediction from the top 100 highly variable genes.
 ```{r}
-summary(dat_use_df$pseudotime5)
+summary(dat_use_df$pseudotime)
 ```
 
 Now it's time to plot some genes deemed the most important to predicting pseudotime:
@@ -308,7 +293,8 @@ top_genes <- names(var_imp)[1:6]
 top_gene_name <- gns$gene_name[match(top_genes, gns$gene)]
 ```
 
-```{r genes, fig.width=6, fig.height=8}
+```{r genes, fig.height=12, fig.width=9}
+nr <- 3
 par(mfrow = c(nr, nc))
 for (i in seq_along(top_genes)) {
   colors <- pal[cut(dat_use[,top_genes[i]], breaks = 100)]
