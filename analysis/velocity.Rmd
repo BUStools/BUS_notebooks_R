@@ -1,0 +1,543 @@
+---
+title: "velocity_collapse"
+author: "Lambda Moses"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+In this notebook, we perform RNA velocity analysis on the [10x 10k neurons from an E18 mouse](https://support.10xgenomics.com/single-cell-gene-expression/datasets/3.0.0/neuron_10k_v3). Instead of the velocyto command line tool, we will use the kallisto | bus pipeline, which is much faster than velocyto, to quantify spliced and unspliced transcripts.
+
+# Setup
+If you would like to rerun this notebook, you can git clone [this repository](https://github.com/BUStools/BUS_notebooks_R) or directly download [this notebook from GitHub](https://github.com/BUStools/BUS_notebooks_R/blob/master/analysis/velocity.Rmd). 
+
+## Install packages
+This notebook demonstrates the use of command line tools `kallisto` and `bustools`. Please use `kallisto` >= 0.46, whose binary can be downloaded [here](https://pachterlab.github.io/kallisto/download). The binary of `bustools` can be found [here](https://github.com/BUStools/bustools/releases). 
+
+After you download the binary, you should decompress the file (if it is `tar.gz`) with `tar -xzvf file.tar.gz` in the `bash` terminal, and add the directory containing the binary to `PATH` by `export PATH=$PATH:/foo/bar`, where `/foo/bar` is the directory of interest. Then you can directly invoke the binary on the command line as we will do in this notebook.
+
+We will be using the R packages below. `BUSpaRse` is not yet on CRAN or Bioconductor. For Mac users, see the [installation note for `BUSpaRse`](https://github.com/BUStools/BUSpaRse). `BUSpaRse` will be used to generate the transcript to gene file for `bustools` and to read output of `bustools` into R. We will also use `Seurat` version 3 which is now on CRAN. Recently, Satija lab announced [`SeuratWrappers`](https://github.com/satijalab/seurat-wrappers), with which we can run RNA velocity directly from Seurat. `SeuratWrappers` is also GitHub only at present. We need to install [`velocyto.R`](https://github.com/velocyto-team/velocyto.R), which is GitHub only, to compute and visualize RNA velocity after quantifying spliced and unspliced transcripts.
+
+```{r, eval=FALSE}
+# Install devtools if it's not already installed
+if (!require(devtools)) {
+  install.packages("devtools")
+}
+# Install from GitHub
+devtools::install_github("BUStools/BUSpaRse")
+devtools::install_github("satijalab/seurat-wrappers")
+devtools::install_github("velocyto-team/velocyto.R")
+```
+
+This vignette uses the version of `DropletUtils` from Bioconductor version 3.9; the version from Bioconductor 3.8 has a different user interface. If you are using a version of R older than 3.6.0 and want to rerun this vignette, then you can adapt the knee plot code to the older version of `DropletUtils`, or install [`DropletUtils` from GitHub](https://github.com/MarioniLab/DropletUtils), which I did for this notebook. `BSgenome.Mmusculus.UCSC.mm10` and `AnnotationHub` are also on Bioconductor. Bioconductor packages can be installed as such:
+
+```{r, eval = FALSE}
+if (!require(BiocManager)) {
+  install.packages("BiocManager")
+}
+BiocManager::install(c("DropletUtils", "BSgenome.Mmusculus.UCSC.mm10", "AnnotationHub"))
+```
+
+The other packages are on CRAN.
+```{r, message=FALSE}
+library(BUSpaRse)
+library(Seurat)
+library(SeuratWrappers)
+library(BSgenome.Mmusculus.UCSC.mm10)
+library(AnnotationHub)
+library(zeallot) # For %<-% that unpacks lists in the Python manner
+library(DropletUtils)
+library(tidyverse)
+library(uwot) # For umap
+library(GGally) # For ggpairs
+library(velocyto.R)
+library(SingleR)
+library(scales)
+library(plotly)
+theme_set(theme_bw())
+```
+
+## Download data
+The dataset we are using is [10x 10k neurons from an E18 mouse](https://support.10xgenomics.com/single-cell-gene-expression/datasets/3.0.0/neuron_10k_v3) (almost 25 GB).
+
+```{r dl_data}
+# Download data
+if (!file.exists("./data/neuron_10k_fastqs.tar")) {
+  download.files("http://s3-us-west-2.amazonaws.com/10x.files/samples/cell-exp/3.0.0/neuron_10k_v3/neuron_10k_v3_fastqs.tar", "./data/neuron_10k_fastqs.tar", method = "wget", quiet = TRUE)
+}
+```
+
+```{r, include=FALSE}
+do_untar <- !dir.exists("./data/neuron_10k_v3_fastqs")
+do_index <- !file.exists("./output/mm_cDNA_introns_ensembl94.idx")
+do_bus <- !file.exists("./output/neuron10k_velocity/output.bus")
+```
+
+Then untar the downloaded file.
+```{bash, eval=do_untar}
+cd ./data
+tar -xvf ./data/neuron_10k_fastqs.tar
+```
+
+# Generate gene count matrices for spliced and unspliced transcripts
+In order to know which reads come from spliced as opposed to unspliced transcripts, we need to see whether the reads contain intronic sequences. Thus we need to include intronic sequences in the kallisto index. This can be done with the `BUSpaRse` function `get_velocity_files`, which generates all files required to run RNA velocity with kallisto | bustools. First, we need a genome annotation to get intronic sequences. We can get genome annotation from GTF or GFF3 files from Ensembl with `getGTF` or `getGFF` from the R package `biomartr`, but Bioconductor provides genome annotations in its databases and package ecosystem as well. Here we use Ensembl version 94 annotation from Bioconductor's `AnnotationHub` (the most recent version from Bioconductor 3.8). UCSC annotation can be obtained from Bioconductor package `TxDb.Mmusculus.UCSC.mm10.knownGene`. 
+
+```{r}
+# query AnnotationHub for mouse Ensembl annotation
+ah <- AnnotationHub()
+query(ah, pattern = c("Ensembl", "94", "Mus musculus", "EnsDb"))
+```
+
+```{r}
+# Get mouse Ensembl 94 annotation
+edb <- ah[["AH64944"]]
+```
+
+Explaining the arguments of `get_velocity_files`:
+
+* `X`, the genome annotation, which is here `edb`. Here `edb` is an [`EnsDb`](https://bioconductor.org/packages/release/bioc/html/ensembldb.html) object. Other allowed inputs are: a path to a GTF file, a `GRanges` object made from loading a GTF file into R, or a [`TxDb`](https://bioconductor.org/packages/release/bioc/html/GenomicFeatures.html) object (e.g. [`TxDb.Mmusculus.UCSC.mm10.knownGene`](https://bioconductor.org/packages/release/data/annotation/html/TxDb.Mmusculus.UCSC.mm10.knownGene.html)).
+* `L`: Length of the biological read of the technology of interest. For 10x v1 and v2 chemistry, `L` is 98 nt, and for v3 chemistry, `L` is 91 nt. The length of flanking region around introns is `L-1`, to capture reads from nascent transcripts that partially map to intronic and exonic sequences.
+* `Genome`: Genome, either a `DNAStringSet` or `BSgenome` object. Genomes of _Homo sapiens_ and common model organisms can also be easily obtained from Bioconductor. The one used in this notebook is from the package `BSgenome.Mmusculus.UCSC.mm10`. Alternatively, you can download genomes from Ensembl, RefSeq, or GenBank with `biomartr::getGenome`. Make sure that the annotation and the genome use the same genome version, which is here GRCm38 (mm10).
+* `Transcriptome`: While you may supply a transcriptome in the form of a path to a fasta file or a `DNAStringSet`, this is not required. The transcriptome can be extracted from the genome with the gene annotation. We recommend extracting the transcriptome from the genome, so the transcript IDs used in the transcriptome and the annotation (and importantly, in the `tr2g.tsv` file, explained later) are guaranteed to match. In this notebook, the transcriptome is not supplied and will be extracted from the genome.
+* `isoform_action`: There are two options regarding gene isoforms from alternative splicing or alternative transcription start or termination site. One is to get intronic sequences separately for each isoform, and another is to collapse all isoforms of a gene by taking the union of all exonic ranges of the gene. I'm not sure which way is better, but since in the case of alternative splicing, some intronic sequences of one isoform can actually be exonic sequences of another isoform, we will collapse isoforms here.
+
+```{r}
+get_velocity_files(edb, L = 91, Genome = BSgenome.Mmusculus.UCSC.mm10, 
+                   out_path = "./output/neuron10k_collapse", 
+                   isoform_action = "collapse")
+```
+
+```{r, include=FALSE}
+do_untar <- !dir.exists("./data/neuron_10k_v3_fastqs")
+do_index <- !file.exists("./output/mm_cDNA_introns_94_collapse.idx")
+do_bus <- !file.exists("./output/neuron10k_collapse/output.bus")
+```
+
+For regular gene count data, we build a kallisto index for cDNAs as reads are pseudoaligned to cDNAs. Here, for RNA velocity, as reads are pseudoaligned to the flanked intronic sequences in addition to the cDNAs, the flanked intronic sequences should also be part of the kallisto index.
+```{bash, eval=do_index}
+# Intron index
+kallisto index -i ./output/mm_cDNA_introns_94_collapse.idx ./output/neuron10k_collapse/cDNA_introns.fa
+```
+
+The initial `bus` file is generated the same way as in regular gene count data, except with the cDNA + flanked intron index.
+```{bash, eval=do_bus}
+cd ./data/neuron_10k_v3_fastqs
+kallisto bus -i ../../output/mm_cDNA_introns_94_collapse.idx \
+-o ../../output/neuron10k_collapse -x 10xv3 -t8 \
+neuron_10k_v3_S1_L002_R1_001.fastq.gz neuron_10k_v3_S1_L002_R2_001.fastq.gz \
+neuron_10k_v3_S1_L001_R1_001.fastq.gz neuron_10k_v3_S1_L001_R2_001.fastq.gz
+```
+
+```{r}
+do_copy <- !file.exists("./data/whitelist_v3.txt")
+do_bustools <- !file.exists("./output/neuron10k_velocity/output.correct.sort.bus")
+do_count <- !file.exists("./output/neuron10k_velocity/spliced/s.mtx")
+```
+
+A barcode whitelist of all valid barcode can be used, though is not strictly required. The 10x whitelist contains all barcodes from the kit. The 10x whitelist file comes with Cell Ranger installation, and is copies to the working directory of this notebook. For `bustools`, the whitelist must be a text file with one column, each row of which is a valid cell barcode. The text file must not be compressed. 
+```{bash, eval=do_copy}
+cp ~/cellranger-3.0.2/cellranger-cs/3.0.2/lib/python/cellranger/barcodes/3M-february-2018.txt.gz \
+./data/whitelist_v3.txt.gz
+# Decompress
+gunzip ./data/whitelist_v3.txt.gz
+```
+
+The `bustools correct` command checks the whitelist and can correct some barcodes not on the whitelist but might have been due to sequencing error or mutation. If you do not wish to use a whitelist, then you can skip `bustools correct` below and go straight to `bustools sort`. In bash, `|` is a pipe just like the magrittr pipe `%>%` in R. The `-` by the end of the `bustools sort` command indicates where what goes through the pipe goes, i.e. the output of `bustools correct` is becoming the input to `bustools sort`. `-t4` means using 4 threads. 
+
+**Note: This part will change soon!**
+
+The `bustools capture` command determines what is from cDNA and what is from the flanked introns and generate two separate `bus` files.
+
+```{bash, eval=do_bustools}
+cd ./output/neuron10k_collapse
+mkdir cDNA_capture/ introns_capture/ spliced/ unspliced/
+bustools correct -w ../../data/whitelist_v3.txt -p output.bus | \
+bustools sort -o output.correct.sort.bus -t4 -
+bustools capture -o cDNA_capture/ -c ./cDNA_tx_to_capture.txt -e matrix.ec -t transcripts.txt output.correct.sort.bus
+bustools capture -o introns_capture/ -c ./introns_tx_to_capture.txt -e matrix.ec -t transcripts.txt output.correct.sort.bus
+```
+
+Unlike for just a gene count matrix, for RNA velocity, 2 matrices are generated. One for spliced reads, and the other for unspliced. Here the reads not captured for cDNA go to the unspliced matrix, and the reads not captured for introns go to the spliced matrix.
+```{bash}
+cd ./output/neuron10k_collapse
+bustools count -o unspliced/u -g ./tr2g.tsv -e cDNA_capture/split.ec -t transcripts.txt --genecounts cDNA_capture/split.bus
+bustools count -o spliced/s -g ./tr2g.tsv -e introns_capture/split.ec -t transcripts.txt --genecounts introns_capture/split.bus
+```
+
+# Preprocessing
+## Remove empty droplets
+Now we have the spliced and unspliced matrices to be read into R:
+```{r}
+c(spliced, unspliced) %<-% read_velocity_output(spliced_dir = "./output/neuron10k_collapse/spliced",
+                                                spliced_name = "s",
+                                                unspliced_dir = "./output/neuron10k_collapse/unspliced",
+                                                unspliced_name = "u")
+```
+
+The `%<-%` from `zeallot` unpacks a list of 2 into 2 separate objects in the Python and Matlab manner. How many UMIs are from unspliced transcripts?
+
+```{r}
+sum(unspliced@x) / (sum(unspliced@x) + sum(spliced@x))
+```
+
+There are more unspliced counts than spliced counts, which has been observed in multiple datasets. In contrast, for velocyto, the unspliced count is usually between 10% and 20% of the sum of spliced and unspliced. Perhaps this is because kallisto | bus counts reads that are partially intronic and partially exonic as unspliced while velocyto throws away many reads (see [this GitHub issue](https://github.com/velocyto-team/velocyto.py/issues/148)). 
+
+We expect around 10,000 cells. There are over 10 times more barcodes here, since most barcodes are from empty droplets. The number of genes does not seem too outrageous.
+```{r}
+dim(spliced)
+```
+
+```{r}
+dim(unspliced)
+```
+
+Most barcodes only have 0 or 1 UMIs detected.
+```{r}
+tot_count <- Matrix::colSums(spliced)
+summary(tot_count)
+```
+
+A commonly used method to estimate the number of empty droplets is barcode ranking knee and inflection points, as those are often assumed to represent transition between two components of a distribution. While more sophisticated methods exist (e.g. see [`emptyDrops` in `DropletUtils`](https://www.bioconductor.org/packages/devel/bioc/vignettes/DropletUtils/inst/doc/DropletUtils.html#detecting-empty-droplets)), for simplicity, we will use the barcode ranking method here. However, whichever way we go, we don't have the ground truth. The spliced matrix is used for filtering, though both matrices have similar inflection points.
+```{r}
+bc_rank <- barcodeRanks(spliced)
+bc_uns <- barcodeRanks(unspliced)
+```
+
+Here the knee plot is transposed, because this is more generalizable to multi-modal data, such that those with not only RNA-seq but also abundance of cell surface markers. In that case, we can plot number of UMIs on the x axis, number of cell surface protein tags on the y axis, and barcode rank based on both UMI and protein tag counts on the z axis; it makes more sense to make barcode rank the dependent variable. See [this blog post by Lior Pachter](https://liorpachter.wordpress.com/2019/06/24/rotating-the-knee-plot-and-related-yoga/) for a more detailed explanation.
+
+```{r knee}
+tibble(rank = bc_rank$rank, total = bc_rank$total, matrix = "spliced") %>% 
+  bind_rows(tibble(rank = bc_uns$rank, total = bc_uns$total, matrix = "unspliced")) %>% 
+  distinct() %>% 
+  ggplot(aes(total, rank, color = matrix)) +
+  geom_line() +
+  geom_vline(xintercept = metadata(bc_rank)$knee, color = "blue", linetype = 2) +
+  geom_vline(xintercept = metadata(bc_rank)$inflection, color = "green", linetype = 2) +
+  geom_vline(xintercept = metadata(bc_uns)$knee, color = "purple", linetype = 3) +
+  geom_vline(xintercept = metadata(bc_uns)$inflection, color = "cyan", linetype = 3) +
+  annotate("text", y = c(1000, 1000, 500, 500), 
+           x = 1.5 * c(metadata(bc_rank)$knee, metadata(bc_rank)$inflection,
+                       metadata(bc_uns)$knee, metadata(bc_uns)$inflectio),
+           label = c("knee (s)", "inflection (s)", "knee (u)", "inflection (u)"), 
+           color = c("blue", "green", "purple", "cyan")) +
+  scale_x_log10() +
+  scale_y_log10() +
+  labs(y = "Rank", x = "Total UMI counts") +
+  theme_bw()
+```
+
+Which inflection point should be used to remove what are supposed to be empty droplets? The one of the spliced matrix or the unspliced matrix? 
+
+Actually, spliced and unspliced counts are multimodal data, so why not make one of those promised 3D plots where the barcode rank depends on two variables? The rank (z axis) would now be the number cells with at least x spliced UMIs and y unspliced UMIs. How shall this be computed? The transposed knee plot (or rank-UMI plot) can be thought of as `(1 - ECDF(total_UMI))*n_cells`. In the ECDF of total UMI counts, the dependent variable is the proportion of cells with at most this number of distinct UMIs. So 1 minus that would mean the proportion of cells with at least this number of distinct UMIs. In the knee plot, the rank is the number of cells with at least this number of distinct UMIs. So dividing by the number of cells, we get `1 - ECDF(total_UMI)`. Would computing the 2D ECDF be more efficient than this naive approach? There is an R package that can compute bivariate ECDFs called `Emcdf`, but it uses so much memory that even our server can't handle. I failed to find implementations of bivariate ECDFs in other languages. There is an [algorithm based on range trees](https://dl.acm.org/citation.cfm?id=358850) that can find multivariate ECDF efficiently.
+
+Before obtaining a more efficient implementation, I used my naive approach that translates this concept into code very literally. Though I used Rcpp, it's really slow. The trick to make it faster is to only evaluate how many cells have at least x spliced and y unspliced counts at a smaller number of grid points of x and y.
+
+```{r engine='Rcpp'}
+//[[Rcpp::depends(RcppProgress)]]
+#include <progress.hpp>
+#include <progress_bar.hpp>
+#include <Rcpp.h>
+using namespace Rcpp;
+
+//[[Rcpp::export]]
+NumericMatrix bc_ranks2(NumericVector x, NumericVector y, 
+                        NumericVector x_grid, NumericVector y_grid) {
+  NumericMatrix out(x_grid.size(), y_grid.size());
+  Progress p(x_grid.size(), true);
+  for (int i = 0; i < x_grid.size(); i++) {
+    checkUserInterrupt();
+    for (int j = 0; j < y_grid.size(); j++) {
+      out(i,j) = sum((x_grid[i] <= x) & (y_grid[j] <= y));
+    }
+    p.increment();
+  }
+  return(out);
+}
+```
+
+As most barcodes have a small number of distinct UMIs detected, the grid should be denser for fewer counts. Making the grid in log space achieves this.
+```{r}
+# Can only plot barcodes with both spliced and unspliced counts
+bcs_inter <- intersect(colnames(spliced), colnames(unspliced))
+s <- colSums(spliced[,bcs_inter])
+u <- colSums(unspliced[,bcs_inter])
+# Grid points
+sr <- sort(unique(exp(round(log(s)*100)/100)))
+ur <- sort(unique(exp(round(log(u)*100)/100)))
+```
+
+```{r, include=FALSE}
+do_rank2 <- !file.exists("./output/neuron10k_collapse/bivar_knee.rds")
+if (!do_rank2) {
+  bc2 <- readRDS("./output/neuron10k_collapse/bivar_knee.rds")
+}
+```
+
+```{r, eval=do_rank2}
+# Run naive approach
+bc2 <- bc_ranks2(s, u, sr, ur)
+```
+
+```{r, include=FALSE}
+saveRDS(bc2, "./output/neuron10k_collapse/bivar_knee.rds")
+```
+
+What would the "rank" look like?
+```{r}
+# can't turn color to lot scale unless log values are plotted
+z_use <- log10(bc2)
+z_use[is.infinite(z_use)] <- NA
+plot_ly(x = sr, y = ur, z = z_use) %>% add_surface() %>% 
+  layout(scene = list(xaxis = list(title = "Total spliced UMIs", type = "log"),
+                      yaxis = list(title = "Total unspliced UMIs", type = "log"),
+                      zaxis = list(title = "Rank (log10)")))
+```
+
+Looks like it worked. This looks pretty symmetric as the rank-UMI plots for the spliced and unspliced matrices are pretty similar. How can this be used to decide what may be empty droplets? This worths some more thoughts. The surface might also need to be be smoothed for automated thresholding, just like in `DropletUtils`'s inflection method. For now, for simplicity, the inflection point for the spliced matrix will be used provisionally.
+```{r}
+bcs_use <- colnames(spliced)[tot_count > metadata(bc_rank)$inflection]
+# Remove genes that aren't detected
+tot_genes <- Matrix::rowSums(spliced)
+genes_use <- rownames(spliced)[tot_genes > 0]
+sf <- spliced[genes_use, bcs_use]
+uf <- unspliced[genes_use, bcs_use]
+```
+
+```{r}
+dim(sf)
+```
+
+## Cell type annotation
+`SingleR` uses bulk RNA-seq data of isolated known cell types as a reference to annotate cell types in scRNA-seq datasets. The reference uses gene symbols or names rather than Ensembl IDs.
+```{r}
+# Get gene names
+gns <- tr2g_EnsDb(edb)[,c("gene", "gene_name")] %>% 
+  distinct()
+```
+
+```{r}
+data("mouse.rnaseq")
+# Convert from gene symbols to Ensembl gene ID
+ref_use <- mouse.rnaseq$data
+rownames(ref_use) <- gns$gene[match(rownames(ref_use), gns$gene_name)]
+ref_use <- ref_use[!is.na(rownames(ref_use)),]
+```
+
+```{r, include=FALSE}
+do_annot <- !file.exists("./output/neuron10k_collapse/cell_type.rds")
+if (!do_annot) {
+  annot <- readRDS("./output/neuron10k_collapse/cell_type.rds")
+}
+```
+
+```{r, eval=do_annot}
+annot <- SingleR("single", sf, ref_data = ref_use, types = mouse.rnaseq$types)
+```
+
+```{r, include = FALSE, eval=FALSE}
+saveRDS(annot, "./output/neuron10k_collapse/cell_type.rds")
+```
+
+In order not to have cells not of the neural or glial lineages overshadow velocity visualization, only cells of the neural and glial lineages are kept. 
+
+```{r}
+ind <- annot$labels %in% c("NPCs", "Neurons", "OPCs", "Oligodendrocytes", 
+                           "qNSCs", "aNSCs", "Astrocytes", "Ependymal")
+cells_use <- annot$cell.names[ind]
+sf <- sf[, cells_use]
+uf <- uf[, cells_use]
+```
+
+Meaning of the acronyms:
+
+* NPCs: Neural progenitor cells
+* OPCs: Oligodendrocyte progenitor cells
+* qNSCs: Quiescent neural stem cells
+* aNSCs: Active neural stem cells
+
+```{r, include=FALSE}
+do_seu <- !file.exists("./output/neuron10k_collapse/seu_ng.rds")
+if (!do_seu) 
+  seu <- readRDS("./output/neuron10k_collapse/seu_ng.rds")
+```
+
+## QC
+Both the spliced and unspliced matrices are normalized and scaled with [`SCTransform`](https://www.biorxiv.org/content/10.1101/576827v2), which is an alternative to `NormalizeData`, `ScaleData`, and `FindVariableFeatures`.
+```{r, results="hide", eval = do_seu}
+seu <- CreateSeuratObject(sf, assay = "sf") %>% 
+  SCTransform(assay = "sf", new.assay.name = "spliced")
+seu[["uf"]] <- CreateAssayObject(uf)
+seu <- SCTransform(seu, assay = "uf", new.assay.name = "unspliced")
+# Add cell type metadata
+seu <- AddMetaData(seu, setNames(annot$labels[ind], cells_use), 
+                   col.name = "cell_type")
+```
+
+```{r, fig.height=12, fig.width=6}
+cols_use <- c("nCount_sf", "nFeature_sf", "nCount_uf", "nFeature_uf")
+VlnPlot(seu, cols_use, pt.size = 0.1, ncol = 1, group.by = "cell_type")
+```
+
+There's only one cell labeled ependymal by `SingleR`. How does number of UMI counts relate to number of genes detected? How does number of UMI counts in the spliced matrix relate to the number of gene detected in the unspliced matrix?
+```{r}
+# Helper functions for ggpairs
+log10_diagonal <- function(data, mapping, ...) {
+  ggally_densityDiag(data, mapping, ...) + scale_x_log10()
+}
+log10_points <- function(data, mapping, ...) {
+  ggally_points(data, mapping, ...) + scale_x_log10() + scale_y_log10()
+}
+```
+
+```{r pairs}
+ggpairs(seu@meta.data, columns = cols_use,
+        upper = list(continuous = "cor"),
+        diag = list(continuous = log10_diagonal),
+        lower = list(continuous = wrap(log10_points, alpha = 0.1, size=0.3)),
+        progress = FALSE)
+```
+
+## Dimension reduction
+When visualizing RNA velocity on reduced dimensions, should the cell embeddings be from the spliced matrix or the unspliced matrix or the sum of both? In my opinion, it makes the most sense to plot RNA velocity over cell embeddings from the spliced matrix. The arrows in RNA velocity visualization stand for where the cell is predicted to be going in the near future. Where does the cell go from? The current state. And the current state is represented by the spliced matrix, while the unspliced matrix represents what is soon to come. Thus all the dimension reduction here will be computed from the spliced matrix.
+```{r elbow}
+DefaultAssay(seu) <- "spliced"
+seu <- RunPCA(seu, verbose = FALSE, npcs = 70)
+ElbowPlot(seu, ndims = 70)
+```
+
+```{r, eval=FALSE}
+PCAPlot(seu, group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) +
+  scale_color_brewer(type = "qual", palette = "Set2")
+```
+
+```{r pca, echo=FALSE}
+# Need to use DimPlot due to weird workflowr problem with PCAPlot that calls seu[[wflow.build]]
+# and eats up memory. I suspect this is due to the sys.call() in 
+# Seurat:::SpecificDimPlot. I still want to display the standard way though
+DimPlot(seu, reduction = "pca",
+        group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) +
+  scale_color_brewer(type = "qual", palette = "Set2")
+```
+
+```{r, eval=FALSE}
+seu <- RunTSNE(seu, dims = 1:50, verbose = FALSE)
+TSNEPlot(seu, group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) +
+  scale_color_brewer(type = "qual", palette = "Set2")
+```
+
+```{r tsne, echo=FALSE}
+seu <- RunTSNE(seu, dims = 1:50, verbose = FALSE)
+DimPlot(seu, reduction = "tsne",
+        group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) +
+  scale_color_brewer(type = "qual", palette = "Set2")
+```
+
+This looks quite similar to the tSNE from gene count matrix of this same dataset, except rotated; see the [`slingshot` notebook](https://bustools.github.io/BUS_notebooks_R/slingshot.html#dimension_reduction)
+
+Seurat's `RunUMAP` doesn't work on servers, where this notebook is built, because of some problem with `reticulate`, which `RunUMAP` uses to call the Python implementation of UMAP. See [this GitHub issue](https://github.com/rstudio/reticulate/issues/428). Thus we will use the R package `uwot` for UMAP instead. 
+```{r}
+set.seed(123)
+um <- umap(Embeddings(seu, reduction = "pca")[, 1:50], init = "random")
+rownames(um) <- colnames(sf)
+colnames(um) <- c("UMAP_1", "UMAP_2")
+seu[["umap"]] <- CreateDimReducObject(embeddings = um, assay = "spliced", key = "umap_")
+```
+
+```{r, eval=FALSE}
+UMAPPlot(seu, pt.size = 0.5, group.by = "cell_type", label = TRUE, repel = TRUE) +
+  scale_color_brewer(type = "qual", palette = "Set2")
+```
+
+```{r umap, echo=FALSE}
+DimPlot(seu, reduction = "umap",
+        group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) +
+  scale_color_brewer(type = "qual", palette = "Set2")
+```
+
+As expected, qNSCs are on the one end , and neurons are on the other. Clustering should partition the big blob of NPCs that `SingleR` could not further partition due to limitations in the `SingleR` reference for mouse brains.
+```{r, eval = FALSE}
+seu <- FindNeighbors(seu, verbose = FALSE) %>% 
+  FindClusters(resolution = 1, verbose = FALSE) # Louvain
+UMAPPlot(seu, pt.size = 0.5)
+```
+
+```{r umap_clust, echo = FALSE}
+seu <- FindNeighbors(seu, verbose = FALSE) %>% 
+  FindClusters(resolution = 1, verbose = FALSE) # Louvain
+DimPlot(seu, pt.size = 0.5, reduction = "umap")
+```
+
+# RNA velocity
+```{r}
+seu <- RunVelocity(seu, ncores = 10, reduction = "pca", verbose = FALSE)
+```
+
+```{r, include=FALSE, eval=do_seu}
+saveRDS(seu, "./output/neuron10k_collapse/seu_ng.rds")
+```
+
+Unfortunately, `velocyto.R` does not natively support `ggplot2`. This is a function that assigns colors to each cell in base R graphics.
+```{r}
+cell_pal <- function(cell_cats, pal_fun) {
+  categories <- sort(unique(cell_cats))
+  pal <- setNames(pal_fun(length(categories)), categories)
+  pal[cell_cats]
+}
+```
+
+`velocyto.R` also requires that the vector of colors should have cell barcodes/IDs as names to match color to cell.
+```{r}
+cell_colors <- cell_pal(seu$cell_type, brewer_pal("qual", "Set2"))
+cell_colors_clust <- cell_pal(seu$seurat_clusters, hue_pal())
+names(cell_colors) <- names(cell_colors_clust) <- colnames(sf)
+```
+
+```{r, include=FALSE}
+do_cc <- !file.exists("./output/neuron10k_collapse/cc_umap.rds")
+if (!do_cc) {
+  cc_umap <- readRDS("./output/neuron10k_collapse/cc_umap.rds")
+}
+```
+
+Would a clean trajectory from qNSCs to NPCs to neurons be traced? The arrows are projected onto non-linear dimension reductions by correlation between the predicted cell state and gene expression of other cells in the dataset. 
+```{r v1a, eval=do_cc}
+cc_umap <- show.velocity.on.embedding.cor(emb = Embeddings(seu, "umap"),
+                                          vel = Tool(seu, slot = "RunVelocity"),
+                                          n.cores = 50, show.grid.flow = TRUE,
+                                          grid.n = 50, cell.colors = cell_colors,
+                                          cex = 0.5, cell.border.alpha = 0,
+                                          arrow.scale = 2, arrow.lwd = 0.75,
+                                          xlab = "UMAP1", ylab = "UMAP2")
+```
+
+```{r v1b, eval=!do_cc, echo=FALSE}
+show.velocity.on.embedding.cor(emb = Embeddings(seu, "umap"),
+                               vel = Tool(seu, slot = "RunVelocity"),
+                               n.cores = 50, show.grid.flow = TRUE,
+                               grid.n = 50, cell.colors = cell_colors,
+                               cex = 0.5, cell.border.alpha = 0,
+                               arrow.scale = 2, arrow.lwd = 0.75,
+                               cc = cc_umap$cc,
+                               xlab = "UMAP1", ylab = "UMAP2")
+```
+
+This presents a much more complicated picture. Moreover, there are some very divergent cells in small clusters labeled as NPCs. This step is computationally expensive; in subsequent calls to `show.velocity.on.embedding.cor` for the same dimension reduction, the expensive part can be bypassed by supplying the output of the first call.
+```{r v2}
+show.velocity.on.embedding.cor(emb = Embeddings(seu, "umap"),
+                               vel = Tool(seu, slot = "RunVelocity"),
+                               n.cores = 50, show.grid.flow = TRUE,
+                               grid.n = 50, cell.colors = cell_colors_clust,
+                               cex = 0.5, cell.border.alpha = 0,
+                               arrow.scale = 2, arrow.lwd = 0.75, 
+                               cc = cc_umap$cc,
+                               xlab = "UMAP1", ylab = "UMAP2")
+```
+
+It seems that something interesting is happening in cluster 5. 
+
+```{r, eval=FALSE, include=FALSE}
+saveRDS(cc_umap, "./output/neuron10k_collapse/cc_umap.rds")
+```
