@@ -53,7 +53,6 @@ library(monocle)
 library(SingleR)
 library(Matrix)
 library(tidyverse)
-library(ggsci)
 theme_set(theme_bw())
 ```
 
@@ -62,8 +61,8 @@ The dataset we are using is [10x 10k neurons from an E18 mouse](https://support.
 
 ```{r dl_data}
 # Download data
-if (!file.exists("./data/neuron_10k_fastqs.tar")) {
-  download.files("http://s3-us-west-2.amazonaws.com/10x.files/samples/cell-exp/3.0.0/neuron_10k_v3/neuron_10k_v3_fastqs.tar", "./data/neuron_10k_fastqs.tar", method = "wget", quiet = TRUE)
+if (!file.exists("./data/neuron_10k_v3_fastqs.tar")) {
+  download.file("http://s3-us-west-2.amazonaws.com/10x.files/samples/cell-exp/3.0.0/neuron_10k_v3/neuron_10k_v3_fastqs.tar", "./data/neuron_10k_v3_fastqs.tar", method = "wget", quiet = TRUE)
 }
 ```
 
@@ -73,32 +72,32 @@ do_untar <- !dir.exists("./data/neuron_10k_v3_fastqs")
 
 ```{bash, eval=do_untar}
 cd ./data
-tar -xvf ./neuron_10k_fastqs.tar
+tar -xvf ./neuron_10k_v3_fastqs.tar
 ```
 
 # Generate the gene count matrix
 ## Build the `kallisto` index
-Here we use [kallisto](https://pachterlab.github.io/kallisto/about) to pseudoalign the reads to the transcriptome and then to create the `bus` file to be converted to a sparse matrix. The first step is to build an index of the mouse transcriptome. The transcriptome downloaded here are from Ensembl version 94, released in October 2018. 
+Here we use [kallisto](https://pachterlab.github.io/kallisto/about) to pseudoalign the reads to the transcriptome and then to create the `bus` file to be converted to a sparse matrix. The first step is to build an index of the mouse transcriptome. The transcriptome downloaded here is Ensembl version 97, the most recent version as of writing.
 ```{r dl_tx}
 # Mouse transcriptome
-if (!file.exists("./data/mm_cdna.fa.gz")) {
-  download.file("ftp://ftp.ensembl.org/pub/release-94/fasta/mus_musculus/cdna/Mus_musculus.GRCm38.cdna.all.fa.gz", "./data/mm_cdna.fa.gz", method = "wget", quiet = TRUE)
+if (!file.exists("./data/mm_cdna97.fa.gz")) {
+  download.file("ftp://ftp.ensembl.org/pub/release-97/fasta/mus_musculus/cdna/Mus_musculus.GRCm38.cdna.all.fa.gz", "./data/mm_cdna97.fa.gz", method = "wget", quiet = TRUE)
 }
 ```
 
 ```{r, include=FALSE}
-do_index <- !file.exists("./output/mm_tr_index.idx")
+do_index <- !file.exists("./output/mm_tr_index97.idx")
 do_bus <- !file.exists("./output/neuron10k/output.bus")
 ```
 
 ```{bash index, eval=do_index}
-kallisto index -i ./output/mm_tr_index.idx ./data/mm_cdna.fa.gz
+kallisto index -i ./output/mm_tr_index97.idx ./data/mm_cdna97.fa.gz
 ```
 
 With the index and the fastq files, the `kallisto bus` command generates a binary `bus` file called `output.bus`, which will be sorted and processed to generate a gene count matrix.
 ```{bash kallisto, eval=do_bus}
 cd ./data/neuron_10k_v3_fastqs
-kallisto bus -i ../../output/mm_tr_index.idx -o ../../output/neuron10k -x 10xv3 -t8 \
+kallisto bus -i ../../output/mm_tr_index97.idx -o ../../output/neuron10k -x 10xv3 -t8 \
 neuron_10k_v3_S1_L002_R1_001.fastq.gz neuron_10k_v3_S1_L002_R2_001.fastq.gz \
 neuron_10k_v3_S1_L001_R1_001.fastq.gz neuron_10k_v3_S1_L001_R2_001.fastq.gz
 ```
@@ -109,7 +108,7 @@ For the sparse matrix, most people are interested in how many UMIs per gene per 
 
 Remember that we downloaded transcriptome FASTA file from Ensembl just now. In FASTA files, each entry is a sequence with a name. In Ensembl FASTA files, the sequence name has genome annotation of the corresponding sequence, so we can extract transcript IDs and corresponding gene IDs and gene names from there.
 ```{r}
-tr2g <- transcript2gene(fasta_file = "./data/mm_cdna.fa.gz", 
+tr2g <- transcript2gene(fasta_file = "./data/mm_cdna97.fa.gz", 
                         kallisto_out_path = "./output/neuron10k",
                         verbose = FALSE)
 ```
@@ -121,7 +120,7 @@ head(tr2g)
 `bustools` requires `tr2g` to be written into a tab delimited file of a specific format: No headers, first column is transcript ID, and second column is the corresponding gene ID. Transcript IDs must be in the same order as in the `kallisto` index.
 ```{r, eval}
 # Write tr2g to format required by bustools
-save_tr2g_bustools(tr2g, file_save = "./output/tr2g_mm.tsv")
+save_tr2g_bustools(tr2g, file_save = "./output/tr2g_mm97.tsv")
 ```
 
 A whitelist that contains all the barcodes known to be present in the kit is provided by 10x and comes with CellRanger. A CellRanger installation is required, though we will not run CellRanger here.
@@ -142,7 +141,7 @@ Then we're ready to make the gene count matrix. First, `bustools` runs barcode e
 mkdir ./tmp
 bustools correct -w ./data/whitelist_v3.txt -p ./output/neuron10k/output.bus | \
 bustools sort -T tmp/ -t4 -p - | \
-bustools count -o ./output/neuron10k/genes -g ./output/tr2g_mm.tsv \
+bustools count -o ./output/neuron10k/genes -g ./output/tr2g_mm97.tsv \
 -e ./output/neuron10k/matrix.ec -t ./output/neuron10k/transcripts.txt --genecounts -
 rm -r ./tmp
 ```
@@ -196,7 +195,7 @@ dim(res_mat)
 Now the number of cells is closer to expectation.
 
 ## Cell type inference
-Monocle 2 only infers one trajectory for the entire dataset, so non-neuronal cells like endothelial cells and erythrocytes may be mistaken as highly differentiated cells from the neuronal lineage. So we will remove non-neuronal cell types. Cell types are also helpful to orient the trajectory; neuronal progenitor cells must come before neurons. Here cell type inference is done programatically with [`SingleR`](https://github.com/dviraran/SingleR), which compares gene expression profiles of individual cells to bulk RNA-seq data of purified known cell types.
+Monocle 2 only infers one trajectory for the entire dataset, so non-neuronal cells like endothelial cells and erythrocytes may be mistaken as highly differentiated cells from the neuronal lineage. So we will remove cell types not of the neural or glial lineages. Cell types are also helpful to orient the trajectory; neuronal progenitor cells must come before neurons. Here cell type inference is done programatically with [`SingleR`](https://github.com/dviraran/SingleR), which compares gene expression profiles of individual cells to bulk RNA-seq data of purified known cell types.
 ```{r ref}
 data("mouse.rnaseq")
 # Convert from gene symbols to Ensembl gene ID
@@ -205,23 +204,32 @@ rownames(ref_use) <- tr2g$gene[match(rownames(ref_use), tr2g$gene_name)]
 ref_use <- ref_use[!is.na(rownames(ref_use)),]
 ```
 
-Then `SingleR` will assign each cell a label based on Spearman correlation with known cell types from bulk RNA-seq. These are the labels we want:
+Then `SingleR` will assign each cell a label based on Spearman correlation with known cell types from bulk RNA-seq. These are meanings of the acronyms:
 
-* NPCs: Neuronal progenitor cells
-* aNSCs: Active neuronal stem cells
-* qNSCs: Quiescent neuronal stem cells
-* Neurons
-```{r singlr, results='hide'}
+* OPCs: Oligodendrocyte progenitor cells
+* NPCs: Neural progenitor cells
+* aNSCs: Active neural stem cells
+* qNSCs: Quiescent neural stem cells
+
+```{r include=FALSE}
+do_annot <- !file.exists("./output/neuron10k/cell_type.rds")
+if (!do_annot) {
+  annots <- SingleR("single", res_mat, ref_data = ref_use, types = mouse.rnaseq$types)
+}
+```
+
+```{r singlr, results='hide', eval=do_annot}
 annots <- SingleR("single", res_mat, ref_data = ref_use, types = mouse.rnaseq$types)
-inds <- annots$labels %in% c("NPCs", "aNSCs", "qNSCs", "Neurons")
-# Only keep these 4 cell types
+inds <- annots$labels %in% c("NPCs", "Neurons", "OPCs", "Oligodendrocytes", 
+                           "qNSCs", "aNSCs", "Astrocytes", "Ependymal")
+# Only keep these cell types
 cells_use <- annots$cell.names[inds]
 mat_neu <- res_mat[,cells_use]
 ```
 
-```{r, include=FALSE, eval=FALSE}
+```{r, include=FALSE, eval=do_annot}
 saveRDS(mat_neu, "./output/neuron10k/mat_neu.rds")
-saveRDS(annots, "./output/neuron10k/cell_types.rds")
+saveRDS(annots, "./output/neuron10k/cell_type.rds")
 saveRDS(res_mat, "./output/neuron10k/mat_filtered.rds")
 ```
 
@@ -285,15 +293,16 @@ plot_cell_clusters(cds, cell_size = 0.5) +
 See where the annotated cell types are
 ```{r tsne2}
 plot_cell_clusters(cds, cell_size = 0.5, color_by = "cell_type") +
-  scale_color_d3(name = "cell type") +
+  scale_color_brewer(name = "cell type", type = "qual", palette = "Set2") +
   labs(x = "tSNE1", y = "tSNE2") +
-  theme(legend.position = "right")
+  theme(legend.position = "right") +
+  guides(color = guide_legend(override.aes = list(size = 3)))
 ```
 
 Genes likely to be informative of ordering of cells along the pseudotime trajectory will be selected for pseudotime inference.
 ```{r, results='hide'}
 diff_genes <- differentialGeneTest(cds, fullModelFormulaStr = "~ Cluster + cell_type",
-                                   cores = 4)
+                                   cores = 10)
 # Use top 3000 differentially expressed genes
 ordering_genes <- row.names(subset(diff_genes, qval < 1e-3))[order(diff_genes$qval)][1:3000]
 cds <- setOrderingFilter(cds, ordering_genes)
@@ -308,7 +317,7 @@ cds <- orderCells(cds)
 See what the trajectory looks like. This projection is `DDRTree`.
 ```{r traj1}
 plot_cell_trajectory(cds, color_by = "cell_type", cell_size = 1) +
-  scale_color_d3(name = "cell type")
+  scale_color_brewer(name = "cell type", type = "qual", palette = "Set2")
 ```
 
 In the [kallisto | bustools paper](https://www.biorxiv.org/content/10.1101/673285v1), I used `slingshot` for pseudotime analysis (Supplementary Figure 6.5) of this dataset, and found two neuronal end points. The result from Monocle 2 here also shows two main branches. Also, as expected, the stem cells are at the very beginning of the trajectory.
