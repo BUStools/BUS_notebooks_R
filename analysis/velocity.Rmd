@@ -66,7 +66,7 @@ The dataset we are using is [10x 10k neurons from an E18 mouse](https://support.
 ```{r dl_data}
 # Download data
 if (!file.exists("./data/neuron_10k_fastqs.tar")) {
-  download.files("http://s3-us-west-2.amazonaws.com/10x.files/samples/cell-exp/3.0.0/neuron_10k_v3/neuron_10k_v3_fastqs.tar", "./data/neuron_10k_fastqs.tar", method = "wget", quiet = TRUE)
+  download.file("http://s3-us-west-2.amazonaws.com/10x.files/samples/cell-exp/3.0.0/neuron_10k_v3/neuron_10k_v3_fastqs.tar", "./data/neuron_10k_v3_fastqs.tar", method = "wget", quiet = TRUE)
 }
 ```
 
@@ -79,21 +79,21 @@ do_bus <- !file.exists("./output/neuron10k_velocity/output.bus")
 Then untar the downloaded file.
 ```{bash, eval=do_untar}
 cd ./data
-tar -xvf ./data/neuron_10k_fastqs.tar
+tar -xvf ./neuron_10k_v3_fastqs.tar
 ```
 
 # Generate spliced and unspliced matrices
-In order to know which reads come from spliced as opposed to unspliced transcripts, we need to see whether the reads contain intronic sequences. Thus we need to include intronic sequences in the kallisto index. This can be done with the `BUSpaRse` function `get_velocity_files`, which generates all files required to run RNA velocity with kallisto | bustools. First, we need a genome annotation to get intronic sequences. We can get genome annotation from GTF or GFF3 files from Ensembl with `getGTF` or `getGFF` from the R package `biomartr`, but Bioconductor provides genome annotations in its databases and package ecosystem as well. Here we use Ensembl version 94 annotation from Bioconductor's `AnnotationHub` (the most recent version from Bioconductor 3.8). UCSC annotation can be obtained from Bioconductor package `TxDb.Mmusculus.UCSC.mm10.knownGene`. 
+In order to know which reads come from spliced as opposed to unspliced transcripts, we need to see whether the reads contain intronic sequences. Thus we need to include intronic sequences in the kallisto index. This can be done with the `BUSpaRse` function `get_velocity_files`, which generates all files required to run RNA velocity with kallisto | bustools. First, we need a genome annotation to get intronic sequences. We can get genome annotation from GTF or GFF3 files from Ensembl with `getGTF` or `getGFF` from the R package `biomartr`, but Bioconductor provides genome annotations in its databases and package ecosystem as well. As of writing, the most recent version of Ensembl is 97. UCSC annotation can be obtained from Bioconductor package `TxDb.Mmusculus.UCSC.mm10.knownGene`. 
 
 ```{r}
 # query AnnotationHub for mouse Ensembl annotation
 ah <- AnnotationHub()
-query(ah, pattern = c("Ensembl", "94", "Mus musculus", "EnsDb"))
+query(ah, pattern = c("Ensembl", "97", "Mus musculus", "EnsDb"))
 ```
 
 ```{r}
-# Get mouse Ensembl 94 annotation
-edb <- ah[["AH64944"]]
+# Get mouse Ensembl 97 annotation
+edb <- ah[["AH73905"]]
 ```
 
 Explaining the arguments of `get_velocity_files`:
@@ -104,6 +104,10 @@ Explaining the arguments of `get_velocity_files`:
 * `Transcriptome`: While you may supply a transcriptome in the form of a path to a fasta file or a `DNAStringSet`, this is not required. The transcriptome can be extracted from the genome with the gene annotation. We recommend extracting the transcriptome from the genome, so the transcript IDs used in the transcriptome and the annotation (and importantly, in the `tr2g.tsv` file, explained later) are guaranteed to match. In this notebook, the transcriptome is not supplied and will be extracted from the genome.
 * `isoform_action`: There are two options regarding gene isoforms from alternative splicing or alternative transcription start or termination site. One is to get intronic sequences separately for each isoform, and another is to collapse all isoforms of a gene by taking the union of all exonic ranges of the gene. I'm not sure which way is better, but since in the case of alternative splicing, some intronic sequences of one isoform can actually be exonic sequences of another isoform, we will collapse isoforms here.
 
+```{r, include = FALSE}
+do_files <- !file.exists("./output/neuron10k_collapse/cDNA_introns.fa")
+```
+
 ```{r}
 get_velocity_files(edb, L = 91, Genome = BSgenome.Mmusculus.UCSC.mm10, 
                    out_path = "./output/neuron10k_collapse", 
@@ -112,20 +116,21 @@ get_velocity_files(edb, L = 91, Genome = BSgenome.Mmusculus.UCSC.mm10,
 
 ```{r, include=FALSE}
 do_untar <- !dir.exists("./data/neuron_10k_v3_fastqs")
-do_index <- !file.exists("./output/mm_cDNA_introns_94_collapse.idx")
+do_index <- !file.exists("./output/mm_cDNA_introns_97_collapse.idx")
 do_bus <- !file.exists("./output/neuron10k_collapse/output.bus")
 ```
 
 For regular gene count data, we build a kallisto index for cDNAs as reads are pseudoaligned to cDNAs. Here, for RNA velocity, as reads are pseudoaligned to the flanked intronic sequences in addition to the cDNAs, the flanked intronic sequences should also be part of the kallisto index.
+
 ```{bash, eval=do_index}
 # Intron index
-kallisto index -i ./output/mm_cDNA_introns_94_collapse.idx ./output/neuron10k_collapse/cDNA_introns.fa
+kallisto index -i ./output/mm_cDNA_introns_97_collapse.idx ./output/neuron10k_collapse/cDNA_introns.fa
 ```
 
 The initial `bus` file is generated the same way as in regular gene count data, except with the cDNA + flanked intron index.
 ```{bash, eval=do_bus}
 cd ./data/neuron_10k_v3_fastqs
-kallisto bus -i ../../output/mm_cDNA_introns_94_collapse.idx \
+kallisto bus -i ../../output/mm_cDNA_introns_97_collapse.idx \
 -o ../../output/neuron10k_collapse -x 10xv3 -t8 \
 neuron_10k_v3_S1_L002_R1_001.fastq.gz neuron_10k_v3_S1_L002_R2_001.fastq.gz \
 neuron_10k_v3_S1_L001_R1_001.fastq.gz neuron_10k_v3_S1_L001_R2_001.fastq.gz
@@ -337,7 +342,7 @@ if (!do_annot) {
 annot <- SingleR("single", sf, ref_data = ref_use, types = mouse.rnaseq$types)
 ```
 
-```{r, include = FALSE, eval=FALSE}
+```{r, include = FALSE, eval=do_annot}
 saveRDS(annot, "./output/neuron10k_collapse/cell_type.rds")
 ```
 
@@ -381,7 +386,7 @@ cols_use <- c("nCount_sf", "nFeature_sf", "nCount_uf", "nFeature_uf")
 VlnPlot(seu, cols_use, pt.size = 0.1, ncol = 1, group.by = "cell_type")
 ```
 
-There's only one cell labeled ependymal by `SingleR`. How does number of UMI counts relate to number of genes detected? How does number of UMI counts in the spliced matrix relate to the number of gene detected in the unspliced matrix?
+There's only 2 cells labeled ependymal by `SingleR`. How does number of UMI counts relate to number of genes detected? How does number of UMI counts in the spliced matrix relate to the number of gene detected in the unspliced matrix?
 ```{r}
 # Helper functions for ggpairs
 log10_diagonal <- function(data, mapping, ...) {
@@ -408,27 +413,16 @@ seu <- RunPCA(seu, verbose = FALSE, npcs = 70)
 ElbowPlot(seu, ndims = 70)
 ```
 
-```{r, eval=FALSE}
-PCAPlot(seu, group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) +
-  scale_color_brewer(type = "qual", palette = "Set2")
-```
-
-```{r pca, echo=FALSE}
+```{r pca}
 # Need to use DimPlot due to weird workflowr problem with PCAPlot that calls seu[[wflow.build]]
 # and eats up memory. I suspect this is due to the sys.call() in 
-# Seurat:::SpecificDimPlot. I still want to display the standard way though
+# Seurat:::SpecificDimPlot. 
 DimPlot(seu, reduction = "pca",
         group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) +
   scale_color_brewer(type = "qual", palette = "Set2")
 ```
 
-```{r, eval=FALSE}
-seu <- RunTSNE(seu, dims = 1:50, verbose = FALSE)
-TSNEPlot(seu, group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) +
-  scale_color_brewer(type = "qual", palette = "Set2")
-```
-
-```{r tsne, echo=FALSE}
+```{r tsne}
 seu <- RunTSNE(seu, dims = 1:50, verbose = FALSE)
 DimPlot(seu, reduction = "tsne",
         group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) +
@@ -439,32 +433,22 @@ This looks quite similar to the tSNE from gene count matrix of this same dataset
 
 Seurat's `RunUMAP` doesn't work on servers, where this notebook is built, because of some problem with `reticulate`, which `RunUMAP` uses to call the Python implementation of UMAP. See [this GitHub issue](https://github.com/rstudio/reticulate/issues/428). Thus we will use the R package `uwot` for UMAP instead. 
 ```{r}
-set.seed(123)
+set.seed(4837)
 um <- umap(Embeddings(seu, reduction = "pca")[, 1:50], init = "random")
 rownames(um) <- colnames(sf)
 colnames(um) <- c("UMAP_1", "UMAP_2")
 seu[["umap"]] <- CreateDimReducObject(embeddings = um, assay = "spliced", key = "umap_")
 ```
 
-```{r, eval=FALSE}
-UMAPPlot(seu, pt.size = 0.5, group.by = "cell_type", label = TRUE, repel = TRUE) +
-  scale_color_brewer(type = "qual", palette = "Set2")
-```
-
-```{r umap, echo=FALSE}
+```{r umap}
 DimPlot(seu, reduction = "umap",
         group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) +
   scale_color_brewer(type = "qual", palette = "Set2")
 ```
 
 As expected, qNSCs are on the one end , and neurons are on the other. Clustering should partition the big blob of NPCs that `SingleR` could not further partition due to limitations in the `SingleR` reference for mouse brains.
-```{r, eval = FALSE}
-seu <- FindNeighbors(seu, verbose = FALSE) %>% 
-  FindClusters(resolution = 1, verbose = FALSE) # Louvain
-UMAPPlot(seu, pt.size = 0.5)
-```
 
-```{r umap_clust, echo = FALSE}
+```{r umap_clust}
 seu <- FindNeighbors(seu, verbose = FALSE) %>% 
   FindClusters(resolution = 1, verbose = FALSE) # Louvain
 DimPlot(seu, pt.size = 0.5, reduction = "umap")
@@ -536,8 +520,44 @@ show.velocity.on.embedding.cor(emb = Embeddings(seu, "umap"),
                                xlab = "UMAP1", ylab = "UMAP2")
 ```
 
-It seems that something interesting is happening in cluster 5. 
+It seems that something interesting is happening in cluster 12. 
 
-```{r, eval=FALSE, include=FALSE}
+```{r, eval=do_cc, include=FALSE}
 saveRDS(cc_umap, "./output/neuron10k_collapse/cc_umap.rds")
 ```
+
+## Phase portraits
+Let's look at phase portraits of some genes:
+
+```{r, fig.width=12, fig.height=4}
+gene.relative.velocity.estimates(GetAssayData(seu, slot = "data", assay = "spliced"),
+                                 GetAssayData(seu, slot = "data", assay = "unspliced"),
+                                 cell.emb = Embeddings(seu, "umap"),
+                                 show.gene = gns$gene[gns$gene_name == "Mef2c"],
+                                 old.fit = Tool(seu, slot = "RunVelocity"),
+                                 cell.colors = cell_colors)
+```
+
+This is Mef2c (myocyte enhancer factor 2C), which is highly expressed in the mouse adult cortex though not much in the embryonic CNS until E18, according to the [NCBI page of this gene](https://www.ncbi.nlm.nih.gov/gene/17260). In this dataset, it's more highly expressed among cells labeled neurons and those close to the neurons. However, it seems that it's close to steady state (the line in panel 3, the phase portrait); in most cells there aren't much more or fewer unspliced than spliced transcripts. 
+
+```{r, fig.width=12, fig.height=4}
+gene.relative.velocity.estimates(GetAssayData(seu, slot = "data", assay = "spliced"),
+                                 GetAssayData(seu, slot = "data", assay = "unspliced"),
+                                 cell.emb = Embeddings(seu, "umap"),
+                                 show.gene = gns$gene[gns$gene_name == "Fabp7"],
+                                 old.fit = Tool(seu, slot = "RunVelocity"),
+                                 cell.colors = cell_colors)
+```
+
+This is Fabp7 (fatty acid binding protein 7). It's highly expressed in the mouse embryonic CNS, though much less so in adult CNS, according to [the NCBI page of this gene](https://www.ncbi.nlm.nih.gov/gene/12140). In this dataset, it's highly expressed in the cells close to qNSCs, i.e. those in earlier stages of differentiation. The line in the third panel representing the steady state was fitted with the lower and upper extremes of the plot in case of departure from steady state. Here we see many cells below the putative steady state, downregulated and with fewer unspliced transcripts than expected. The fourth panel is the residual of the fit in the third panel, with red for positive and blue for negative. It seems that some cells with many spliced counts for this gene has fewer than "steady state" counts of unspliced counts.
+
+```{r, fig.width=12, fig.height=4}
+gene.relative.velocity.estimates(GetAssayData(seu, slot = "data", assay = "spliced"),
+                                 GetAssayData(seu, slot = "data", assay = "unspliced"),
+                                 cell.emb = Embeddings(seu, "umap"),
+                                 show.gene = gns$gene[gns$gene_name == "Opcml"],
+                                 old.fit = Tool(seu, slot = "RunVelocity"),
+                                 cell.colors = cell_colors)
+```
+
+This is Opcml (opioid binding protein/cell adhesion molecule-like), whose expression is increasing in the mouse embryonic CNS during development and is even more highly expressed in the adult brain, according to the [NCBI page of this gene](https://www.ncbi.nlm.nih.gov/gene/330908). This dataset is from an E18 mouse, and consistent with the ENCODE data displayed on the NCBI page, this gene is upregulated here. Most cells are above the putative steady state line in panel 3, especially the NPCs closer to the neurons (panel 4).
