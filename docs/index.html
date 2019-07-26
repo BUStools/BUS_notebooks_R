@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -246,18 +247,6 @@ $(document).ready(function () {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
@@ -343,7 +332,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2019-07-24
+<strong>Last updated:</strong> 2019-07-26
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -374,10 +363,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree9200d94cf3a76f75486c384954020d7634898f71targetblank9200d94a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/9200d94cf3a76f75486c384954020d7634898f71" target="_blank">9200d94</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree969c54cc10c1223c172a3e4a1ce699c7c01f505dtargetblank969c54ca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/969c54cc10c1223c172a3e4a1ce699c7c01f505d" target="_blank">969c54c</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree9200d94cf3a76f75486c384954020d7634898f71targetblank9200d94a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree969c54cc10c1223c172a3e4a1ce699c7c01f505dtargetblank969c54ca" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -387,43 +376,12 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    BUS_notebooks_R.Rproj
-    Ignored:    data/cDNA_introns.t2g.txt
-    Ignored:    data/cDNA_transcripts.to_capture.txt
-    Ignored:    data/hgmm_1k_fastqs.tar
-    Ignored:    data/hs_cdna.fa.gz
-    Ignored:    data/introns_transcripts.to_capture.txt
-    Ignored:    data/mm_cdna.fa.gz
-    Ignored:    data/neuron_10k_fastqs.tar
-    Ignored:    data/neuron_10k_v3_fastqs/
-    Ignored:    data/whitelist_v2.txt
-    Ignored:    data/whitelist_v3.txt
-    Ignored:    output/hs_mm_tr_index.idx
-    Ignored:    output/hs_tr_index.idx
-    Ignored:    output/mm_cDNA_introns_94_collapse.idx
-    Ignored:    output/mm_cDNA_introns_ensembl94.idx
-    Ignored:    output/mm_tr_index.idx
-    Ignored:    output/out_hgmm1k/
+    Ignored:    data/whitelist_v3.txt.gz
+    Ignored:    output/out_pbmc1k/
 
 Untracked files:
-    Untracked:  ASpli_binFeatures.log
-    Untracked:  analysis/velocity1.Rmd
-    Untracked:  analysis/velocity2.Rmd
-    Untracked:  analysis/velocity3.Rmd
-    Untracked:  data/cDNA.correct_header.fa
-    Untracked:  data/fastqs/
-    Untracked:  data/hs_cdna.fa
-    Untracked:  data/hs_cellranger_38.gtf
-    Untracked:  data/introns.correct_header.fa
-    Untracked:  data/mm_cdna.fa
     Untracked:  ensembl/
-    Untracked:  output/cc_neuron10k_pca.rds
-    Untracked:  output/cc_neuron10k_tsne.rds
     Untracked:  output/neuron10k/
-    Untracked:  output/neuron10k_collapse/
-    Untracked:  output/neuron10k_velocity/
-    Untracked:  output/tr2g_hgmm.tsv
-    Untracked:  output/tr2g_mm.tsv
-    Untracked:  output/velo_neuron10k.rds
 
 </code></pre>
 <p>
@@ -462,6 +420,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/969c54cc10c1223c172a3e4a1ce699c7c01f505d/analysis/index.Rmd" target="_blank">969c54c</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-26
+</td>
+<td>
+Slight changes to index page
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/002ff7462d71f11af8e1a18c92158280b00827b9/docs/index.html" target="_blank">002ff74</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-25
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -613,6 +605,23 @@ Lambda Moses
 </td>
 <td>
 Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/3cf75fe28a1852364770b5dd229a64f8be512137/analysis/index.Rmd" target="_blank">3cf75fe</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-17
+</td>
+<td>
+Added Monocle 2 notebook
 </td>
 </tr>
 <tr>
@@ -1202,20 +1211,20 @@ Start workflowr project.
 </div>
 <div id="kallisto-bustools-r-notebooks" class="section level1">
 <h1>kallisto | bustools R notebooks</h1>
-<p>This repository has example notebooks that demonstrate usage of <a href="https://www.biorxiv.org/content/10.1101/673285v1"><code>kallisto bus</code></a> to generate gene count or transcript compatibility count (TCC) matrices from FASTQ files and some basic downstream analyses. To run the notebooks, please install <a href="https://pachterlab.github.io/kallisto/starting">kallisto</a>, <a href="https://github.com/BUStools/bustools">bustools</a>, and the <a href="https://github.com/BUStools/BUSpaRse">BUSpaRse</a> R package.</p>
+<p>This repository has example notebooks that demonstrate usage of <a href="https://www.biorxiv.org/content/10.1101/673285v1"><code>kallisto bus</code></a> to generate gene count or transcript compatibility count (TCC) matrices from FASTQ files followed by downstream analyses. To run the notebooks, please install <a href="https://pachterlab.github.io/kallisto/starting">kallisto</a>, <a href="https://github.com/BUStools/bustools">bustools</a>, and the <a href="https://github.com/BUStools/BUSpaRse">BUSpaRse</a> R package.</p>
 <div id="notebooks" class="section level2">
 <h2>Notebooks</h2>
 <div class="row">
 <div class="col-md-6">
 <center>
 <p><a href="https://bustools.github.io/BUS_notebooks_R/10xv2.html"><img src="https://bustools.github.io/BUS_notebooks_R/figure/10xv2.Rmd/tsne-1.png" width="600" /></a></p>
-<p><a href="https://bustools.github.io/BUS_notebooks_R/10xv2.html">1k 1:1 Mixture of Fresh Frozen Human (HEK293T) and Mouse (NIH3T3) Cells (10x v2 chemistry); demonstration of <code>bustools</code></a></p>
+<p><a href="https://bustools.github.io/BUS_notebooks_R/10xv2.html">Demonstration of <code>bustools</code> on 1k 1:1 Mixture of Fresh Frozen Human (HEK293T) and Mouse (NIH3T3) Cells (10x v2 chemistry) dataset</a></p>
 </center>
 </div>
 <div class="col-md-6">
 <center>
 <p><a href="https://bustools.github.io/BUS_notebooks_R/10xv3.html"><img src="https://bustools.github.io/BUS_notebooks_R/figure/10xv3.Rmd/tsne-1.png" width="600" /></a></p>
-<p><a href="https://bustools.github.io/BUS_notebooks_R/10xv3.html">1k PBMCs from a Healthy Donor (10x v3 chemistry); demonstration of <code>TENxBUSData</code> and <code>BUSpaRse</code></a></p>
+<p><a href="https://bustools.github.io/BUS_notebooks_R/10xv3.html">Demonstration of <code>TENxBUSData</code> and <code>BUSpaRse</code> on 1k PBMCs from a Healthy Donor (10x v3 chemistry) dataset</a></p>
 </center>
 </div>
 </div>
@@ -1279,6 +1288,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
