@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(comment = "#>")
 ```
 
-In this vignette, we will process fastq files of the [10x 10k neurons from an E18 mouse](https://support.10xgenomics.com/single-cell-gene-expression/datasets/3.0.0/neuron_10k_v3), and perform pseudotime analysis with Monocle 2 on the neuronal cell types. Monocle 2 is deprecated, but it can be easily installed from Bioconductor and still has a user base. At present, Monocle 3 is at beta stage of development, and it can be hard to install on Linux servers due to gdal dependency.
+In this vignette, we will process fastq files of the [10x 10k neurons from an E18 mouse](https://support.10xgenomics.com/single-cell-gene-expression/datasets/3.0.0/neuron_10k_v3) with the [kallisto &#124; bustools workflow](https://www.kallistobus.tools/), and perform pseudotime analysis with Monocle 2 on the neuronal cell types. Monocle 2 is deprecated, but it can be easily installed from Bioconductor and still has a user base. At present, Monocle 3 is at beta stage of development, and it can be hard to install on Linux servers due to gdal dependency.
 
 # Setup
 If you would like to rerun this notebook, you can git clone [this repository](https://github.com/BUStools/BUS_notebooks_R) or directly download [this notebook from GitHub](https://github.com/BUStools/BUS_notebooks_R/blob/master/analysis/monocle2.Rmd). 
