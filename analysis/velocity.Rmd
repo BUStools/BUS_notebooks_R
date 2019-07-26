@@ -65,7 +65,7 @@ The dataset we are using is [10x 10k neurons from an E18 mouse](https://support.
 
 ```{r dl_data}
 # Download data
-if (!file.exists("./data/neuron_10k_fastqs.tar")) {
+if (!file.exists("./data/neuron_10k_v3_fastqs.tar")) {
   download.file("http://s3-us-west-2.amazonaws.com/10x.files/samples/cell-exp/3.0.0/neuron_10k_v3/neuron_10k_v3_fastqs.tar", "./data/neuron_10k_v3_fastqs.tar", method = "wget", quiet = TRUE)
 }
 ```
@@ -108,7 +108,7 @@ Explaining the arguments of `get_velocity_files`:
 do_files <- !file.exists("./output/neuron10k_collapse/cDNA_introns.fa")
 ```
 
-```{r}
+```{r, eval=do_files}
 get_velocity_files(edb, L = 91, Genome = BSgenome.Mmusculus.UCSC.mm10, 
                    out_path = "./output/neuron10k_collapse", 
                    isoform_action = "collapse")
@@ -529,7 +529,7 @@ saveRDS(cc_umap, "./output/neuron10k_collapse/cc_umap.rds")
 ## Phase portraits
 Let's look at phase portraits of some genes:
 
-```{r, fig.width=12, fig.height=4}
+```{r phase1, fig.width=12, fig.height=4}
 gene.relative.velocity.estimates(GetAssayData(seu, slot = "data", assay = "spliced"),
                                  GetAssayData(seu, slot = "data", assay = "unspliced"),
                                  cell.emb = Embeddings(seu, "umap"),
@@ -540,7 +540,7 @@ gene.relative.velocity.estimates(GetAssayData(seu, slot = "data", assay = "splic
 
 This is Mef2c (myocyte enhancer factor 2C), which is highly expressed in the mouse adult cortex though not much in the embryonic CNS until E18, according to the [NCBI page of this gene](https://www.ncbi.nlm.nih.gov/gene/17260). In this dataset, it's more highly expressed among cells labeled neurons and those close to the neurons. However, it seems that it's close to steady state (the line in panel 3, the phase portrait); in most cells there aren't much more or fewer unspliced than spliced transcripts. 
 
-```{r, fig.width=12, fig.height=4}
+```{r phase2, fig.width=12, fig.height=4}
 gene.relative.velocity.estimates(GetAssayData(seu, slot = "data", assay = "spliced"),
                                  GetAssayData(seu, slot = "data", assay = "unspliced"),
                                  cell.emb = Embeddings(seu, "umap"),
@@ -551,7 +551,7 @@ gene.relative.velocity.estimates(GetAssayData(seu, slot = "data", assay = "splic
 
 This is Fabp7 (fatty acid binding protein 7). It's highly expressed in the mouse embryonic CNS, though much less so in adult CNS, according to [the NCBI page of this gene](https://www.ncbi.nlm.nih.gov/gene/12140). In this dataset, it's highly expressed in the cells close to qNSCs, i.e. those in earlier stages of differentiation. The line in the third panel representing the steady state was fitted with the lower and upper extremes of the plot in case of departure from steady state. Here we see many cells below the putative steady state, downregulated and with fewer unspliced transcripts than expected. The fourth panel is the residual of the fit in the third panel, with red for positive and blue for negative. It seems that some cells with many spliced counts for this gene has fewer than "steady state" counts of unspliced counts.
 
-```{r, fig.width=12, fig.height=4}
+```{r phase3, fig.width=12, fig.height=4}
 gene.relative.velocity.estimates(GetAssayData(seu, slot = "data", assay = "spliced"),
                                  GetAssayData(seu, slot = "data", assay = "unspliced"),
                                  cell.emb = Embeddings(seu, "umap"),
