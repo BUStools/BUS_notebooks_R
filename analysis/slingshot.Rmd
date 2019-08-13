@@ -27,7 +27,6 @@ library(tidymodels)
 library(Seurat)
 library(scales)
 library(viridis)
-library(reticulate)
 ```
 
 # Loading the matrix
@@ -267,7 +266,7 @@ dat_val <- testing(dat_split)
 
 `tidymodels` is a unified interface to different machine learning models, a "tidier" version of `caret`. The code chunk below can easily be adjusted to use other random forest packages as the back end, so no need to learn new syntax for those packages.
 ```{r}
-model <- rand_forest(mtry = 50, trees = 1200, min_n = 15) %>%
+model <- rand_forest(mtry = 50, trees = 1200, min_n = 15, mode = "regression") %>%
   set_engine("ranger", importance = "impurity", num.threads = 3) %>%
   fit(pseudotime ~ ., data = dat_train)
 ```
