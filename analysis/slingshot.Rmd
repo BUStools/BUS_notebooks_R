@@ -135,13 +135,6 @@ DimPlot(seu, reduction = "tsne",
 
 UMAP can better preserve pairwise distance of cells than tSNE and can better separate cell populations than the first 2 PCs of PCA ([Becht et al. 2018](https://doi.org/10.1038/nbt.4314)), so the TI will be done on UMAP rather than tSNE or PCA. Note that the messages printed below are from the development version of Seurat (not yet on CRAN). The CRAN version still calls Python UMAP so probably does not work on servers. See the [RNA velocity notebook](https://bustools.github.io/BUS_notebooks_R/velocity.html#dimension_reduction) for an example of a work around using `uwot`.
 
-```{r}
-Idents(seu) <- "cell_type"
-DimPlot(seu[, WhichCells(seu, idents = "aNSCs")], reduction = "umap",
-        group.by = "cell_type", pt.size = 0.5, label = TRUE, repel = TRUE) +
-  scale_color_brewer(type = "qual", palette = "Set2")
-```
-
 ```{r umap}
 seu <- RunUMAP(seu, dims = 1:50, seed.use = 4867)
 DimPlot(seu, reduction = "umap",
@@ -231,7 +224,7 @@ lines(sds, lwd = 2, col = 'black')
 ```
 
 Which cells are in which lineage? Here we plot the pseudotime values for each lineage.
-```{r pt, fig.width=9, fig.height=12}
+```{r pt, fig.width=12, fig.height=16}
 nc <- 3
 pt <- slingPseudotime(sds)
 nms <- colnames(pt)
