@@ -28,8 +28,9 @@ library(ggsci)
 
 # Create a `cell_data_set` object
 The filtered gene count matrix and the cell annotation were saved from the Monocle 2 notebook.
+
 ```{r}
-annot <- readRDS("./output/neuron10k/cell_types.rds")
+annot <- readRDS("./output/neuron10k/cell_type.rds")
 mat_filtered <- readRDS("./output/neuron10k/mat_filtered.rds")
 ```
 
@@ -52,7 +53,7 @@ str(annot)
 Since we will do differential expression and gene symbols are more human readable than Ensembl gene IDs, we will get the corresponding gene symbols from Ensembl.
 ```{r}
 gns <- tr2g_ensembl(species = "Mus musculus", use_gene_name = TRUE, 
-                    ensembl_version = 94)[,c("gene", "gene_name")] %>% 
+                    ensembl_version = 97)[,c("gene", "gene_name")] %>% 
   distinct()
 ```
 
@@ -98,14 +99,21 @@ plot_cells(cds, color_cells_by = "cell_type", group_label_size = 3.5,
 Monocle 3 does Louvain clustering and partitions the dataset for separate trajectories based on Louvain clustering.
 ```{r part}
 cds <- cluster_cells(cds)
-plot_cells(cds, color_cells_by = "partition", group_cells_by = "partition",
+plot_cells(cds, color_cells_by = "partition", group_cells_by = "partition", 
+           group_label_size = 4)
+```
+
+```{r}
+plot_cells(cds, color_cells_by = "cluster", group_cells_by = "cluster", 
            group_label_size = 4)
 ```
 
 # Trajectory inference
 Monocle 3's trajectory inference is inspired by PAGA.
 ```{r ti, results='hide', fig.keep='all'}
-cds <- learn_graph(cds, verbose = FALSE)
+cds <- learn_graph(cds, verbose = FALSE, 
+                   learn_graph_control = list(minimal_branch_len = 7,
+                                              geodesic_distance_ratio = 0.5))
 plot_cells(cds, color_cells_by = "cell_type", label_groups_by_cluster = FALSE,
            group_label_size = 3.5, graph_label_size = 2) +
   scale_color_d3(palette = "category20b")
@@ -124,8 +132,9 @@ de_res <- graph_test(cds, neighbor_graph = "principal_graph", cores = 3)
 ```
 
 These are some of the most significant genes differentially expressed along the trajectory.
+
 ```{r genes}
-genes_plt <- c("mt-Nd6", "Actr1a", "Ss18", "Hspa12a")
+genes_plt <- c("Ube2c", "Mrps12", "Hspa12a", "Igfbp3")
 plot_cells(cds, genes = genes_plt,
            show_trajectory_graph = FALSE,
            label_cell_groups = FALSE,
