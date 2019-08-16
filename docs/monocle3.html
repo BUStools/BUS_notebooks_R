@@ -12,7 +12,7 @@
 
 <meta name="author" content="Lambda Moses" />
 
-<meta name="date" content="2019-07-23" />
+<meta name="date" content="2019-08-15" />
 
 <title>Monocle 3</title>
 
@@ -381,7 +381,7 @@ div.section {
 
 <h1 class="title toc-ignore">Monocle 3</h1>
 <h4 class="author">Lambda Moses</h4>
-<h4 class="date">2019-07-23</h4>
+<h4 class="date">2019-08-15</h4>
 
 </div>
 
@@ -406,7 +406,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2019-07-23
+<strong>Last updated:</strong> 2019-08-15
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -497,10 +497,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree5cb1030ac3cbc417d0f67f553ee3a7e7044a8d9ctargetblank5cb1030a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/5cb1030ac3cbc417d0f67f553ee3a7e7044a8d9c" target="_blank">5cb1030</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree1cafb2f3e721c2d7ac26ed796a88e111ac19fa33targetblank1cafb2fa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/1cafb2f3e721c2d7ac26ed796a88e111ac19fa33" target="_blank">1cafb2f</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree5cb1030ac3cbc417d0f67f553ee3a7e7044a8d9ctargetblank5cb1030a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree1cafb2f3e721c2d7ac26ed796a88e111ac19fa33targetblank1cafb2fa" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -510,6 +510,7 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    BUS_notebooks_R.Rproj
+    Ignored:    analysis/figure/
     Ignored:    data/whitelist_v3.txt.gz
     Ignored:    output/out_pbmc1k/
 
@@ -554,6 +555,57 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/1cafb2f3e721c2d7ac26ed796a88e111ac19fa33/analysis/monocle3.Rmd" target="_blank">1cafb2f</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-08-16
+</td>
+<td>
+Rebuilt with Ensembl 97
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/32adc25610d14f630f42aee00ed3a87a337d529a/analysis/monocle3.Rmd" target="_blank">32adc25</a>
+</td>
+<td>
+Lior Pachter
+</td>
+<td>
+2019-07-26
+</td>
+<td>
+Update monocle3.Rmd
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/5ebb54700e7490de6057bd48b8d7e6eb254901f8/docs/monocle3.html" target="_blank">5ebb547</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-23
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -648,7 +700,7 @@ Monocle 3 notebook
 </div>
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>This notebook does pseudotime analysis of the <a href="https://support.10xgenomics.com/single-cell-gene-expression/datasets/3.0.0/neuron_10k_v3">10x 10k neurons from an E18 mouse</a> with <a href="https://cole-trapnell-lab.github.io/monocle3/">Monocle 3</a>. Please refer to the <a href="https://cole-trapnell-lab.github.io/monocle3/monocle3_docs/#installing-monocle">Monocle 3 website</a> for installation instruction. Gdal is required for Monocle 3 due to the <code>sf</code> dependency. The Python package <code>louvain</code> (which requires Python <code>igraph</code>, which requires compilation) is recommended, though not strictly required.</p>
+<p>This notebook does pseudotime analysis of the <a href="https://support.10xgenomics.com/single-cell-gene-expression/datasets/3.0.0/neuron_10k_v3">10x 10k neurons from an E18 mouse</a> using <a href="https://cole-trapnell-lab.github.io/monocle3/">Monocle 3</a>, and starting with the <a href="https://www.kallistobus.tools/">kallisto | bustools workflow</a>. Please refer to the <a href="https://cole-trapnell-lab.github.io/monocle3/monocle3_docs/#installing-monocle">Monocle 3 website</a> for installation instruction. Gdal is required for Monocle 3 due to the <code>sf</code> dependency. The Python package <code>louvain</code> (which requires Python <code>igraph</code>, which requires compilation) is recommended, though not strictly required.</p>
 <p>Monocle 3 has a few improvements compared to Monocle 2: Monocle 3 infers trajectory much faster, supports partitioning of the data into separate trajectories in case of different cell lineages, supports large datasets on disk, allows cycles in the trajectory, and supports 3D plotting. Monocle 3 has been used on over 2 million cells for the <a href="https://www.nature.com/articles/s41586-019-0969-x?WT.ec_id=NATURE-201902&amp;sap-outbound-id=3D6B78CB95C498488E0AB2A140F1B7A311607DA1">Mouse Organogenesis Cell Atlas (MOCA)</a>.</p>
 <p>The gene count matrix of the 10k neuron dataset has already been generated with the kallisto | bustools pipeline and filtered for the <a href="https://bustools.github.io/BUS_notebooks_R/monocle2.html">Monocle 2 notebook</a>. Cell types have also been annotated with <code>SingleR</code> in that notebook. Please refer to the first 3 main sections of that notebook for instructions on how to use kallisto | bustools, remove empty droplets, and annotate cell types. So this notebook will start with Monocle 3 analysis right away.</p>
 <p>The package <code>biomaRt</code> is from Bioconductor. <code>BUSpaRse</code> and <code>monocle3</code> are on GitHub. Packages <code>tidyverse</code> and <code>ggsci</code> (just for the D3 palette) are on CRAN.</p>
@@ -661,52 +713,56 @@ library(ggsci)</code></pre>
 <div id="create-a-cell_data_set-object" class="section level1">
 <h1>Create a <code>cell_data_set</code> object</h1>
 <p>The filtered gene count matrix and the cell annotation were saved from the Monocle 2 notebook.</p>
-<pre class="r"><code>annot &lt;- readRDS(&quot;./output/neuron10k/cell_types.rds&quot;)
+<pre class="r"><code>annot &lt;- readRDS(&quot;./output/neuron10k/cell_type.rds&quot;)
 mat_filtered &lt;- readRDS(&quot;./output/neuron10k/mat_filtered.rds&quot;)</code></pre>
 <p>Just to show the structures of those 2 objects:</p>
 <pre class="r"><code>dim(mat_filtered)</code></pre>
-<pre><code>[1] 23342 11031</code></pre>
+<pre><code>[1] 23516 11037</code></pre>
 <pre class="r"><code>class(mat_filtered)</code></pre>
 <pre><code>[1] &quot;dgCMatrix&quot;
 attr(,&quot;package&quot;)
 [1] &quot;Matrix&quot;</code></pre>
 <p>Row names are Ensembl gene IDs.</p>
 <pre class="r"><code>head(rownames(mat_filtered))</code></pre>
-<pre><code>[1] &quot;ENSMUSG00000094619.2&quot;  &quot;ENSMUSG00000095646.1&quot;  &quot;ENSMUSG00000073406.10&quot;
-[4] &quot;ENSMUSG00000079491.9&quot;  &quot;ENSMUSG00000046808.17&quot; &quot;ENSMUSG00000092300.7&quot; </code></pre>
+<pre><code>[1] &quot;ENSMUSG00000094619.2&quot;  &quot;ENSMUSG00000095646.1&quot;  &quot;ENSMUSG00000092401.3&quot; 
+[4] &quot;ENSMUSG00000109389.1&quot;  &quot;ENSMUSG00000092212.3&quot;  &quot;ENSMUSG00000079293.11&quot;</code></pre>
 <pre class="r"><code>head(colnames(mat_filtered))</code></pre>
 <pre><code>[1] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot;
 [4] &quot;AAACCCAGTCGCACAC&quot; &quot;AAACCCAGTGCACATT&quot; &quot;AAACCCAGTGGTAATA&quot;</code></pre>
 <pre class="r"><code>str(annot)</code></pre>
 <pre><code>List of 10
- $ scores       : num [1:11031, 1:28] 0.188 0.192 0.183 0.265 0.186 ...
+ $ scores       : num [1:11037, 1:28] 0.188 0.194 0.182 0.267 0.187 ...
   ..- attr(*, &quot;dimnames&quot;)=List of 2
-  .. ..$ : chr [1:11031] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot; &quot;AAACCCAGTCGCACAC&quot; ...
+  .. ..$ : chr [1:11037] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot; &quot;AAACCCAGTCGCACAC&quot; ...
   .. ..$ : chr [1:28] &quot;Adipocytes&quot; &quot;aNSCs&quot; &quot;Astrocytes&quot; &quot;Astrocytes activated&quot; ...
- $ labels       : chr [1:11031, 1] &quot;NPCs&quot; &quot;NPCs&quot; &quot;NPCs&quot; &quot;NPCs&quot; ...
+ $ labels       : chr [1:11037, 1] &quot;NPCs&quot; &quot;NPCs&quot; &quot;NPCs&quot; &quot;NPCs&quot; ...
   ..- attr(*, &quot;dimnames&quot;)=List of 2
-  .. ..$ : chr [1, 1:11031] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot; &quot;AAACCCAGTCGCACAC&quot; ...
+  .. ..$ : chr [1, 1:11037] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot; &quot;AAACCCAGTCGCACAC&quot; ...
   .. ..$ : NULL
- $ r            : num [1:11031, 1:358] 0.186 0.195 0.18 0.25 0.17 ...
+ $ r            : num [1:11037, 1:358] 0.187 0.197 0.179 0.251 0.171 ...
   ..- attr(*, &quot;dimnames&quot;)=List of 2
-  .. ..$ : chr [1:11031] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot; &quot;AAACCCAGTCGCACAC&quot; ...
+  .. ..$ : chr [1:11037] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot; &quot;AAACCCAGTCGCACAC&quot; ...
   .. ..$ : chr [1:358] &quot;ERR525589Aligned&quot; &quot;ERR525592Aligned&quot; &quot;SRR275532Aligned&quot; &quot;SRR275534Aligned&quot; ...
- $ pval         : Named num [1:11031] 0.0396 0.0582 0.0366 0.0107 0.0329 ...
-  ..- attr(*, &quot;names&quot;)= chr [1:11031] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot; &quot;AAACCCAGTCGCACAC&quot; ...
- $ labels1      : chr [1:11031, 1] &quot;NPCs&quot; &quot;NPCs&quot; &quot;NPCs&quot; &quot;NPCs&quot; ...
+ $ pval         : Named num [1:11037] 0.0428 0.058 0.0383 0.0111 0.0327 ...
+  ..- attr(*, &quot;names&quot;)= chr [1:11037] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot; &quot;AAACCCAGTCGCACAC&quot; ...
+ $ labels1      : chr [1:11037, 1] &quot;NPCs&quot; &quot;NPCs&quot; &quot;NPCs&quot; &quot;NPCs&quot; ...
   ..- attr(*, &quot;dimnames&quot;)=List of 2
-  .. ..$ : chr [1:11031] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot; &quot;AAACCCAGTCGCACAC&quot; ...
+  .. ..$ : chr [1:11037] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot; &quot;AAACCCAGTCGCACAC&quot; ...
   .. ..$ : NULL
- $ labels1.thres: chr [1:11031] &quot;NPCs&quot; &quot;X&quot; &quot;NPCs&quot; &quot;NPCs&quot; ...
- $ cell.names   : chr [1:11031] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot; &quot;AAACCCAGTCGCACAC&quot; ...
+ $ labels1.thres: chr [1:11037] &quot;NPCs&quot; &quot;X&quot; &quot;NPCs&quot; &quot;NPCs&quot; ...
+ $ cell.names   : chr [1:11037] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot; &quot;AAACCCAGTCGCACAC&quot; ...
  $ quantile.use : num 0.8
  $ types        : chr [1:358] &quot;Adipocytes&quot; &quot;Adipocytes&quot; &quot;Adipocytes&quot; &quot;Adipocytes&quot; ...
  $ method       : chr &quot;single&quot;</code></pre>
 <p>Since we will do differential expression and gene symbols are more human readable than Ensembl gene IDs, we will get the corresponding gene symbols from Ensembl.</p>
 <pre class="r"><code>gns &lt;- tr2g_ensembl(species = &quot;Mus musculus&quot;, use_gene_name = TRUE, 
-                    ensembl_version = 94)[,c(&quot;gene&quot;, &quot;gene_name&quot;)] %&gt;% 
+                    ensembl_version = 97)[,c(&quot;gene&quot;, &quot;gene_name&quot;)] %&gt;% 
   distinct()</code></pre>
 <pre><code>Querying biomart for transcript and gene IDs of Mus musculus</code></pre>
+<pre><code>Note: requested host was redirected from
+http://jul2019.archive.ensembl.org to https://www.ensembl.org:443/biomart/martservice</code></pre>
+<pre><code>This often occurs when connecting to the archive URL for the current Ensembl release</code></pre>
+<pre><code>You can check the current version number using listEnsemblArchives()</code></pre>
 <pre><code>Cache found</code></pre>
 <p>Just like how the <code>Seurat</code> workflow is centered around the <code>Seurat</code> object, Monocle 3 workflow is centered around the <code>cell_data_set</code> object. To create a <code>cell_data_set</code> object, we at least need the gene count matrix, and optionally need cell and gene metadata. Note that this is different from the <code>CellDataSet</code> object for Monocle 2. Cell metadata must have the column <code>cell</code>, for cell names or barcodes. Gene metadata must have the <code>id</code> column for gene ID (here Ensembl gene ID), and a column <code>gene_short_name</code>, for gene symbols, is recommended and is required for some functions. In addition, cell metadata must have cell names as row names and gene metadata must have gene IDs as gene names when initializing the <code>cell_data_set</code> object.</p>
 <pre class="r"><code>cell_meta &lt;- data.frame(cell = colnames(mat_filtered),
@@ -854,7 +910,7 @@ Lambda Moses
 </div>
 <p>Monocle 3 does Louvain clustering and partitions the dataset for separate trajectories based on Louvain clustering.</p>
 <pre class="r"><code>cds &lt;- cluster_cells(cds)
-plot_cells(cds, color_cells_by = &quot;partition&quot;, group_cells_by = &quot;partition&quot;,
+plot_cells(cds, color_cells_by = &quot;partition&quot;, group_cells_by = &quot;partition&quot;, 
            group_label_size = 4)</code></pre>
 <pre><code>No trajectory to plot. Has learn_graph() been called yet?</code></pre>
 <p><img src="figure/monocle3.Rmd/part-1.png" width="672" style="display: block; margin: auto;" /></p>
@@ -895,13 +951,56 @@ Lambda Moses
 </table>
 </div>
 </div>
+<pre class="r"><code>plot_cells(cds, color_cells_by = &quot;cluster&quot;, group_cells_by = &quot;cluster&quot;, 
+           group_label_size = 4)</code></pre>
+<pre><code>No trajectory to plot. Has learn_graph() been called yet?</code></pre>
+<p><img src="figure/monocle3.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/002b84d7ef371d2c72be546fa303cbd0e6c2c971/docs/figure/monocle3.Rmd/unnamed-chunk-8-1.png" target="_blank">002b84d</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-23
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="trajectory-inference" class="section level1">
 <h1>Trajectory inference</h1>
 <p>Monocle 3’s trajectory inference is inspired by PAGA.</p>
-<pre class="r"><code>cds &lt;- learn_graph(cds, verbose = FALSE)</code></pre>
-<pre><code>Warning in min(data_df$weight[data_df$weight &gt; 0]): no non-missing
-arguments to min; returning Inf</code></pre>
+<pre class="r"><code>cds &lt;- learn_graph(cds, verbose = FALSE, 
+                   learn_graph_control = list(minimal_branch_len = 7,
+                                              geodesic_distance_ratio = 0.5))</code></pre>
+<pre><code>Warning in louvain_clustering(data, pd[row.names(data), ], k = k, weight = weight, : RANN counts the point itself, k must be smaller than
+the total number of points - 1 (all other points) - 1 (itself)!</code></pre>
 <pre class="r"><code>plot_cells(cds, color_cells_by = &quot;cell_type&quot;, label_groups_by_cluster = FALSE,
            group_label_size = 3.5, graph_label_size = 2) +
   scale_color_d3(palette = &quot;category20b&quot;)</code></pre>
@@ -989,7 +1088,7 @@ Lambda Moses
 <p>For the trajectory for which pseudotime is computed, Monocle 3 can find genes differentially expressed along the trajectory.</p>
 <pre class="r"><code>de_res &lt;- graph_test(cds, neighbor_graph = &quot;principal_graph&quot;, cores = 3)</code></pre>
 <p>These are some of the most significant genes differentially expressed along the trajectory.</p>
-<pre class="r"><code>genes_plt &lt;- c(&quot;mt-Nd6&quot;, &quot;Actr1a&quot;, &quot;Ss18&quot;, &quot;Hspa12a&quot;)
+<pre class="r"><code>genes_plt &lt;- c(&quot;Ube2c&quot;, &quot;Mrps12&quot;, &quot;Hspa12a&quot;, &quot;Igfbp3&quot;)
 plot_cells(cds, genes = genes_plt,
            show_trajectory_graph = FALSE,
            label_cell_groups = FALSE,
@@ -1042,7 +1141,7 @@ Lambda Moses
 <pre class="r"><code>sessionInfo()</code></pre>
 <pre><code>R version 3.6.1 (2019-07-05)
 Platform: x86_64-apple-darwin15.6.0 (64-bit)
-Running under: macOS Mojave 10.14.5
+Running under: macOS Mojave 10.14.6
 
 Matrix products: default
 BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
@@ -1060,8 +1159,8 @@ other attached packages:
  [3] stringr_1.4.0               dplyr_0.8.3                
  [5] purrr_0.3.2                 readr_1.3.1                
  [7] tidyr_0.8.3                 tibble_2.1.3               
- [9] ggplot2_3.2.0               tidyverse_1.2.1            
-[11] BUSpaRse_0.99.18            biomaRt_2.41.6             
+ [9] ggplot2_3.2.1               tidyverse_1.2.1            
+[11] BUSpaRse_0.99.18            biomaRt_2.41.7             
 [13] monocle3_0.1.2              SingleCellExperiment_1.7.0 
 [15] SummarizedExperiment_1.15.5 DelayedArray_0.11.4        
 [17] BiocParallel_1.19.0         matrixStats_0.54.0         
@@ -1075,12 +1174,12 @@ loaded via a namespace (and not attached):
   [5] proxy_0.4-23             rstudioapi_0.10         
   [7] ggrepel_0.8.1            bit64_0.9-7             
   [9] AnnotationDbi_1.47.0     lubridate_1.7.4         
- [11] xml2_1.2.0               codetools_0.2-16        
- [13] knitr_1.23               zeallot_0.1.0           
+ [11] xml2_1.2.2               codetools_0.2-16        
+ [13] knitr_1.24               zeallot_0.1.0           
  [15] jsonlite_1.6             workflowr_1.4.0         
  [17] Rsamtools_2.1.3          broom_0.5.2             
  [19] dbplyr_1.4.2             uwot_0.1.3              
- [21] compiler_3.6.1           httr_1.4.0              
+ [21] compiler_3.6.1           httr_1.4.1              
  [23] backports_1.1.4          assertthat_0.2.1        
  [25] Matrix_1.2-17            lazyeval_0.2.2          
  [27] cli_1.1.0                htmltools_0.3.6         
@@ -1088,20 +1187,20 @@ loaded via a namespace (and not attached):
  [31] igraph_1.2.4.1           gtable_0.3.0            
  [33] glue_1.3.1               GenomeInfoDbData_1.2.1  
  [35] RANN_2.6.1               reshape2_1.4.3          
- [37] rappdirs_0.3.1           Rcpp_1.0.1              
+ [37] rappdirs_0.3.1           Rcpp_1.0.2              
  [39] cellranger_1.1.0         vctrs_0.2.0             
- [41] Biostrings_2.53.1        nlme_3.1-140            
- [43] rtracklayer_1.45.1       DelayedMatrixStats_1.7.1
- [45] xfun_0.8                 plyranges_1.5.11        
+ [41] Biostrings_2.53.2        nlme_3.1-141            
+ [43] rtracklayer_1.45.2       DelayedMatrixStats_1.7.1
+ [45] xfun_0.8                 plyranges_1.5.12        
  [47] rvest_0.3.4              irlba_2.3.3             
  [49] ensembldb_2.9.2          XML_3.98-1.20           
  [51] zlibbioc_1.31.0          scales_1.0.0            
  [53] BSgenome_1.53.0          hms_0.5.0               
  [55] ProtGenerics_1.17.2      AnnotationFilter_1.9.0  
- [57] yaml_2.2.0               curl_3.3                
+ [57] yaml_2.2.0               curl_4.0                
  [59] memoise_1.1.0            gridExtra_2.3           
- [61] stringi_1.4.3            RSQLite_2.1.1           
- [63] GenomicFeatures_1.37.3   rlang_0.4.0             
+ [61] stringi_1.4.3            RSQLite_2.1.2           
+ [63] GenomicFeatures_1.37.4   rlang_0.4.0             
  [65] pkgconfig_2.0.2          bitops_1.0-6            
  [67] evaluate_0.14            lattice_0.20-38         
  [69] GenomicAlignments_1.21.4 labeling_0.3            
@@ -1111,7 +1210,7 @@ loaded via a namespace (and not attached):
  [77] generics_0.0.2           DBI_1.0.0               
  [79] pillar_1.4.2             haven_2.1.1             
  [81] whisker_0.3-2            withr_2.1.2             
- [83] RCurl_1.95-4.12          modelr_0.1.4            
+ [83] RCurl_1.95-4.12          modelr_0.1.5            
  [85] crayon_1.3.4             BiocFileCache_1.9.1     
  [87] rmarkdown_1.14           viridis_0.5.1           
  [89] progress_1.2.2           grid_3.6.1              
