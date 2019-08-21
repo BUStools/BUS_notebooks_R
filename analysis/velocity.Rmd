@@ -15,7 +15,7 @@ In this notebook, we perform RNA velocity analysis on the [10x 10k neurons from 
 If you would like to rerun this notebook, you can git clone [this repository](https://github.com/BUStools/BUS_notebooks_R) or directly download [this notebook from GitHub](https://github.com/BUStools/BUS_notebooks_R/blob/master/analysis/velocity.Rmd). 
 
 ## Install packages
-This notebook demonstrates the use of command line tools `kallisto` and `bustools`. Please use `kallisto` >= 0.46, whose binary can be downloaded [here](https://pachterlab.github.io/kallisto/download). The binary of `bustools` can be found [here](https://github.com/BUStools/bustools/releases). 
+This notebook demonstrates the use of command line tools `kallisto` and `bustools`. Please use `kallisto` >= 0.46, whose binary can be downloaded [here](https://pachterlab.github.io/kallisto/download). Also, please use `bustools` >= 0.39.3, whose binary of `bustools` can be found [here](https://github.com/BUStools/bustools/releases). User interface of `bustools` has changed in version 0.39.3. For version 0.39.2, see earlier git commits of this notebook.
 
 After you download the binary, you should decompress the file (if it is `tar.gz`) with `tar -xzvf file.tar.gz` in the `bash` terminal, and add the directory containing the binary to `PATH` by `export PATH=$PATH:/foo/bar`, where `/foo/bar` is the directory of interest. Then you can directly invoke the binary on the command line as we will do in this notebook.
 
@@ -136,7 +136,7 @@ neuron_10k_v3_S1_L002_R1_001.fastq.gz neuron_10k_v3_S1_L002_R2_001.fastq.gz \
 neuron_10k_v3_S1_L001_R1_001.fastq.gz neuron_10k_v3_S1_L001_R2_001.fastq.gz
 ```
 
-```{r}
+```{r, include=FALSE}
 do_copy <- !file.exists("./data/whitelist_v3.txt")
 do_bustools <- !file.exists("./output/neuron10k_collapse/output.correct.sort.bus")
 do_count <- !file.exists("./output/neuron10k_collapse/spliced/s.mtx")
@@ -152,34 +152,32 @@ gunzip ./data/whitelist_v3.txt.gz
 
 The `bustools correct` command checks the whitelist and can correct some barcodes not on the whitelist but might have been due to sequencing error or mutation. If you do not wish to use a whitelist, then you can skip `bustools correct` below and go straight to `bustools sort`. In bash, `|` is a pipe just like the magrittr pipe `%>%` in R. The `-` by the end of the `bustools sort` command indicates where what goes through the pipe goes, i.e. the output of `bustools correct` is becoming the input to `bustools sort`. `-t4` means using 4 threads. 
 
-**Note: This part will change soon!**
-
-The `bustools capture` command determines what is from cDNA and what is from the flanked introns and generate two separate `bus` files.
+The `bustools capture` command determines what is from cDNA and what is from the flanked introns and generate two separate `bus` files. The `-s` flag specifies that transcripts are to be captured; `bustools capture` also supports barcodes (`-b`) and UMIs (`-u`).
 
 ```{bash, eval=do_bustools}
 cd ./output/neuron10k_collapse
-mkdir cDNA_capture/ introns_capture/ spliced/ unspliced/
+mkdir spliced/ unspliced/
 bustools correct -w ../../data/whitelist_v3.txt -p output.bus | \
 bustools sort -o output.correct.sort.bus -t4 -
-bustools capture -o cDNA_capture/ -c ./cDNA_tx_to_capture.txt -e matrix.ec -t transcripts.txt output.correct.sort.bus
-bustools capture -o introns_capture/ -c ./introns_tx_to_capture.txt -e matrix.ec -t transcripts.txt output.correct.sort.bus
+bustools capture -s -o cDNA_capture.bus -c ./cDNA_tx_to_capture.txt -e matrix.ec -t transcripts.txt output.correct.sort.bus
+bustools capture -s -o introns_capture.bus -c ./introns_tx_to_capture.txt -e matrix.ec -t transcripts.txt output.correct.sort.bus
 ```
 
 Unlike for just a gene count matrix, for RNA velocity, 2 matrices are generated. One for spliced reads, and the other for unspliced. Here the reads not captured for cDNA go to the unspliced matrix, and the reads not captured for introns go to the spliced matrix.
 ```{bash}
 cd ./output/neuron10k_collapse
-bustools count -o unspliced/u -g ./tr2g.tsv -e cDNA_capture/split.ec -t transcripts.txt --genecounts cDNA_capture/split.bus
-bustools count -o spliced/s -g ./tr2g.tsv -e introns_capture/split.ec -t transcripts.txt --genecounts introns_capture/split.bus
+bustools count -o unspliced -g ./tr2g.tsv -e matrix.ec -t transcripts.txt --genecounts introns_capture.bus
+bustools count -o spliced -g ./tr2g.tsv -e matrix.ec -t transcripts.txt --genecounts cDNA_capture.bus
 ```
 
 # Preprocessing
 ## Remove empty droplets
 Now we have the spliced and unspliced matrices to be read into R:
 ```{r}
-c(spliced, unspliced) %<-% read_velocity_output(spliced_dir = "./output/neuron10k_collapse/spliced",
-                                                spliced_name = "s",
-                                                unspliced_dir = "./output/neuron10k_collapse/unspliced",
-                                                unspliced_name = "u")
+c(spliced, unspliced) %<-% read_velocity_output(spliced_dir = "./output/neuron10k_collapse",
+                                                spliced_name = "spliced",
+                                                unspliced_dir = "./output/neuron10k_collapse",
+                                                unspliced_name = "unspliced")
 ```
 
 The `%<-%` from `zeallot` unpacks a list of 2 into 2 separate objects in the Python and Matlab manner. How many UMIs are from unspliced transcripts?
@@ -431,13 +429,10 @@ DimPlot(seu, reduction = "tsne",
 
 This looks quite similar to the tSNE from gene count matrix of this same dataset, except rotated; see the [`slingshot` notebook](https://bustools.github.io/BUS_notebooks_R/slingshot.html#dimension_reduction)
 
-Seurat's `RunUMAP` doesn't work on servers, where this notebook is built, because of some problem with `reticulate`, which `RunUMAP` uses to call the Python implementation of UMAP. See [this GitHub issue](https://github.com/rstudio/reticulate/issues/428). Thus we will use the R package `uwot` for UMAP instead. 
+In the most recent development version of Seurat, `RunUMAP` can use the R package `uwot` as the backend, thus obliterating calling Python UMAP through `reticulate`. On servers, `reticulate` does not work due to [this issue](https://github.com/rstudio/reticulate/issues/428).
+
 ```{r}
-set.seed(4837)
-um <- umap(Embeddings(seu, reduction = "pca")[, 1:50], init = "random")
-rownames(um) <- colnames(sf)
-colnames(um) <- c("UMAP_1", "UMAP_2")
-seu[["umap"]] <- CreateDimReducObject(embeddings = um, assay = "spliced", key = "umap_")
+seu <- RunUMAP(seu, dims = 1:50, umap.method = "uwot")
 ```
 
 ```{r umap}
@@ -520,7 +515,7 @@ show.velocity.on.embedding.cor(emb = Embeddings(seu, "umap"),
                                xlab = "UMAP1", ylab = "UMAP2")
 ```
 
-It seems that something interesting is happening in cluster 12. 
+qNSCs and closely related astrocytes are in the cluster at the top left of this plot. This picture is consistent with going from qNSCs to neurons.
 
 ```{r, eval=do_cc, include=FALSE}
 saveRDS(cc_umap, "./output/neuron10k_collapse/cc_umap.rds")
@@ -555,9 +550,9 @@ This is Fabp7 (fatty acid binding protein 7). It's highly expressed in the mouse
 gene.relative.velocity.estimates(GetAssayData(seu, slot = "data", assay = "spliced"),
                                  GetAssayData(seu, slot = "data", assay = "unspliced"),
                                  cell.emb = Embeddings(seu, "umap"),
-                                 show.gene = gns$gene[gns$gene_name == "Opcml"],
+                                 show.gene = gns$gene[gns$gene_name == "Arpp21"],
                                  old.fit = Tool(seu, slot = "RunVelocity"),
                                  cell.colors = cell_colors)
 ```
 
-This is Opcml (opioid binding protein/cell adhesion molecule-like), whose expression is increasing in the mouse embryonic CNS during development and is even more highly expressed in the adult brain, according to the [NCBI page of this gene](https://www.ncbi.nlm.nih.gov/gene/330908). This dataset is from an E18 mouse, and consistent with the ENCODE data displayed on the NCBI page, this gene is upregulated here. Most cells are above the putative steady state line in panel 3, especially the NPCs closer to the neurons (panel 4).
+This is Arpp21 (cyclic AMP-regulated phosphoprotein, 21), which according to [ENCODE RNA-seq data](https://www.ncbi.nlm.nih.gov/gene/74100), is increasingly expressed in the mouse CNS through development. Here most cells are above the line that is the putative steady state, meaning that this gene is upregulated, which is consistent with the ENCODE data.
