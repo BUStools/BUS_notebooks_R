@@ -139,7 +139,7 @@ neuron_10k_v3_S1_L001_R1_001.fastq.gz neuron_10k_v3_S1_L001_R2_001.fastq.gz
 ```{r, include=FALSE}
 do_copy <- !file.exists("./data/whitelist_v3.txt")
 do_bustools <- !file.exists("./output/neuron10k_collapse/output.correct.sort.bus")
-do_count <- !file.exists("./output/neuron10k_collapse/spliced/s.mtx")
+do_count <- !file.exists("./output/neuron10k_collapse/spliced.mtx")
 ```
 
 A barcode whitelist of all valid barcode can be used, though is not strictly required. The 10x whitelist contains all barcodes from the kit. The 10x whitelist file comes with Cell Ranger installation, and is copies to the working directory of this notebook. For `bustools`, the whitelist must be a text file with one column, each row of which is a valid cell barcode. The text file must not be compressed. 
@@ -163,7 +163,7 @@ bustools capture -s -o cDNA_capture.bus -c ./cDNA_tx_to_capture.txt -e matrix.ec
 bustools capture -s -o introns_capture.bus -c ./introns_tx_to_capture.txt -e matrix.ec -t transcripts.txt output.correct.sort.bus
 ```
 
-Unlike for just a gene count matrix, for RNA velocity, 2 matrices are generated. One for spliced reads, and the other for unspliced. Here the reads not captured for cDNA go to the unspliced matrix, and the reads not captured for introns go to the spliced matrix.
+Unlike for just a gene count matrix, for RNA velocity, 2 matrices are generated. One for spliced reads, and the other for unspliced. 
 ```{bash}
 cd ./output/neuron10k_collapse
 bustools count -o unspliced -g ./tr2g.tsv -e matrix.ec -t transcripts.txt --genecounts introns_capture.bus
