@@ -136,6 +136,17 @@ neuron_10k_v3_S1_L002_R1_001.fastq.gz neuron_10k_v3_S1_L002_R2_001.fastq.gz \
 neuron_10k_v3_S1_L001_R1_001.fastq.gz neuron_10k_v3_S1_L001_R2_001.fastq.gz
 ```
 
+Here I need to make sure that all transcripts in the capture list are in the dataset. Otherwise the output of `bustools capture` will be wrong. I hope that this will be fixed soon or will get a helpful error message.
+```{r}
+tr2g <- sort_tr2g(read_tsv("./output/neuron10k_collapse/tr2g.tsv", 
+                           col_names = c("transcript", "gene")), 
+                  kallisto_out_path = "./output/neuron10k_collapse")
+writeLines(tr2g$transcript[str_detect(tr2g$transcript, "-I", negate = TRUE)],
+           con = "./output/neuron10k_collapse/cDNA_tx_to_capture.txt")
+writeLines(tr2g$transcript[str_detect(tr2g$transcript, "-I")],
+           con = "./output/neuron10k_collapse/introns_tx_to_capture.txt")
+```
+
 ```{r, include=FALSE}
 do_copy <- !file.exists("./data/whitelist_v3.txt")
 do_bustools <- !file.exists("./output/neuron10k_collapse/output.correct.sort.bus")
@@ -152,22 +163,21 @@ gunzip ./data/whitelist_v3.txt.gz
 
 The `bustools correct` command checks the whitelist and can correct some barcodes not on the whitelist but might have been due to sequencing error or mutation. If you do not wish to use a whitelist, then you can skip `bustools correct` below and go straight to `bustools sort`. In bash, `|` is a pipe just like the magrittr pipe `%>%` in R. The `-` by the end of the `bustools sort` command indicates where what goes through the pipe goes, i.e. the output of `bustools correct` is becoming the input to `bustools sort`. `-t4` means using 4 threads. 
 
-The `bustools capture` command determines what is from cDNA and what is from the flanked introns and generate two separate `bus` files. The `-s` flag specifies that transcripts are to be captured; `bustools capture` also supports barcodes (`-b`) and UMIs (`-u`).
+The `bustools capture` command determines what is from cDNA and what is from the flanked introns and generate two separate `bus` files. The `-s` flag specifies that transcripts are to be captured; `bustools capture` also supports barcodes (`-b`) and UMIs (`-u`). To be consistent with `velocyto`, here "spliced" reads are those not mapping to any flanked intronic regions (so can't be spanning intron-exon junctions), and "unspliced" reads are those not mapping to any exclusively exonic regions. The `-x` flag is used to find the complement of the capture list (which is the argument to `-c`), so the complement to the intronic list gives us the "spliced" reads from the above criterion, and the complement to the exonic list gives us the "unspliced" reads from the above criterion.
 
 ```{bash, eval=do_bustools}
 cd ./output/neuron10k_collapse
-mkdir spliced/ unspliced/
 bustools correct -w ../../data/whitelist_v3.txt -p output.bus | \
 bustools sort -o output.correct.sort.bus -t4 -
-bustools capture -s -o cDNA_capture.bus -c ./cDNA_tx_to_capture.txt -e matrix.ec -t transcripts.txt output.correct.sort.bus
-bustools capture -s -o introns_capture.bus -c ./introns_tx_to_capture.txt -e matrix.ec -t transcripts.txt output.correct.sort.bus
+bustools capture -s -x -o spliced.bus -c ./introns_tx_to_capture.txt -e matrix.ec -t transcripts.txt output.correct.sort.bus
+bustools capture -s -x -o unspliced.bus -c ./cDNA_tx_to_capture.txt -e matrix.ec -t transcripts.txt output.correct.sort.bus
 ```
 
-Unlike for just a gene count matrix, for RNA velocity, 2 matrices are generated. One for spliced reads, and the other for unspliced. 
+Unlike for just a gene count matrix, for RNA velocity, 2 matrices are generated. One for spliced transcripts, and the other for unspliced. 
 ```{bash}
 cd ./output/neuron10k_collapse
-bustools count -o unspliced -g ./tr2g.tsv -e matrix.ec -t transcripts.txt --genecounts introns_capture.bus
-bustools count -o spliced -g ./tr2g.tsv -e matrix.ec -t transcripts.txt --genecounts cDNA_capture.bus
+bustools count -o unspliced -g ./tr2g.tsv -e matrix.ec -t transcripts.txt --genecounts unspliced.bus
+bustools count -o spliced -g ./tr2g.tsv -e matrix.ec -t transcripts.txt --genecounts spliced.bus
 ```
 
 # Preprocessing
@@ -186,7 +196,7 @@ The `%<-%` from `zeallot` unpacks a list of 2 into 2 separate objects in the Pyt
 sum(unspliced@x) / (sum(unspliced@x) + sum(spliced@x))
 ```
 
-There are more unspliced counts than spliced counts, which has been observed in multiple datasets. In contrast, for velocyto, the unspliced count is usually between 10% and 20% of the sum of spliced and unspliced. Perhaps this is because kallisto | bus counts reads that are partially intronic and partially exonic as unspliced while velocyto throws away many reads (see [this GitHub issue](https://github.com/velocyto-team/velocyto.py/issues/148)). 
+In previous versions of this notebook, there were more unspliced counts than spliced counts. As part of an ongoing project, I converted the supposedly unspliced `bus` output into text and inspected it in R as a data frame. The output was wrong; there were still reads mapped to exclusively exonic regions in that `bus` file. However, the problem was fixed when I made sure that all transcripts in the capture list are also in the transcript list in the `kallisto bus` output, so the current version should be correct. However, this is still a higher proportion of unspliced counts. In contrast, for velocyto, the unspliced count is usually between 10% and 20% of the sum of spliced and unspliced. Perhaps this is because kallisto | bus counts reads that are partially intronic and partially exonic as unspliced while velocyto throws away many reads (see [this GitHub issue](https://github.com/velocyto-team/velocyto.py/issues/148)). 
 
 We expect around 10,000 cells. There are over 10 times more barcodes here, since most barcodes are from empty droplets. The number of genes does not seem too outrageous.
 ```{r}
@@ -446,7 +456,7 @@ As expected, qNSCs are on the one end , and neurons are on the other. Clustering
 ```{r umap_clust}
 seu <- FindNeighbors(seu, verbose = FALSE) %>% 
   FindClusters(resolution = 1, verbose = FALSE) # Louvain
-DimPlot(seu, pt.size = 0.5, reduction = "umap")
+DimPlot(seu, pt.size = 0.5, reduction = "umap", label = TRUE)
 ```
 
 # RNA velocity
@@ -503,7 +513,7 @@ show.velocity.on.embedding.cor(emb = Embeddings(seu, "umap"),
                                xlab = "UMAP1", ylab = "UMAP2")
 ```
 
-This presents a much more complicated picture. Moreover, there are some very divergent cells in small clusters labeled as NPCs. This step is computationally expensive; in subsequent calls to `show.velocity.on.embedding.cor` for the same dimension reduction, the expensive part can be bypassed by supplying the output of the first call.
+This presents a much more complicated picture. The cells labeled qNSCs are at the very bottom, and there seem to be two paths for the early stage cells to go towards neurons. The more mature neurons also seem to be changing a lot. This step is computationally expensive; in subsequent calls to `show.velocity.on.embedding.cor` for the same dimension reduction, the expensive part can be bypassed by supplying the output of the first call.
 ```{r v2}
 show.velocity.on.embedding.cor(emb = Embeddings(seu, "umap"),
                                vel = Tool(seu, slot = "RunVelocity"),
@@ -515,7 +525,7 @@ show.velocity.on.embedding.cor(emb = Embeddings(seu, "umap"),
                                xlab = "UMAP1", ylab = "UMAP2")
 ```
 
-qNSCs and closely related astrocytes are in the cluster at the top left of this plot. This picture is consistent with going from qNSCs to neurons.
+qNSCs and closely related astrocytes are in the cluster at the very bottom of this plot. This picture is mostly consistent with going from qNSCs to neurons, though manual cell type annotation would be helpful.
 
 ```{r, eval=do_cc, include=FALSE}
 saveRDS(cc_umap, "./output/neuron10k_collapse/cc_umap.rds")
@@ -533,7 +543,7 @@ gene.relative.velocity.estimates(GetAssayData(seu, slot = "data", assay = "splic
                                  cell.colors = cell_colors)
 ```
 
-This is Mef2c (myocyte enhancer factor 2C), which is highly expressed in the mouse adult cortex though not much in the embryonic CNS until E18, according to the [NCBI page of this gene](https://www.ncbi.nlm.nih.gov/gene/17260). In this dataset, it's more highly expressed among cells labeled neurons and those close to the neurons. However, it seems that it's close to steady state (the line in panel 3, the phase portrait); in most cells there aren't much more or fewer unspliced than spliced transcripts. 
+This is Mef2c (myocyte enhancer factor 2C), which is highly expressed in the mouse adult cortex though not much in the embryonic CNS until E18, according to the [NCBI page of this gene](https://www.ncbi.nlm.nih.gov/gene/17260). In this dataset, it's more highly expressed among a subset of cells labeled neurons and those close to those neurons. However, it seems that it's close to steady state (the line in panel 3, the phase portrait); in most cells there aren't much more or fewer unspliced than spliced transcripts, but it seems to be below steady state for neurons, meaning that the gene is downregulated in those cells.
 
 ```{r phase2, fig.width=12, fig.height=4}
 gene.relative.velocity.estimates(GetAssayData(seu, slot = "data", assay = "spliced"),
