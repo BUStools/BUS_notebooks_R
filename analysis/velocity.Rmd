@@ -120,7 +120,7 @@ do_index <- !file.exists("./output/mm_cDNA_introns_97_collapse.idx")
 do_bus <- !file.exists("./output/neuron10k_collapse/output.bus")
 ```
 
-For regular gene count data, we build a kallisto index for cDNAs as reads are pseudoaligned to cDNAs. Here, for RNA velocity, as reads are pseudoaligned to the flanked intronic sequences in addition to the cDNAs, the flanked intronic sequences should also be part of the kallisto index.
+For regular gene count data, we build a kallisto index for cDNAs as reads are pseudoaligned to cDNAs. Here, for RNA velocity, as reads are pseudoaligned to the flanked intronic sequences in addition to the cDNAs, the flanked intronic sequences should also be part of the kallisto index. We advise you to run this step on a server, as it takes up to about 50 GB of memory and takes about an hour to run.
 
 ```{bash, eval=do_index}
 # Intron index
@@ -136,16 +136,7 @@ neuron_10k_v3_S1_L002_R1_001.fastq.gz neuron_10k_v3_S1_L002_R2_001.fastq.gz \
 neuron_10k_v3_S1_L001_R1_001.fastq.gz neuron_10k_v3_S1_L001_R2_001.fastq.gz
 ```
 
-Here I need to make sure that all transcripts in the capture list are in the dataset. Otherwise the output of `bustools capture` will be wrong. I hope that this will be fixed soon or will get a helpful error message.
-```{r}
-tr2g <- sort_tr2g(read_tsv("./output/neuron10k_collapse/tr2g.tsv", 
-                           col_names = c("transcript", "gene")), 
-                  kallisto_out_path = "./output/neuron10k_collapse")
-writeLines(tr2g$transcript[str_detect(tr2g$transcript, "-I", negate = TRUE)],
-           con = "./output/neuron10k_collapse/cDNA_tx_to_capture.txt")
-writeLines(tr2g$transcript[str_detect(tr2g$transcript, "-I")],
-           con = "./output/neuron10k_collapse/introns_tx_to_capture.txt")
-```
+The most recent version of `BUSpaRse` ensures that all transcripts on the capture list are present in the transcriptome. Otherwise the output of `bustools capture` will be wrong. I hope that this will be fixed soon or will get a helpful error message.
 
 ```{r, include=FALSE}
 do_copy <- !file.exists("./data/whitelist_v3.txt")
@@ -394,7 +385,7 @@ cols_use <- c("nCount_sf", "nFeature_sf", "nCount_uf", "nFeature_uf")
 VlnPlot(seu, cols_use, pt.size = 0.1, ncol = 1, group.by = "cell_type")
 ```
 
-There's only 2 cells labeled ependymal by `SingleR`. How does number of UMI counts relate to number of genes detected? How does number of UMI counts in the spliced matrix relate to the number of gene detected in the unspliced matrix?
+There's only 1 cell labeled ependymal by `SingleR`. How does number of UMI counts relate to number of genes detected? How does number of UMI counts in the spliced matrix relate to the number of gene detected in the unspliced matrix?
 ```{r}
 # Helper functions for ggpairs
 log10_diagonal <- function(data, mapping, ...) {
@@ -513,7 +504,7 @@ show.velocity.on.embedding.cor(emb = Embeddings(seu, "umap"),
                                xlab = "UMAP1", ylab = "UMAP2")
 ```
 
-This presents a much more complicated picture. The cells labeled qNSCs are at the very bottom, and there seem to be two paths for the early stage cells to go towards neurons. The more mature neurons also seem to be changing a lot. This step is computationally expensive; in subsequent calls to `show.velocity.on.embedding.cor` for the same dimension reduction, the expensive part can be bypassed by supplying the output of the first call.
+This presents a much more complicated picture. The cells labeled qNSCs are at the bottom right. The more mature neurons also seem to be changing a lot. This step is computationally expensive; in subsequent calls to `show.velocity.on.embedding.cor` for the same dimension reduction, the expensive part can be bypassed by supplying the output of the first call.
 ```{r v2}
 show.velocity.on.embedding.cor(emb = Embeddings(seu, "umap"),
                                vel = Tool(seu, slot = "RunVelocity"),
@@ -525,7 +516,7 @@ show.velocity.on.embedding.cor(emb = Embeddings(seu, "umap"),
                                xlab = "UMAP1", ylab = "UMAP2")
 ```
 
-qNSCs and closely related astrocytes are in the cluster at the very bottom of this plot. This picture is mostly consistent with going from qNSCs to neurons, though manual cell type annotation would be helpful.
+qNSCs and closely related astrocytes are in the cluster at the bottom right of this plot. This picture is mostly consistent with going from qNSCs to neurons, though manual cell type annotation would be helpful.
 
 ```{r, eval=do_cc, include=FALSE}
 saveRDS(cc_umap, "./output/neuron10k_collapse/cc_umap.rds")
