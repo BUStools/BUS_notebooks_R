@@ -19,7 +19,7 @@ This notebook demonstrates the use of command line tools `kallisto` and `bustool
 
 After you download the binary, you should decompress the file (if it is `tar.gz`) with `tar -xzvf file.tar.gz` in the `bash` terminal, and add the directory containing the binary to `PATH` by `export PATH=$PATH:/foo/bar`, where `/foo/bar` is the directory of interest. Then you can directly invoke the binary on the command line as we will do in this notebook.
 
-We will be using the R packages below. `BUSpaRse` is not yet on CRAN or Bioconductor. For Mac users, see the [installation note for `BUSpaRse`](https://github.com/BUStools/BUSpaRse). `BUSpaRse` will be used to generate the transcript to gene file for `bustools` and to read output of `bustools` into R. We will also use `Seurat` version 3 which is now on CRAN. Recently, Satija lab announced [`SeuratWrappers`](https://github.com/satijalab/seurat-wrappers), with which we can run RNA velocity directly from Seurat. `SeuratWrappers` is also GitHub only at present. We need to install [`velocyto.R`](https://github.com/velocyto-team/velocyto.R), which is GitHub only, to compute and visualize RNA velocity after quantifying spliced and unspliced transcripts.
+We will be using the R packages below. `BUSpaRse` is now on Bioconductor 3.10 (development version of Bioconductor). For Mac users, see the [installation note for `BUSpaRse`](https://github.com/BUStools/BUSpaRse). `BUSpaRse` will be used to generate the transcript to gene file for `bustools` and to read output of `bustools` into R. We will also use `Seurat` version 3 which is now on CRAN. Recently, Satija lab announced [`SeuratWrappers`](https://github.com/satijalab/seurat-wrappers), with which we can run RNA velocity directly from Seurat. `SeuratWrappers` is also GitHub only at present. We need to install [`velocyto.R`](https://github.com/velocyto-team/velocyto.R), which is GitHub only, to compute and visualize RNA velocity after quantifying spliced and unspliced transcripts.
 
 ```{r, eval=FALSE}
 # Install devtools if it's not already installed
@@ -102,36 +102,36 @@ Explaining the arguments of `get_velocity_files`:
 * `L`: Length of the biological read of the technology of interest. For 10x v1 and v2 chemistry, `L` is 98 nt, and for v3 chemistry, `L` is 91 nt. The length of flanking region around introns is `L-1`, to capture reads from nascent transcripts that partially map to intronic and exonic sequences.
 * `Genome`: Genome, either a `DNAStringSet` or `BSgenome` object. Genomes of _Homo sapiens_ and common model organisms can also be easily obtained from Bioconductor. The one used in this notebook is from the package `BSgenome.Mmusculus.UCSC.mm10`. Alternatively, you can download genomes from Ensembl, RefSeq, or GenBank with `biomartr::getGenome`. Make sure that the annotation and the genome use the same genome version, which is here GRCm38 (mm10).
 * `Transcriptome`: While you may supply a transcriptome in the form of a path to a fasta file or a `DNAStringSet`, this is not required. The transcriptome can be extracted from the genome with the gene annotation. We recommend extracting the transcriptome from the genome, so the transcript IDs used in the transcriptome and the annotation (and importantly, in the `tr2g.tsv` file, explained later) are guaranteed to match. In this notebook, the transcriptome is not supplied and will be extracted from the genome.
-* `isoform_action`: There are two options regarding gene isoforms from alternative splicing or alternative transcription start or termination site. One is to get intronic sequences separately for each isoform, and another is to collapse all isoforms of a gene by taking the union of all exonic ranges of the gene. I'm not sure which way is better, but since in the case of alternative splicing, some intronic sequences of one isoform can actually be exonic sequences of another isoform, we will collapse isoforms here.
+* `isoform_action`: There are two options regarding gene isoforms from alternative splicing or alternative transcription start or termination site. One is to get intronic sequences separately for each isoform, and another is to collapse all isoforms of a gene by taking the union of all exonic ranges of the gene. To be honest, I implemented both options since I wasn't sure which one is better. Now I reason that keeping isoforms separate is better, since given the way reads are assigned to "spliced" or "unspliced", reads that are ambiguous due to alternative splicing will be discarded anyway and collapsing isoforms will inflate the counts in the spliced gene count matrices. Earlier versions of this notebook did collapse isoforms, so you can look at the previous version to compare results. 
 
 ```{r, include = FALSE}
-do_files <- !file.exists("./output/neuron10k_collapse/cDNA_introns.fa")
+do_files <- !file.exists("./output/neuron10k_velocity/cDNA_introns.fa")
 ```
 
 ```{r, eval=do_files}
 get_velocity_files(edb, L = 91, Genome = BSgenome.Mmusculus.UCSC.mm10, 
-                   out_path = "./output/neuron10k_collapse", 
-                   isoform_action = "collapse")
+                   out_path = "./output/neuron10k_velocity", 
+                   isoform_action = "separate")
 ```
 
 ```{r, include=FALSE}
 do_untar <- !dir.exists("./data/neuron_10k_v3_fastqs")
-do_index <- !file.exists("./output/mm_cDNA_introns_97_collapse.idx")
-do_bus <- !file.exists("./output/neuron10k_collapse/output.bus")
+do_index <- !file.exists("./output/mm_cDNA_introns_97.idx")
+do_bus <- !file.exists("./output/neuron10k_velocity/output.bus")
 ```
 
 For regular gene count data, we build a kallisto index for cDNAs as reads are pseudoaligned to cDNAs. Here, for RNA velocity, as reads are pseudoaligned to the flanked intronic sequences in addition to the cDNAs, the flanked intronic sequences should also be part of the kallisto index. We advise you to run this step on a server, as it takes up to about 50 GB of memory and takes about an hour to run.
 
 ```{bash, eval=do_index}
 # Intron index
-kallisto index -i ./output/mm_cDNA_introns_97_collapse.idx ./output/neuron10k_collapse/cDNA_introns.fa
+kallisto index -i ./output/mm_cDNA_introns_97.idx ./output/neuron10k_velocity/cDNA_introns.fa
 ```
 
 The initial `bus` file is generated the same way as in regular gene count data, except with the cDNA + flanked intron index.
 ```{bash, eval=do_bus}
 cd ./data/neuron_10k_v3_fastqs
-kallisto bus -i ../../output/mm_cDNA_introns_97_collapse.idx \
--o ../../output/neuron10k_collapse -x 10xv3 -t8 \
+kallisto bus -i ../../output/mm_cDNA_introns_97.idx \
+-o ../../output/neuron10k_velocity -x 10xv3 -t8 \
 neuron_10k_v3_S1_L002_R1_001.fastq.gz neuron_10k_v3_S1_L002_R2_001.fastq.gz \
 neuron_10k_v3_S1_L001_R1_001.fastq.gz neuron_10k_v3_S1_L001_R2_001.fastq.gz
 ```
@@ -140,11 +140,11 @@ The most recent version of `BUSpaRse` ensures that all transcripts on the captur
 
 ```{r, include=FALSE}
 do_copy <- !file.exists("./data/whitelist_v3.txt")
-do_bustools <- !file.exists("./output/neuron10k_collapse/output.correct.sort.bus")
-do_count <- !file.exists("./output/neuron10k_collapse/spliced.mtx")
+do_bustools <- !file.exists("./output/neuron10k_velocity/output.correct.sort.bus")
+do_count <- !file.exists("./output/neuron10k_velocity/spliced.mtx")
 ```
 
-A barcode whitelist of all valid barcode can be used, though is not strictly required. The 10x whitelist contains all barcodes from the kit. The 10x whitelist file comes with Cell Ranger installation, and is copies to the working directory of this notebook. For `bustools`, the whitelist must be a text file with one column, each row of which is a valid cell barcode. The text file must not be compressed. 
+A barcode whitelist of all valid barcode can be used, though is not strictly required. The 10x whitelist contains all barcodes from the kit. The 10x whitelist file comes with Cell Ranger installation, and is copies to the working directory of this notebook. For `bustools`, the whitelist must be a text file with one column, each row of which is a valid cell barcode. The text file must not be compressed. If you do not have a whitelist, the most recent version of `bustools` can generate one based on data. The `bustools whitelist` command can also remove barcodes with too few reads, which means removing what may be empty droplets.
 ```{bash, eval=do_copy}
 cp ~/cellranger-3.0.2/cellranger-cs/3.0.2/lib/python/cellranger/barcodes/3M-february-2018.txt.gz \
 ./data/whitelist_v3.txt.gz
@@ -154,10 +154,10 @@ gunzip ./data/whitelist_v3.txt.gz
 
 The `bustools correct` command checks the whitelist and can correct some barcodes not on the whitelist but might have been due to sequencing error or mutation. If you do not wish to use a whitelist, then you can skip `bustools correct` below and go straight to `bustools sort`. In bash, `|` is a pipe just like the magrittr pipe `%>%` in R. The `-` by the end of the `bustools sort` command indicates where what goes through the pipe goes, i.e. the output of `bustools correct` is becoming the input to `bustools sort`. `-t4` means using 4 threads. 
 
-The `bustools capture` command determines what is from cDNA and what is from the flanked introns and generate two separate `bus` files. The `-s` flag specifies that transcripts are to be captured; `bustools capture` also supports barcodes (`-b`) and UMIs (`-u`). To be consistent with `velocyto`, here "spliced" reads are those not mapping to any flanked intronic regions (so can't be spanning intron-exon junctions), and "unspliced" reads are those not mapping to any exclusively exonic regions. The `-x` flag is used to find the complement of the capture list (which is the argument to `-c`), so the complement to the intronic list gives us the "spliced" reads from the above criterion, and the complement to the exonic list gives us the "unspliced" reads from the above criterion.
+The `bustools capture` command determines what is from cDNA and what is from the flanked introns and generate two separate `bus` files. The `-s` flag specifies that transcripts are to be captured; `bustools capture` also supports barcodes (`-b`) and UMIs (`-u`). To be consistent with `velocyto`, here "spliced" reads are those not mapping to any flanked intronic regions (so can't be spanning intron-exon junctions), and "unspliced" reads are those not mapping to any exclusively exonic regions. The `-x` flag is used to find the complement of the capture list (which is the argument to `-c`), so the complement to the intronic list gives us the "spliced" reads from the above criterion, and the complement to the exonic list gives us the "unspliced" reads from the above criterion. This operates at the read or `bus` record level rather than the UMI or transcript level; the first `bustools capture` command (for spliced matrix) only cares whether a UMI for a barcode has a read that only maps to exonic sequences, counting it as spliced, but the command does not care if that same UMI has another read that only maps to intronic sequences, which is evidence that the transcript represented by that UMI is actually not fully spliced. That's why I think this method counts some transcripts that in fact have intronic sequences as spliced, thus inflating the counts in the spliced matrix. Transcripts that are not fully spliced -- whether nascent transcripts or transcripts with retained introns -- do still have exons and even exon-exon junctions, as splicing is concurrent with transcriptions and usually not all introns are retained. 
 
 ```{bash, eval=do_bustools}
-cd ./output/neuron10k_collapse
+cd ./output/neuron10k_velocity
 bustools correct -w ../../data/whitelist_v3.txt -p output.bus | \
 bustools sort -o output.correct.sort.bus -t4 -
 bustools capture -s -x -o spliced.bus -c ./introns_tx_to_capture.txt -e matrix.ec -t transcripts.txt output.correct.sort.bus
@@ -166,7 +166,7 @@ bustools capture -s -x -o unspliced.bus -c ./cDNA_tx_to_capture.txt -e matrix.ec
 
 Unlike for just a gene count matrix, for RNA velocity, 2 matrices are generated. One for spliced transcripts, and the other for unspliced. 
 ```{bash}
-cd ./output/neuron10k_collapse
+cd ./output/neuron10k_velocity
 bustools count -o unspliced -g ./tr2g.tsv -e matrix.ec -t transcripts.txt --genecounts unspliced.bus
 bustools count -o spliced -g ./tr2g.tsv -e matrix.ec -t transcripts.txt --genecounts spliced.bus
 ```
@@ -175,9 +175,9 @@ bustools count -o spliced -g ./tr2g.tsv -e matrix.ec -t transcripts.txt --geneco
 ## Remove empty droplets
 Now we have the spliced and unspliced matrices to be read into R:
 ```{r}
-c(spliced, unspliced) %<-% read_velocity_output(spliced_dir = "./output/neuron10k_collapse",
+c(spliced, unspliced) %<-% read_velocity_output(spliced_dir = "./output/neuron10k_velocity",
                                                 spliced_name = "spliced",
-                                                unspliced_dir = "./output/neuron10k_collapse",
+                                                unspliced_dir = "./output/neuron10k_velocity",
                                                 unspliced_name = "unspliced")
 ```
 
@@ -274,9 +274,9 @@ ur <- sort(unique(exp(round(log(u)*100)/100)))
 ```
 
 ```{r, include=FALSE}
-do_rank2 <- !file.exists("./output/neuron10k_collapse/bivar_knee.rds")
+do_rank2 <- !file.exists("./output/neuron10k_velocity/bivar_knee.rds")
 if (!do_rank2) {
-  bc2 <- readRDS("./output/neuron10k_collapse/bivar_knee.rds")
+  bc2 <- readRDS("./output/neuron10k_velocity/bivar_knee.rds")
 }
 ```
 
@@ -286,7 +286,7 @@ bc2 <- bc_ranks2(s, u, sr, ur)
 ```
 
 ```{r, include=FALSE}
-saveRDS(bc2, "./output/neuron10k_collapse/bivar_knee.rds")
+saveRDS(bc2, "./output/neuron10k_velocity/bivar_knee.rds")
 ```
 
 What would the "rank" look like?
@@ -331,9 +331,9 @@ ref_use <- ref_use[!is.na(rownames(ref_use)),]
 ```
 
 ```{r, include=FALSE}
-do_annot <- !file.exists("./output/neuron10k_collapse/cell_type.rds")
+do_annot <- !file.exists("./output/neuron10k_velocity/cell_type.rds")
 if (!do_annot) {
-  annot <- readRDS("./output/neuron10k_collapse/cell_type.rds")
+  annot <- readRDS("./output/neuron10k_velocity/cell_type.rds")
 }
 ```
 
@@ -342,7 +342,7 @@ annot <- SingleR("single", sf, ref_data = ref_use, types = mouse.rnaseq$types)
 ```
 
 ```{r, include = FALSE, eval=do_annot}
-saveRDS(annot, "./output/neuron10k_collapse/cell_type.rds")
+saveRDS(annot, "./output/neuron10k_velocity/cell_type.rds")
 ```
 
 In order not to have cells not of the neural or glial lineages overshadow velocity visualization, only cells of the neural and glial lineages are kept. 
@@ -363,9 +363,9 @@ Meaning of the acronyms:
 * aNSCs: Active neural stem cells
 
 ```{r, include=FALSE}
-do_seu <- !file.exists("./output/neuron10k_collapse/seu_ng.rds")
+do_seu <- !file.exists("./output/neuron10k_velocity/seu_ng.rds")
 if (!do_seu) 
-  seu <- readRDS("./output/neuron10k_collapse/seu_ng.rds")
+  seu <- readRDS("./output/neuron10k_velocity/seu_ng.rds")
 ```
 
 ## QC
@@ -456,7 +456,7 @@ seu <- RunVelocity(seu, ncores = 10, reduction = "pca", verbose = FALSE)
 ```
 
 ```{r, include=FALSE, eval=do_seu}
-saveRDS(seu, "./output/neuron10k_collapse/seu_ng.rds")
+saveRDS(seu, "./output/neuron10k_velocity/seu_ng.rds")
 ```
 
 Unfortunately, `velocyto.R` does not natively support `ggplot2`. This is a function that assigns colors to each cell in base R graphics.
@@ -468,6 +468,23 @@ cell_pal <- function(cell_cats, pal_fun) {
 }
 ```
 
+It would also be helpful to label the clusters.
+```{r}
+#' Get cluster label coordinates
+#' 
+#' @param labels Character or factor vector for labels.
+#' @param coords Numeric matrix with two columns, for x and y coordinates of the dimension reduction; the number of rows must match the length of `labels`.
+#' @param ... Extra arguments passed to `text`.
+#' @return Nothing. Just adds text labels to the plot if the plotting device is still on.
+label_clusters <- function(labels, coords, ...) {
+  df <- tibble(label = labels, x = coords[,1], y = coords[,2])
+  df <- df %>% 
+    group_by(label) %>% 
+    summarize(x = median(x), y = median(y))
+  text(df$x, df$y, df$label, ...)
+}
+```
+
 `velocyto.R` also requires that the vector of colors should have cell barcodes/IDs as names to match color to cell.
 ```{r}
 cell_colors <- cell_pal(seu$cell_type, brewer_pal("qual", "Set2"))
@@ -476,9 +493,9 @@ names(cell_colors) <- names(cell_colors_clust) <- colnames(sf)
 ```
 
 ```{r, include=FALSE}
-do_cc <- !file.exists("./output/neuron10k_collapse/cc_umap.rds")
+do_cc <- !file.exists("./output/neuron10k_velocity/cc_umap.rds")
 if (!do_cc) {
-  cc_umap <- readRDS("./output/neuron10k_collapse/cc_umap.rds")
+  cc_umap <- readRDS("./output/neuron10k_velocity/cc_umap.rds")
 }
 ```
 
@@ -489,8 +506,9 @@ cc_umap <- show.velocity.on.embedding.cor(emb = Embeddings(seu, "umap"),
                                           n.cores = 50, show.grid.flow = TRUE,
                                           grid.n = 50, cell.colors = cell_colors,
                                           cex = 0.5, cell.border.alpha = 0,
-                                          arrow.scale = 2, arrow.lwd = 0.75,
+                                          arrow.scale = 2, arrow.lwd = 0.6,
                                           xlab = "UMAP1", ylab = "UMAP2")
+label_clusters(seu$cell_type, Embeddings(seu, "umap"), font = 2, col = "brown")
 ```
 
 ```{r v1b, eval=!do_cc, echo=FALSE}
@@ -499,27 +517,31 @@ show.velocity.on.embedding.cor(emb = Embeddings(seu, "umap"),
                                n.cores = 50, show.grid.flow = TRUE,
                                grid.n = 50, cell.colors = cell_colors,
                                cex = 0.5, cell.border.alpha = 0,
-                               arrow.scale = 2, arrow.lwd = 0.75,
+                               arrow.scale = 2, arrow.lwd = 0.6,
                                cc = cc_umap$cc,
                                xlab = "UMAP1", ylab = "UMAP2")
+label_clusters(seu$cell_type, Embeddings(seu, "umap"), font = 2, col = "brown")
 ```
 
-This presents a much more complicated picture. The cells labeled qNSCs are at the bottom right. The more mature neurons also seem to be changing a lot. This step is computationally expensive; in subsequent calls to `show.velocity.on.embedding.cor` for the same dimension reduction, the expensive part can be bypassed by supplying the output of the first call.
+This presents a much more complicated picture. The cells labeled qNSCs and astrocytes are at the very top, going into two paths, one going down and to the right to the neurons, and the other going left towards the OPCs. There also seems to be a cycle to the left of what's labeled qNSCs and astrocytes at the top. To the lower right of the cluster containing what's labeled OPCs (cluster 7), there're two branches, but those also look like a cycle. In the [`slingshot` notebook](https://bustools.github.io/BUS_notebooks_R/slingshot.html#trajectory_inference), I did get a lineage that departs on one of the branches near OPCs and returns on the other (curve 13); the RNA velocity velocity results here seems to support the existence of that lineage. The more mature neurons also seem to be changing a lot; they seem to branch into 3 different populations. More detailed manual cell type annotation would be helpful.
+
+This step is computationally expensive; in subsequent calls to `show.velocity.on.embedding.cor` for the same dimension reduction, the expensive part can be bypassed by supplying the output of the first call.
 ```{r v2}
 show.velocity.on.embedding.cor(emb = Embeddings(seu, "umap"),
                                vel = Tool(seu, slot = "RunVelocity"),
                                n.cores = 50, show.grid.flow = TRUE,
                                grid.n = 50, cell.colors = cell_colors_clust,
                                cex = 0.5, cell.border.alpha = 0,
-                               arrow.scale = 2, arrow.lwd = 0.75, 
+                               arrow.scale = 2, arrow.lwd = 0.6, 
                                cc = cc_umap$cc,
                                xlab = "UMAP1", ylab = "UMAP2")
+label_clusters(seu$seurat_clusters, Embeddings(seu, "umap"), font = 2, cex = 1.2)
 ```
 
-qNSCs and closely related astrocytes are in the cluster at the bottom right of this plot. This picture is mostly consistent with going from qNSCs to neurons, though manual cell type annotation would be helpful.
+qNSCs and closely related astrocytes are in cluster 10. 
 
 ```{r, eval=do_cc, include=FALSE}
-saveRDS(cc_umap, "./output/neuron10k_collapse/cc_umap.rds")
+saveRDS(cc_umap, "./output/neuron10k_velocity/cc_umap.rds")
 ```
 
 ## Phase portraits
