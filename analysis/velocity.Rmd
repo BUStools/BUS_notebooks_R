@@ -148,7 +148,7 @@ kb count -i ../mm_cDNA_introns_97.idx -g tr2g.tsv -x 10xv3 -o kb \
 
 The `mtx` files are in the `counts_unfiltered` directory.
 
-Read the next section for instructions of going from fastq files to the matrices directly with `kallisto` and `bustools`. This is helpful to modularize the workflow, such as when you want to generate a regular gene count matrix, a TCC matrix, and the spliced and unspliced matrix, for the same data, without having to make the `bus` file over and over again. The matrices for this analysis were generated in the section below.
+Read the next section for instructions of going from fastq files to the matrices directly with `kallisto` and `bustools`. This is helpful to modularize the workflow. The matrices used in this notebook were generated in the next section.
 
 ## Directly using `kallisto` and `bustools`
 The initial `bus` file is generated the same way as in regular gene count data, except with the cDNA + flanked intron index.
