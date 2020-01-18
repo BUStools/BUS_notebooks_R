@@ -32,13 +32,14 @@ devtools::install_github("satijalab/seurat-wrappers")
 devtools::install_github("velocyto-team/velocyto.R")
 ```
 
-This vignette uses the version of `DropletUtils` from Bioconductor version 3.9; the version from Bioconductor 3.8 has a different user interface. If you are using a version of R older than 3.6.0 and want to rerun this vignette, then you can adapt the knee plot code to the older version of `DropletUtils`, or install [`DropletUtils` from GitHub](https://github.com/MarioniLab/DropletUtils), which I did for this notebook. `BSgenome.Mmusculus.UCSC.mm10` and `AnnotationHub` are also on Bioconductor. Bioconductor packages can be installed as such:
+This vignette uses the version of `DropletUtils` from Bioconductor version 3.10; the version from Bioconductor 3.8 has a different user interface. If you are using a version of R older than 3.6.0 and want to rerun this vignette, then you can adapt the knee plot code to the older version of `DropletUtils`, or install [`DropletUtils` from GitHub](https://github.com/MarioniLab/DropletUtils), which I did for this notebook. `BSgenome.Mmusculus.UCSC.mm10`, `AnnotationHub`, `SingleR` are also on Bioconductor. Bioconductor packages can be installed as such:
 
 ```{r, eval = FALSE}
 if (!require(BiocManager)) {
   install.packages("BiocManager")
 }
-BiocManager::install(c("DropletUtils", "BSgenome.Mmusculus.UCSC.mm10", "AnnotationHub"))
+BiocManager::install(c("DropletUtils", "BSgenome.Mmusculus.UCSC.mm10", 
+                       "AnnotationHub", "SingleR"))
 ```
 
 The other packages are on CRAN.
@@ -51,7 +52,6 @@ library(AnnotationHub)
 library(zeallot) # For %<-% that unpacks lists in the Python manner
 library(DropletUtils)
 library(tidyverse)
-library(uwot) # For umap
 library(GGally) # For ggpairs
 library(velocyto.R)
 library(SingleR)
@@ -72,7 +72,7 @@ if (!file.exists("./data/neuron_10k_v3_fastqs.tar")) {
 
 ```{r, include=FALSE}
 do_untar <- !dir.exists("./data/neuron_10k_v3_fastqs")
-do_index <- !file.exists("./output/mm_cDNA_introns_ensembl94.idx")
+do_index <- !file.exists("./output/mm_cDNA_introns_ensembl97.idx")
 do_bus <- !file.exists("./output/neuron10k_velocity/output.bus")
 ```
 
@@ -83,7 +83,7 @@ tar -xvf ./neuron_10k_v3_fastqs.tar
 ```
 
 # Generate spliced and unspliced matrices
-In order to know which reads come from spliced as opposed to unspliced transcripts, we need to see whether the reads contain intronic sequences. Thus we need to include intronic sequences in the kallisto index. This can be done with the `BUSpaRse` function `get_velocity_files`, which generates all files required to run RNA velocity with kallisto | bustools. First, we need a genome annotation to get intronic sequences. We can get genome annotation from GTF or GFF3 files from Ensembl with `getGTF` or `getGFF` from the R package `biomartr`, but Bioconductor provides genome annotations in its databases and package ecosystem as well. As of writing, the most recent version of Ensembl is 97. UCSC annotation can be obtained from Bioconductor package `TxDb.Mmusculus.UCSC.mm10.knownGene`. 
+In order to know which reads come from spliced as opposed to unspliced transcripts, we need to see whether the reads contain intronic sequences. Thus we need to include intronic sequences in the kallisto index. This can be done with the `BUSpaRse` function `get_velocity_files`, which generates all files required to run RNA velocity with kallisto | bustools. First, we need a genome annotation to get intronic sequences. We can get genome annotation from GTF or GFF3 files from Ensembl with `getGTF` or `getGFF` from the R package `biomartr`, but Bioconductor provides genome annotations in its databases and package ecosystem as well. UCSC annotation can be obtained from Bioconductor package `TxDb.Mmusculus.UCSC.mm10.knownGene`. Here Ensembl version 97 is used, but Bioconductor 3.10 also provides version 98.
 
 ```{r}
 # query AnnotationHub for mouse Ensembl annotation
@@ -127,6 +127,30 @@ For regular gene count data, we build a kallisto index for cDNAs as reads are ps
 kallisto index -i ./output/mm_cDNA_introns_97.idx ./output/neuron10k_velocity/cDNA_introns.fa
 ```
 
+## Using the `kb` wrapper
+With `kallisto` and `bustools`, it takes several commands to go from fastq files to the spliced and unspliced matrices, which is quite cumbersome. So a wrapper called `kb` was written to condense those steps to one. The command line tool `kb` can be installed with
+
+```{bash, eval = FALSE}
+pip install kb-python
+```
+
+Then we can use the following command to generate the spliced and unspliced matrices:
+
+```{bash, eval = FALSE}
+cd ./output/neuron10k_velocity
+kb count -i ../mm_cDNA_introns_97.idx -g tr2g.tsv -x 10xv3 -o kb \
+-c1 cDNA_tx_to_capture.txt -c2 introns_tx_to_capture.txt --lamanno \
+../../data/neuron_10k_v3_fastqs/neuron_10k_v3_S1_L002_R1_001.fastq.gz \
+../../data/neuron_10k_v3_fastqs/neuron_10k_v3_S1_L002_R2_001.fastq.gz \
+../../data/neuron_10k_v3_fastqs/neuron_10k_v3_S1_L001_R1_001.fastq.gz \
+../../data/neuron_10k_v3_fastqs/neuron_10k_v3_S1_L001_R2_001.fastq.gz
+```
+
+The `mtx` files are in the `counts_unfiltered` directory.
+
+Read the next section for instructions of going from fastq files to the matrices directly with `kallisto` and `bustools`. This is helpful to modularize the workflow, such as when you want to generate a regular gene count matrix, a TCC matrix, and the spliced and unspliced matrix, for the same data, without having to make the `bus` file over and over again. The matrices for this analysis were generated in the section below.
+
+## Directly using `kallisto` and `bustools`
 The initial `bus` file is generated the same way as in regular gene count data, except with the cDNA + flanked intron index.
 ```{bash, eval=do_bus}
 cd ./data/neuron_10k_v3_fastqs
@@ -165,7 +189,7 @@ bustools capture -s -x -o unspliced.bus -c ./cDNA_tx_to_capture.txt -e matrix.ec
 ```
 
 Unlike for just a gene count matrix, for RNA velocity, 2 matrices are generated. One for spliced transcripts, and the other for unspliced. 
-```{bash}
+```{bash, eval=do_bustools}
 cd ./output/neuron10k_velocity
 bustools count -o unspliced -g ./tr2g.tsv -e matrix.ec -t transcripts.txt --genecounts unspliced.bus
 bustools count -o spliced -g ./tr2g.tsv -e matrix.ec -t transcripts.txt --genecounts spliced.bus
@@ -175,9 +199,10 @@ bustools count -o spliced -g ./tr2g.tsv -e matrix.ec -t transcripts.txt --geneco
 ## Remove empty droplets
 Now we have the spliced and unspliced matrices to be read into R:
 ```{r}
-c(spliced, unspliced) %<-% read_velocity_output(spliced_dir = "./output/neuron10k_velocity",
+d <- "./output/neuron10k_velocity"
+c(spliced, unspliced) %<-% read_velocity_output(spliced_dir = d,
                                                 spliced_name = "spliced",
-                                                unspliced_dir = "./output/neuron10k_velocity",
+                                                unspliced_dir = d,
                                                 unspliced_name = "unspliced")
 ```
 
@@ -212,25 +237,49 @@ bc_uns <- barcodeRanks(unspliced)
 
 Here the knee plot is transposed, because this is more generalizable to multi-modal data, such that those with not only RNA-seq but also abundance of cell surface markers. In that case, we can plot number of UMIs on the x axis, number of cell surface protein tags on the y axis, and barcode rank based on both UMI and protein tag counts on the z axis; it makes more sense to make barcode rank the dependent variable. See [this blog post by Lior Pachter](https://liorpachter.wordpress.com/2019/06/24/rotating-the-knee-plot-and-related-yoga/) for a more detailed explanation.
 
+```{r}
+#' Knee plot for filtering empty droplets
+#' 
+#' Visualizes the inflection point to filter empty droplets. This function plots 
+#' different datasets with a different color. Facets can be added after calling
+#' this function with `facet_*` functions.
+#' 
+#' @param bc_ranks A named list of output from `DropletUtil::barcodeRanks`.
+#' @return A ggplot2 object.
+#' @importFrom tibble tibble
+#' @importFrom purrr map map_dbl
+#' @importFrom dplyr distinct
+#' @importFrom ggplot2 geom_line geom_hline geom_vline scale_x_log10 scale_y_log10
+#' @importFrom tidyr unnest
+#' @export
+knee_plot <- function(bc_ranks) {
+  knee_plt <- tibble(rank = map(bc_ranks, ~ .x[["rank"]]),
+                     total = map(bc_ranks, ~ .x[["total"]]),
+                     dataset = names(bc_ranks)) %>% 
+    unnest(cols = c(rank, total)) %>% 
+    distinct() %>% 
+    dplyr::filter(total > 0)
+  annot <- tibble(inflection = map_dbl(bc_ranks, ~ metadata(.x)[["inflection"]]),
+                  rank_cutoff = map_dbl(bc_ranks, 
+                                        ~ max(.x$rank[.x$total >
+                                                        metadata(.x)[["inflection"]]])),
+                  dataset = names(bc_ranks))
+  p <- ggplot(knee_plt, aes(rank, total, color = dataset)) +
+    geom_line() +
+    geom_hline(aes(yintercept = inflection, color = dataset), 
+               data = annot, linetype = 2) +
+    geom_vline(aes(xintercept = rank_cutoff, color = dataset),
+               data = annot, linetype = 2) +
+    scale_x_log10() +
+    scale_y_log10() +
+    labs(x = "Rank", y = "Total UMIs")
+  return(p)
+}
+```
+
 ```{r knee}
-tibble(rank = bc_rank$rank, total = bc_rank$total, matrix = "spliced") %>% 
-  bind_rows(tibble(rank = bc_uns$rank, total = bc_uns$total, matrix = "unspliced")) %>% 
-  distinct() %>% 
-  ggplot(aes(total, rank, color = matrix)) +
-  geom_line() +
-  geom_vline(xintercept = metadata(bc_rank)$knee, color = "blue", linetype = 2) +
-  geom_vline(xintercept = metadata(bc_rank)$inflection, color = "green", linetype = 2) +
-  geom_vline(xintercept = metadata(bc_uns)$knee, color = "purple", linetype = 3) +
-  geom_vline(xintercept = metadata(bc_uns)$inflection, color = "cyan", linetype = 3) +
-  annotate("text", y = c(1000, 1000, 500, 500), 
-           x = 1.5 * c(metadata(bc_rank)$knee, metadata(bc_rank)$inflection,
-                       metadata(bc_uns)$knee, metadata(bc_uns)$inflectio),
-           label = c("knee (s)", "inflection (s)", "knee (u)", "inflection (u)"), 
-           color = c("blue", "green", "purple", "cyan")) +
-  scale_x_log10() +
-  scale_y_log10() +
-  labs(y = "Rank", x = "Total UMI counts") +
-  theme_bw()
+knee_plot(list(spliced = bc_rank, unspliced = bc_uns)) +
+  coord_flip()
 ```
 
 Which inflection point should be used to remove what are supposed to be empty droplets? The one of the spliced matrix or the unspliced matrix? 
@@ -430,7 +479,7 @@ DimPlot(seu, reduction = "tsne",
 
 This looks quite similar to the tSNE from gene count matrix of this same dataset, except rotated; see the [`slingshot` notebook](https://bustools.github.io/BUS_notebooks_R/slingshot.html#dimension_reduction)
 
-In the most recent development version of Seurat, `RunUMAP` can use the R package `uwot` as the backend, thus obliterating calling Python UMAP through `reticulate`. On servers, `reticulate` does not work due to [this issue](https://github.com/rstudio/reticulate/issues/428).
+In the current CRAN version of Seurat, `RunUMAP` can use the R package `uwot` as the backend, thus obliterating calling Python UMAP through `reticulate`. On servers, `reticulate` does not work due to [this issue](https://github.com/rstudio/reticulate/issues/428).
 
 ```{r}
 seu <- RunUMAP(seu, dims = 1:50, umap.method = "uwot")
