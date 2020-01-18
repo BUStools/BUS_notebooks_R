@@ -19,29 +19,17 @@ This notebook demonstrates the use of command line tools `kallisto` and `bustool
 
 After you download the binary, you should decompress the file (if it is `tar.gz`) with `tar -xzvf file.tar.gz` in the `bash` terminal, and add the directory containing the binary to `PATH` by `export PATH=$PATH:/foo/bar`, where `/foo/bar` is the directory of interest. Then you can directly invoke the binary on the command line as we will do in this notebook.
 
-We will be using the R packages below. `BUSpaRse` is not yet on CRAN or Bioconductor. For Mac users, see the [installation note for `BUSpaRse`](https://github.com/BUStools/BUSpaRse). `BUSpaRse` will be used to generate the transcript to gene file for `bustools` and to read output of `bustools` into R. We will also use `Seurat` version 3 which is now on CRAN.
+We will be using the R packages below. `BUSpaRse` is now on Bioconductor 3.10. For Mac users, see the [installation note for `BUSpaRse`](https://github.com/BUStools/BUSpaRse). `BUSpaRse` will be used to generate the transcript to gene file for `bustools` and to read output of `bustools` into R. We will also use `Seurat` version 3 which is now on CRAN.
 
-```{r, eval=FALSE}
-# Install devtools if it's not already installed
-if (!require(devtools)) {
-  install.packages("devtools")
-}
-# Install from GitHub
-devtools::install_github("BUStools/BUSpaRse")
-```
+We will use `SingleR`, which is also on Bioconductor 3.10 to annotate cell types.
 
-The package `SingleR`, which will be used for cell type inference, is only available on GitHub:
-```{r, eval=FALSE}
-devtools::install_github("dviraran/SingleR")
-```
-
-This vignette uses the version of `DropletUtils` from Bioconductor version 3.9; the version from Bioconductor 3.8 has a different user interface. If you are using a version of R older than 3.6.0 and want to rerun this vignette, then you can adapt the knee plot code to the older version of `DropletUtils` or install [`DropletUtils` from GitHub](https://github.com/MarioniLab/DropletUtils). The package `monocle` should also be installed from Bioconductor:
+This vignette uses the version of `DropletUtils` from Bioconductor version 3.10; the version from Bioconductor 3.8 has a different user interface. If you are using a version of R older than 3.6.0 and want to rerun this vignette, then you can adapt the knee plot code to the older version of `DropletUtils` or install [`DropletUtils` from GitHub](https://github.com/MarioniLab/DropletUtils). The package `monocle` should also be installed from Bioconductor:
 
 ```{r, eval = FALSE}
 if (!require(BiocManager)) {
   install.packages("BiocManager")
 }
-BiocManager::install(c("DropletUtils", "monocle"))
+BiocManager::install(c("DropletUtils", "monocle", "SingleR", "BUSpaRse"))
 ```
 
 The other R packages below are on CRAN.
@@ -76,6 +64,7 @@ tar -xvf ./neuron_10k_v3_fastqs.tar
 ```
 
 # Generate the gene count matrix
+
 ## Build the `kallisto` index
 Here we use [kallisto](https://pachterlab.github.io/kallisto/about) to pseudoalign the reads to the transcriptome and then to create the `bus` file to be converted to a sparse matrix. The first step is to build an index of the mouse transcriptome. The transcriptome downloaded here is Ensembl version 97, the most recent version as of writing.
 ```{r dl_tx}
@@ -94,16 +83,7 @@ do_bus <- !file.exists("./output/neuron10k/output.bus")
 kallisto index -i ./output/mm_tr_index97.idx ./data/mm_cdna97.fa.gz
 ```
 
-With the index and the fastq files, the `kallisto bus` command generates a binary `bus` file called `output.bus`, which will be sorted and processed to generate a gene count matrix.
-```{bash kallisto, eval=do_bus}
-cd ./data/neuron_10k_v3_fastqs
-kallisto bus -i ../../output/mm_tr_index97.idx -o ../../output/neuron10k -x 10xv3 -t8 \
-neuron_10k_v3_S1_L002_R1_001.fastq.gz neuron_10k_v3_S1_L002_R2_001.fastq.gz \
-neuron_10k_v3_S1_L001_R1_001.fastq.gz neuron_10k_v3_S1_L001_R2_001.fastq.gz
-```
-
-## Run `bustools`
-### Map transcripts to genes
+#### Map transcripts to genes
 For the sparse matrix, most people are interested in how many UMIs per gene per cell, we here we will quantify this from the `bus` output, and to do so, we need to find which gene corresponds to each transcript. Remember in the output of `kallisto bus`, there's the file `transcripts.txt`. Those are the transcripts in the transcriptome index. 
 
 Remember that we downloaded transcriptome FASTA file from Ensembl just now. In FASTA files, each entry is a sequence with a name. In Ensembl FASTA files, the sequence name has genome annotation of the corresponding sequence, so we can extract transcript IDs and corresponding gene IDs and gene names from there.
@@ -118,11 +98,43 @@ head(tr2g)
 ```
 
 `bustools` requires `tr2g` to be written into a tab delimited file of a specific format: No headers, first column is transcript ID, and second column is the corresponding gene ID. Transcript IDs must be in the same order as in the `kallisto` index.
-```{r, eval}
+```{r}
 # Write tr2g to format required by bustools
 save_tr2g_bustools(tr2g, file_save = "./output/tr2g_mm97.tsv")
 ```
 
+## Using the `kb` wrapper
+With `kallisto` and `bustools`, it takes several commands to go from fastq files to the spliced and unspliced matrices, which is quite cumbersome. So a wrapper called `kb` was written to condense those steps to one. The command line tool `kb` can be installed with
+
+```{bash, eval = FALSE}
+pip install kb-python
+```
+
+Then we can use the following command to generate the spliced and unspliced matrices:
+
+```{bash, eval = FALSE}
+cd ./output/neuron10k
+kb count -i ../mm_tr_index97.idx -g ../tr2g_mm97.tsv -x 10xv3 -o kb \
+../../data/neuron_10k_v3_fastqs/neuron_10k_v3_S1_L002_R1_001.fastq.gz \
+../../data/neuron_10k_v3_fastqs/neuron_10k_v3_S1_L002_R2_001.fastq.gz \
+../../data/neuron_10k_v3_fastqs/neuron_10k_v3_S1_L001_R1_001.fastq.gz \
+../../data/neuron_10k_v3_fastqs/neuron_10k_v3_S1_L001_R2_001.fastq.gz
+```
+
+The `mtx` files are in the `counts_unfiltered` directory.
+
+Read the next section for instructions of going from fastq files to the matrices directly with `kallisto` and `bustools`. This is helpful to modularize the workflow, such as when you want to generate a regular gene count matrix and a TCC matrix for the same data, without having to make the `bus` file over and over again. The matrices for this analysis were generated in the section below.
+
+## Directly using `kallisto` and `bustools`
+With the index and the fastq files, the `kallisto bus` command generates a binary `bus` file called `output.bus`, which will be sorted and processed to generate a gene count matrix.
+```{bash kallisto, eval=do_bus}
+cd ./data/neuron_10k_v3_fastqs
+kallisto bus -i ../../output/mm_tr_index97.idx -o ../../output/neuron10k -x 10xv3 -t8 \
+neuron_10k_v3_S1_L002_R1_001.fastq.gz neuron_10k_v3_S1_L002_R2_001.fastq.gz \
+neuron_10k_v3_S1_L001_R1_001.fastq.gz neuron_10k_v3_S1_L001_R2_001.fastq.gz
+```
+
+### Run `bustools`
 A whitelist that contains all the barcodes known to be present in the kit is provided by 10x and comes with CellRanger. A CellRanger installation is required, though we will not run CellRanger here.
 ```{r, include=FALSE}
 do_copy <- !file.exists("./data/whitelist_v3.txt")
@@ -171,19 +183,50 @@ The vast majority of "cells" have only no or just a few UMI detected. Those are 
 bc_rank <- barcodeRanks(res_mat, lower = 1000)
 ```
 
+```{r}
+#' Knee plot for filtering empty droplets
+#' 
+#' Visualizes the inflection point to filter empty droplets. This function plots 
+#' different datasets with a different color. Facets can be added after calling
+#' this function with `facet_*` functions.
+#' 
+#' @param bc_ranks A named list of output from `DropletUtil::barcodeRanks`.
+#' @return A ggplot2 object.
+#' @importFrom tibble tibble
+#' @importFrom purrr map map_dbl
+#' @importFrom dplyr distinct
+#' @importFrom ggplot2 geom_line geom_hline geom_vline scale_x_log10 scale_y_log10
+#' @importFrom tidyr unnest
+#' @export
+knee_plot <- function(bc_ranks) {
+  knee_plt <- tibble(rank = map(bc_ranks, ~ .x[["rank"]]),
+                     total = map(bc_ranks, ~ .x[["total"]]),
+                     dataset = names(bc_ranks)) %>% 
+    unnest(cols = c(rank, total)) %>% 
+    distinct() %>% 
+    dplyr::filter(total > 0)
+  annot <- tibble(inflection = map_dbl(bc_ranks, ~ metadata(.x)[["inflection"]]),
+                  rank_cutoff = map_dbl(bc_ranks, 
+                                        ~ max(.x$rank[.x$total >
+                                                        metadata(.x)[["inflection"]]])),
+                  dataset = names(bc_ranks))
+  p <- ggplot(knee_plt, aes(rank, total, color = dataset)) +
+    geom_line() +
+    geom_hline(aes(yintercept = inflection, color = dataset), 
+               data = annot, linetype = 2) +
+    geom_vline(aes(xintercept = rank_cutoff, color = dataset),
+               data = annot, linetype = 2) +
+    scale_x_log10() +
+    scale_y_log10() +
+    labs(x = "Rank", y = "Total UMIs")
+  return(p)
+}
+```
+
 Here the knee plot is transposed, because this is more generalizable to multi-modal data, such that those with not only RNA-seq but also abundance of cell surface markers. In that case, we can plot number of UMIs on the x axis, number of cell surface protein tags on the y axis, and barcode rank based on both UMI and protein tag counts on the z axis; it makes more sense to make barcode rank the dependent variable. See [this blog post by Lior Pachter](https://liorpachter.wordpress.com/2019/06/24/rotating-the-knee-plot-and-related-yoga/) for a more detailed explanation.
 ```{r knee}
-tibble(total = bc_rank$total, rank = bc_rank$rank) %>% 
-  distinct() %>% 
-  ggplot(aes(total, rank)) +
-  geom_line() +
-  geom_vline(xintercept = metadata(bc_rank)$knee, color = "blue", linetype = 2) +
-  geom_vline(xintercept = metadata(bc_rank)$inflection, color = "green", linetype = 2) +
-  annotate("text", y = 1000, x = 1.5 * c(metadata(bc_rank)$knee, metadata(bc_rank)$inflection),
-           label = c("knee", "inflection"), color = c("blue", "green")) +
-  scale_x_log10() +
-  scale_y_log10() +
-  labs(y = "Barcode rank", x = "Total UMI count")
+knee_plot(list(neuron_10k = bc_rank)) +
+  coord_flip()
 ```
 
 ```{r filter}
@@ -220,6 +263,9 @@ if (!do_annot) {
 
 ```{r singlr, results='hide', eval=do_annot}
 annots <- SingleR("single", res_mat, ref_data = ref_use, types = mouse.rnaseq$types)
+```
+
+```{r}
 inds <- annots$labels %in% c("NPCs", "Neurons", "OPCs", "Oligodendrocytes", 
                            "qNSCs", "aNSCs", "Astrocytes", "Ependymal")
 # Only keep these cell types
