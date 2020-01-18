@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 <meta name="author" content="Lambda Moses" />
 
-<meta name="date" content="2019-07-25" />
+<meta name="date" content="2020-01-18" />
 
 <title>Pseudotime analysis with Monocle 2</title>
 
@@ -91,7 +90,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -240,6 +238,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -268,6 +267,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -381,7 +386,7 @@ div.section {
 
 <h1 class="title toc-ignore">Pseudotime analysis with Monocle 2</h1>
 <h4 class="author">Lambda Moses</h4>
-<h4 class="date">2019-07-25</h4>
+<h4 class="date">2020-01-18</h4>
 
 </div>
 
@@ -406,7 +411,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2019-07-25
+<strong>Last updated:</strong> 2020-01-18
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -416,7 +421,7 @@ div.section {
 </p>
 <p>
 This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
-  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.4.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
 </p>
 <hr>
 </div>
@@ -454,7 +459,7 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 </div>
 <div id="strongSeedstrongcodesetseed20181214code" class="panel-collapse collapse">
 <div class="panel-body">
-<p>The command <code>set.seed(20181214)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+<p>The command <code>set.seed(20181214)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
 </div>
 </div>
 </div>
@@ -497,10 +502,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree4a9691a8757d6507dd2a672e5c5ab546b4ec240ctargetblank4a9691aa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/4a9691a8757d6507dd2a672e5c5ab546b4ec240c" target="_blank">4a9691a</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree6d7db784aa95cf9c4efa71b9929233028e73ba0etargetblank6d7db78a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/6d7db784aa95cf9c4efa71b9929233028e73ba0e" target="_blank">6d7db78</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree4a9691a8757d6507dd2a672e5c5ab546b4ec240ctargetblank4a9691aa" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree6d7db784aa95cf9c4efa71b9929233028e73ba0etargetblank6d7db78a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -510,6 +515,7 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    BUSpaRse_notebooks.Rproj
+    Ignored:    analysis/figure/
     Ignored:    data/fastqs/
     Ignored:    data/hgmm_100_fastqs.tar
     Ignored:    data/hgmm_1k_fastqs.tar
@@ -524,6 +530,7 @@ Ignored files:
     Ignored:    data/whitelist_v2.txt
     Ignored:    data/whitelist_v3.txt
     Ignored:    output/hs_mm_tr_index.idx
+    Ignored:    output/mm_cDNA_introns_97.idx
     Ignored:    output/mm_cDNA_introns_97_collapse.idx
     Ignored:    output/mm_tr_index.idx
     Ignored:    output/mm_tr_index97.idx
@@ -533,8 +540,14 @@ Ignored files:
 
 Untracked files:
     Untracked:  analysis/dropseq_retina.Rmd
+    Untracked:  analysis/ee_ie_junctions.Rmd
+    Untracked:  analysis/junction.Rmd
+    Untracked:  analysis/junction2.Rmd
+    Untracked:  output/ee_ie/
     Untracked:  output/neuron10k/
     Untracked:  output/neuron10k_collapse/
+    Untracked:  output/neuron10k_junction/
+    Untracked:  output/neuron10k_velocity/
     Untracked:  output/tr2g_mm97.tsv
 
 </code></pre>
@@ -579,13 +592,64 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/6d7db784aa95cf9c4efa71b9929233028e73ba0e/analysis/monocle2.Rmd" target="_blank">6d7db78</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2020-01-18
+</td>
+<td>
+Added section for kb and updated for Bioconductor 3.10
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/aa22abecced3dd0db05a918ec070b52a9ecbdb7a/analysis/monocle2.Rmd" target="_blank">aa22abe</a>
+</td>
+<td>
+GitHub
+</td>
+<td>
+2019-07-26
+</td>
+<td>
+Update monocle2.Rmd
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/a1bf0168648afe1af82cc0282db8392ee940f5a6/docs/monocle2.html" target="_blank">a1bf016</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-25
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/4a9691a8757d6507dd2a672e5c5ab546b4ec240c/analysis/monocle2.Rmd" target="_blank">4a9691a</a>
 </td>
 <td>
 Lambda Moses
 </td>
 <td>
-2019-07-26
+2019-07-25
 </td>
 <td>
 Reran with Ensembl 97
@@ -602,7 +666,7 @@ html
 Lambda Moses
 </td>
 <td>
-2019-07-17
+2019-07-16
 </td>
 <td>
 Build site.
@@ -619,7 +683,7 @@ Rmd
 Lambda Moses
 </td>
 <td>
-2019-07-17
+2019-07-16
 </td>
 <td>
 Just realized that one of the plots isn’t showing because of a typo
@@ -636,7 +700,7 @@ html
 Lambda Moses
 </td>
 <td>
-2019-07-17
+2019-07-16
 </td>
 <td>
 Build site.
@@ -653,7 +717,7 @@ Rmd
 Lambda Moses
 </td>
 <td>
-2019-07-17
+2019-07-16
 </td>
 <td>
 Added Monocle 2 notebook
@@ -666,7 +730,7 @@ Added Monocle 2 notebook
 </div>
 </div>
 </div>
-<p>In this vignette, we will process fastq files of the <a href="https://support.10xgenomics.com/single-cell-gene-expression/datasets/3.0.0/neuron_10k_v3">10x 10k neurons from an E18 mouse</a>, and perform pseudotime analysis with Monocle 2 on the neuronal cell types. Monocle 2 is deprecated, but it can be easily installed from Bioconductor and still has a user base. At present, Monocle 3 is at beta stage of development, and it can be hard to install on Linux servers due to gdal dependency.</p>
+<p>In this vignette, we will process fastq files of the <a href="https://support.10xgenomics.com/single-cell-gene-expression/datasets/3.0.0/neuron_10k_v3">10x 10k neurons from an E18 mouse</a> with the <a href="https://www.kallistobus.tools/">kallisto | bustools workflow</a>, and perform pseudotime analysis with Monocle 2 on the neuronal cell types. Monocle 2 is deprecated, but it can be easily installed from Bioconductor and still has a user base. At present, Monocle 3 is at beta stage of development, and it can be hard to install on Linux servers due to gdal dependency.</p>
 <div id="setup" class="section level1">
 <h1>Setup</h1>
 <p>If you would like to rerun this notebook, you can git clone <a href="https://github.com/BUStools/BUS_notebooks_R">this repository</a> or directly download <a href="https://github.com/BUStools/BUS_notebooks_R/blob/master/analysis/monocle2.Rmd">this notebook from GitHub</a>.</p>
@@ -674,20 +738,13 @@ Added Monocle 2 notebook
 <h2>Install packages</h2>
 <p>This notebook demonstrates the use of command line tools <code>kallisto</code> and <code>bustools</code>. Please use <code>kallisto</code> &gt;= 0.46, whose binary can be downloaded <a href="https://pachterlab.github.io/kallisto/download">here</a>. The binary of <code>bustools</code> can be found <a href="https://github.com/BUStools/bustools/releases">here</a>.</p>
 <p>After you download the binary, you should decompress the file (if it is <code>tar.gz</code>) with <code>tar -xzvf file.tar.gz</code> in the <code>bash</code> terminal, and add the directory containing the binary to <code>PATH</code> by <code>export PATH=$PATH:/foo/bar</code>, where <code>/foo/bar</code> is the directory of interest. Then you can directly invoke the binary on the command line as we will do in this notebook.</p>
-<p>We will be using the R packages below. <code>BUSpaRse</code> is not yet on CRAN or Bioconductor. For Mac users, see the <a href="https://github.com/BUStools/BUSpaRse">installation note for <code>BUSpaRse</code></a>. <code>BUSpaRse</code> will be used to generate the transcript to gene file for <code>bustools</code> and to read output of <code>bustools</code> into R. We will also use <code>Seurat</code> version 3 which is now on CRAN.</p>
-<pre class="r"><code># Install devtools if it&#39;s not already installed
-if (!require(devtools)) {
-  install.packages(&quot;devtools&quot;)
-}
-# Install from GitHub
-devtools::install_github(&quot;BUStools/BUSpaRse&quot;)</code></pre>
-<p>The package <code>SingleR</code>, which will be used for cell type inference, is only available on GitHub:</p>
-<pre class="r"><code>devtools::install_github(&quot;dviraran/SingleR&quot;)</code></pre>
-<p>This vignette uses the version of <code>DropletUtils</code> from Bioconductor version 3.9; the version from Bioconductor 3.8 has a different user interface. If you are using a version of R older than 3.6.0 and want to rerun this vignette, then you can adapt the knee plot code to the older version of <code>DropletUtils</code> or install <a href="https://github.com/MarioniLab/DropletUtils"><code>DropletUtils</code> from GitHub</a>. The package <code>monocle</code> should also be installed from Bioconductor:</p>
+<p>We will be using the R packages below. <code>BUSpaRse</code> is now on Bioconductor 3.10. For Mac users, see the <a href="https://github.com/BUStools/BUSpaRse">installation note for <code>BUSpaRse</code></a>. <code>BUSpaRse</code> will be used to generate the transcript to gene file for <code>bustools</code> and to read output of <code>bustools</code> into R. We will also use <code>Seurat</code> version 3 which is now on CRAN.</p>
+<p>We will use <code>SingleR</code>, which is also on Bioconductor 3.10 to annotate cell types.</p>
+<p>This vignette uses the version of <code>DropletUtils</code> from Bioconductor version 3.10; the version from Bioconductor 3.8 has a different user interface. If you are using a version of R older than 3.6.0 and want to rerun this vignette, then you can adapt the knee plot code to the older version of <code>DropletUtils</code> or install <a href="https://github.com/MarioniLab/DropletUtils"><code>DropletUtils</code> from GitHub</a>. The package <code>monocle</code> should also be installed from Bioconductor:</p>
 <pre class="r"><code>if (!require(BiocManager)) {
   install.packages(&quot;BiocManager&quot;)
 }
-BiocManager::install(c(&quot;DropletUtils&quot;, &quot;monocle&quot;))</code></pre>
+BiocManager::install(c(&quot;DropletUtils&quot;, &quot;monocle&quot;, &quot;SingleR&quot;, &quot;BUSpaRse&quot;))</code></pre>
 <p>The other R packages below are on CRAN.</p>
 <pre class="r"><code>library(BUSpaRse)
 library(DropletUtils)
@@ -718,16 +775,8 @@ if (!file.exists(&quot;./data/mm_cdna97.fa.gz&quot;)) {
   download.file(&quot;ftp://ftp.ensembl.org/pub/release-97/fasta/mus_musculus/cdna/Mus_musculus.GRCm38.cdna.all.fa.gz&quot;, &quot;./data/mm_cdna97.fa.gz&quot;, method = &quot;wget&quot;, quiet = TRUE)
 }</code></pre>
 <pre class="bash"><code>kallisto index -i ./output/mm_tr_index97.idx ./data/mm_cdna97.fa.gz</code></pre>
-<p>With the index and the fastq files, the <code>kallisto bus</code> command generates a binary <code>bus</code> file called <code>output.bus</code>, which will be sorted and processed to generate a gene count matrix.</p>
-<pre class="bash"><code>cd ./data/neuron_10k_v3_fastqs
-kallisto bus -i ../../output/mm_tr_index97.idx -o ../../output/neuron10k -x 10xv3 -t8 \
-neuron_10k_v3_S1_L002_R1_001.fastq.gz neuron_10k_v3_S1_L002_R2_001.fastq.gz \
-neuron_10k_v3_S1_L001_R1_001.fastq.gz neuron_10k_v3_S1_L001_R2_001.fastq.gz</code></pre>
-</div>
-<div id="run-bustools" class="section level2">
-<h2>Run <code>bustools</code></h2>
-<div id="map-transcripts-to-genes" class="section level3">
-<h3>Map transcripts to genes</h3>
+<div id="map-transcripts-to-genes" class="section level4">
+<h4>Map transcripts to genes</h4>
 <p>For the sparse matrix, most people are interested in how many UMIs per gene per cell, we here we will quantify this from the <code>bus</code> output, and to do so, we need to find which gene corresponds to each transcript. Remember in the output of <code>kallisto bus</code>, there’s the file <code>transcripts.txt</code>. Those are the transcripts in the transcriptome index.</p>
 <p>Remember that we downloaded transcriptome FASTA file from Ensembl just now. In FASTA files, each entry is a sequence with a name. In Ensembl FASTA files, the sequence name has genome annotation of the corresponding sequence, so we can extract transcript IDs and corresponding gene IDs and gene names from there.</p>
 <pre class="r"><code>tr2g &lt;- transcript2gene(fasta_file = &quot;./data/mm_cdna97.fa.gz&quot;, 
@@ -744,6 +793,31 @@ neuron_10k_v3_S1_L001_R1_001.fastq.gz neuron_10k_v3_S1_L001_R2_001.fastq.gz</cod
 <p><code>bustools</code> requires <code>tr2g</code> to be written into a tab delimited file of a specific format: No headers, first column is transcript ID, and second column is the corresponding gene ID. Transcript IDs must be in the same order as in the <code>kallisto</code> index.</p>
 <pre class="r"><code># Write tr2g to format required by bustools
 save_tr2g_bustools(tr2g, file_save = &quot;./output/tr2g_mm97.tsv&quot;)</code></pre>
+</div>
+</div>
+<div id="using-the-kb-wrapper" class="section level2">
+<h2>Using the <code>kb</code> wrapper</h2>
+<p>With <code>kallisto</code> and <code>bustools</code>, it takes several commands to go from fastq files to the spliced and unspliced matrices, which is quite cumbersome. So a wrapper called <code>kb</code> was written to condense those steps to one. The command line tool <code>kb</code> can be installed with</p>
+<pre class="bash"><code>pip install kb-python</code></pre>
+<p>Then we can use the following command to generate the spliced and unspliced matrices:</p>
+<pre class="bash"><code>cd ./output/neuron10k
+kb count -i ../mm_tr_index97.idx -g ../tr2g_mm97.tsv -x 10xv3 -o kb \
+../../data/neuron_10k_v3_fastqs/neuron_10k_v3_S1_L002_R1_001.fastq.gz \
+../../data/neuron_10k_v3_fastqs/neuron_10k_v3_S1_L002_R2_001.fastq.gz \
+../../data/neuron_10k_v3_fastqs/neuron_10k_v3_S1_L001_R1_001.fastq.gz \
+../../data/neuron_10k_v3_fastqs/neuron_10k_v3_S1_L001_R2_001.fastq.gz</code></pre>
+<p>The <code>mtx</code> files are in the <code>counts_unfiltered</code> directory.</p>
+<p>Read the next section for instructions of going from fastq files to the matrices directly with <code>kallisto</code> and <code>bustools</code>. This is helpful to modularize the workflow, such as when you want to generate a regular gene count matrix and a TCC matrix for the same data, without having to make the <code>bus</code> file over and over again. The matrices for this analysis were generated in the section below.</p>
+</div>
+<div id="directly-using-kallisto-and-bustools" class="section level2">
+<h2>Directly using <code>kallisto</code> and <code>bustools</code></h2>
+<p>With the index and the fastq files, the <code>kallisto bus</code> command generates a binary <code>bus</code> file called <code>output.bus</code>, which will be sorted and processed to generate a gene count matrix.</p>
+<pre class="bash"><code>cd ./data/neuron_10k_v3_fastqs
+kallisto bus -i ../../output/mm_tr_index97.idx -o ../../output/neuron10k -x 10xv3 -t8 \
+neuron_10k_v3_S1_L002_R1_001.fastq.gz neuron_10k_v3_S1_L002_R2_001.fastq.gz \
+neuron_10k_v3_S1_L001_R1_001.fastq.gz neuron_10k_v3_S1_L001_R2_001.fastq.gz</code></pre>
+<div id="run-bustools" class="section level3">
+<h3>Run <code>bustools</code></h3>
 <p>A whitelist that contains all the barcodes known to be present in the kit is provided by 10x and comes with CellRanger. A CellRanger installation is required, though we will not run CellRanger here.</p>
 <pre class="bash"><code>cp ~/cellranger-3.0.2/cellranger-cs/3.0.2/lib/python/cellranger/barcodes/3M-february-2018.txt.gz \
 ./data/whitelist_v3.txt.gz
@@ -775,19 +849,46 @@ summary(tot_counts)</code></pre>
 <p>The vast majority of “cells” have only no or just a few UMI detected. Those are empty droplets. 10x claims to have cell capture rate of up to 65%, but in practice, depending on how many cells are in fact loaded, the rate can be much lower. A commonly used method to estimate the number of empty droplets is barcode ranking knee and inflection points, as those are often assumed to represent transition between two components of a distribution. While more sophisticated methods exist (e.g. see <a href="https://www.bioconductor.org/packages/devel/bioc/vignettes/DropletUtils/inst/doc/DropletUtils.html#detecting-empty-droplets"><code>emptyDrops</code> in <code>DropletUtils</code></a>), for simplicity, we will use the barcode ranking method here. However, whichever way we go, we don’t have the ground truth.</p>
 <pre class="r"><code># Compute barcode rank
 bc_rank &lt;- barcodeRanks(res_mat, lower = 1000)</code></pre>
+<pre class="r"><code>#&#39; Knee plot for filtering empty droplets
+#&#39; 
+#&#39; Visualizes the inflection point to filter empty droplets. This function plots 
+#&#39; different datasets with a different color. Facets can be added after calling
+#&#39; this function with `facet_*` functions.
+#&#39; 
+#&#39; @param bc_ranks A named list of output from `DropletUtil::barcodeRanks`.
+#&#39; @return A ggplot2 object.
+#&#39; @importFrom tibble tibble
+#&#39; @importFrom purrr map map_dbl
+#&#39; @importFrom dplyr distinct
+#&#39; @importFrom ggplot2 geom_line geom_hline geom_vline scale_x_log10 scale_y_log10
+#&#39; @importFrom tidyr unnest
+#&#39; @export
+knee_plot &lt;- function(bc_ranks) {
+  knee_plt &lt;- tibble(rank = map(bc_ranks, ~ .x[[&quot;rank&quot;]]),
+                     total = map(bc_ranks, ~ .x[[&quot;total&quot;]]),
+                     dataset = names(bc_ranks)) %&gt;% 
+    unnest(cols = c(rank, total)) %&gt;% 
+    distinct() %&gt;% 
+    dplyr::filter(total &gt; 0)
+  annot &lt;- tibble(inflection = map_dbl(bc_ranks, ~ metadata(.x)[[&quot;inflection&quot;]]),
+                  rank_cutoff = map_dbl(bc_ranks, 
+                                        ~ max(.x$rank[.x$total &gt;
+                                                        metadata(.x)[[&quot;inflection&quot;]]])),
+                  dataset = names(bc_ranks))
+  p &lt;- ggplot(knee_plt, aes(rank, total, color = dataset)) +
+    geom_line() +
+    geom_hline(aes(yintercept = inflection, color = dataset), 
+               data = annot, linetype = 2) +
+    geom_vline(aes(xintercept = rank_cutoff, color = dataset),
+               data = annot, linetype = 2) +
+    scale_x_log10() +
+    scale_y_log10() +
+    labs(x = &quot;Rank&quot;, y = &quot;Total UMIs&quot;)
+  return(p)
+}</code></pre>
 <p>Here the knee plot is transposed, because this is more generalizable to multi-modal data, such that those with not only RNA-seq but also abundance of cell surface markers. In that case, we can plot number of UMIs on the x axis, number of cell surface protein tags on the y axis, and barcode rank based on both UMI and protein tag counts on the z axis; it makes more sense to make barcode rank the dependent variable. See <a href="https://liorpachter.wordpress.com/2019/06/24/rotating-the-knee-plot-and-related-yoga/">this blog post by Lior Pachter</a> for a more detailed explanation.</p>
-<pre class="r"><code>tibble(total = bc_rank$total, rank = bc_rank$rank) %&gt;% 
-  distinct() %&gt;% 
-  ggplot(aes(total, rank)) +
-  geom_line() +
-  geom_vline(xintercept = metadata(bc_rank)$knee, color = &quot;blue&quot;, linetype = 2) +
-  geom_vline(xintercept = metadata(bc_rank)$inflection, color = &quot;green&quot;, linetype = 2) +
-  annotate(&quot;text&quot;, y = 1000, x = 1.5 * c(metadata(bc_rank)$knee, metadata(bc_rank)$inflection),
-           label = c(&quot;knee&quot;, &quot;inflection&quot;), color = c(&quot;blue&quot;, &quot;green&quot;)) +
-  scale_x_log10() +
-  scale_y_log10() +
-  labs(y = &quot;Barcode rank&quot;, x = &quot;Total UMI count&quot;)</code></pre>
-<pre><code>#&gt; Warning: Transformation introduced infinite values in continuous x-axis</code></pre>
+<pre class="r"><code>knee_plot(list(neuron_10k = bc_rank)) +
+  coord_flip()</code></pre>
 <p><img src="figure/monocle2.Rmd/knee-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-knee-1">
@@ -813,13 +914,24 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/a1bf0168648afe1af82cc0282db8392ee940f5a6/docs/figure/monocle2.Rmd/knee-1.png" target="_blank">a1bf016</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-25
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/62a20a3096ba5f1118bd961a85537df18599deae/docs/figure/monocle2.Rmd/knee-1.png" target="_blank">62a20a3</a>
 </td>
 <td>
 Lambda Moses
 </td>
 <td>
-2019-07-17
+2019-07-16
 </td>
 </tr>
 </tbody>
@@ -847,8 +959,8 @@ ref_use &lt;- ref_use[!is.na(rownames(ref_use)),]</code></pre>
 <li>aNSCs: Active neural stem cells</li>
 <li>qNSCs: Quiescent neural stem cells</li>
 </ul>
-<pre class="r"><code>annots &lt;- SingleR(&quot;single&quot;, res_mat, ref_data = ref_use, types = mouse.rnaseq$types)
-inds &lt;- annots$labels %in% c(&quot;NPCs&quot;, &quot;Neurons&quot;, &quot;OPCs&quot;, &quot;Oligodendrocytes&quot;, 
+<pre class="r"><code>annots &lt;- SingleR(&quot;single&quot;, res_mat, ref_data = ref_use, types = mouse.rnaseq$types)</code></pre>
+<pre class="r"><code>inds &lt;- annots$labels %in% c(&quot;NPCs&quot;, &quot;Neurons&quot;, &quot;OPCs&quot;, &quot;Oligodendrocytes&quot;, 
                            &quot;qNSCs&quot;, &quot;aNSCs&quot;, &quot;Astrocytes&quot;, &quot;Ependymal&quot;)
 # Only keep these cell types
 cells_use &lt;- annots$cell.names[inds]
@@ -889,13 +1001,24 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/a1bf0168648afe1af82cc0282db8392ee940f5a6/docs/figure/monocle2.Rmd/vln-1.png" target="_blank">a1bf016</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-25
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/62a20a3096ba5f1118bd961a85537df18599deae/docs/figure/monocle2.Rmd/vln-1.png" target="_blank">62a20a3</a>
 </td>
 <td>
 Lambda Moses
 </td>
 <td>
-2019-07-17
+2019-07-16
 </td>
 </tr>
 </tbody>
@@ -931,13 +1054,24 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/a1bf0168648afe1af82cc0282db8392ee940f5a6/docs/figure/monocle2.Rmd/gene_umi-1.png" target="_blank">a1bf016</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-25
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/62a20a3096ba5f1118bd961a85537df18599deae/docs/figure/monocle2.Rmd/gene_umi-1.png" target="_blank">62a20a3</a>
 </td>
 <td>
 Lambda Moses
 </td>
 <td>
-2019-07-17
+2019-07-16
 </td>
 </tr>
 </tbody>
@@ -1001,13 +1135,24 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/a1bf0168648afe1af82cc0282db8392ee940f5a6/docs/figure/monocle2.Rmd/tsne1-1.png" target="_blank">a1bf016</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-25
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/62a20a3096ba5f1118bd961a85537df18599deae/docs/figure/monocle2.Rmd/tsne1-1.png" target="_blank">62a20a3</a>
 </td>
 <td>
 Lambda Moses
 </td>
 <td>
-2019-07-17
+2019-07-16
 </td>
 </tr>
 </tbody>
@@ -1045,13 +1190,24 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/a1bf0168648afe1af82cc0282db8392ee940f5a6/docs/figure/monocle2.Rmd/tsne2-1.png" target="_blank">a1bf016</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-25
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/2da533fa23ca8ef917e30b3ed4975ce5fe6a57f4/docs/figure/monocle2.Rmd/tsne2-1.png" target="_blank">2da533f</a>
 </td>
 <td>
 Lambda Moses
 </td>
 <td>
-2019-07-17
+2019-07-16
 </td>
 </tr>
 </tbody>
@@ -1095,13 +1251,24 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/a1bf0168648afe1af82cc0282db8392ee940f5a6/docs/figure/monocle2.Rmd/traj1-1.png" target="_blank">a1bf016</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-25
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/62a20a3096ba5f1118bd961a85537df18599deae/docs/figure/monocle2.Rmd/traj1-1.png" target="_blank">62a20a3</a>
 </td>
 <td>
 Lambda Moses
 </td>
 <td>
-2019-07-17
+2019-07-16
 </td>
 </tr>
 </tbody>
@@ -1136,13 +1303,24 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/a1bf0168648afe1af82cc0282db8392ee940f5a6/docs/figure/monocle2.Rmd/traj2-1.png" target="_blank">a1bf016</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-25
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/62a20a3096ba5f1118bd961a85537df18599deae/docs/figure/monocle2.Rmd/traj2-1.png" target="_blank">62a20a3</a>
 </td>
 <td>
 Lambda Moses
 </td>
 <td>
-2019-07-17
+2019-07-16
 </td>
 </tr>
 </tbody>
@@ -1178,13 +1356,24 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/a1bf0168648afe1af82cc0282db8392ee940f5a6/docs/figure/monocle2.Rmd/traj3-1.png" target="_blank">a1bf016</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-07-25
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/62a20a3096ba5f1118bd961a85537df18599deae/docs/figure/monocle2.Rmd/traj3-1.png" target="_blank">62a20a3</a>
 </td>
 <td>
 Lambda Moses
 </td>
 <td>
-2019-07-17
+2019-07-16
 </td>
 </tr>
 </tbody>
@@ -1208,12 +1397,7 @@ Lambda Moses
 #&gt; BLAS/LAPACK: /usr/lib64/R/lib/libRblas.so
 #&gt; 
 #&gt; locale:
-#&gt;  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
-#&gt;  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
-#&gt;  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
-#&gt;  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
-#&gt;  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-#&gt; [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+#&gt; [1] en_US.UTF-8
 #&gt; 
 #&gt; attached base packages:
 #&gt;  [1] splines   parallel  stats4    stats     graphics  grDevices utils    
@@ -1221,108 +1405,83 @@ Lambda Moses
 #&gt; 
 #&gt; other attached packages:
 #&gt;  [1] forcats_0.4.0               stringr_1.4.0              
-#&gt;  [3] dplyr_0.8.3                 purrr_0.3.2                
-#&gt;  [5] readr_1.3.1                 tidyr_0.8.3                
-#&gt;  [7] tibble_2.1.3                tidyverse_1.2.1            
-#&gt;  [9] SingleR_1.0.1               monocle_2.13.0             
+#&gt;  [3] dplyr_0.8.3                 purrr_0.3.3                
+#&gt;  [5] readr_1.3.1                 tidyr_1.0.0                
+#&gt;  [7] tibble_2.1.3                tidyverse_1.3.0            
+#&gt;  [9] SingleR_1.0.1               monocle_2.14.0             
 #&gt; [11] DDRTree_0.1.5               irlba_2.3.3                
-#&gt; [13] VGAM_1.1-1                  ggplot2_3.2.0              
-#&gt; [15] Matrix_1.2-17               DropletUtils_1.5.4         
-#&gt; [17] SingleCellExperiment_1.7.0  SummarizedExperiment_1.15.5
-#&gt; [19] DelayedArray_0.11.4         BiocParallel_1.19.0        
-#&gt; [21] matrixStats_0.54.0          Biobase_2.45.0             
-#&gt; [23] GenomicRanges_1.37.14       GenomeInfoDb_1.21.1        
-#&gt; [25] IRanges_2.19.10             S4Vectors_0.23.17          
-#&gt; [27] BiocGenerics_0.31.5         BUSpaRse_0.99.19           
+#&gt; [13] VGAM_1.1-2                  ggplot2_3.2.1              
+#&gt; [15] Matrix_1.2-18               DropletUtils_1.6.1         
+#&gt; [17] SingleCellExperiment_1.8.0  SummarizedExperiment_1.16.0
+#&gt; [19] DelayedArray_0.12.0         BiocParallel_1.20.0        
+#&gt; [21] matrixStats_0.55.0          Biobase_2.46.0             
+#&gt; [23] GenomicRanges_1.38.0        GenomeInfoDb_1.22.0        
+#&gt; [25] IRanges_2.20.1              S4Vectors_0.24.0           
+#&gt; [27] BiocGenerics_0.32.0         BUSpaRse_1.0.0             
+#&gt; [29] workflowr_1.6.0            
 #&gt; 
 #&gt; loaded via a namespace (and not attached):
-#&gt;   [1] rappdirs_0.3.1           rtracklayer_1.45.2      
-#&gt;   [3] R.methodsS3_1.7.1        bit64_0.9-7             
-#&gt;   [5] knitr_1.23               R.utils_2.9.0           
-#&gt;   [7] data.table_1.12.2        RCurl_1.95-4.12         
-#&gt;   [9] AnnotationFilter_1.9.0   doParallel_1.0.14       
-#&gt;  [11] generics_0.0.2           metap_1.1               
-#&gt;  [13] GenomicFeatures_1.37.4   cowplot_1.0.0           
-#&gt;  [15] RSQLite_2.1.2            RANN_2.6.1              
-#&gt;  [17] combinat_0.0-8           proxy_0.4-23            
-#&gt;  [19] future_1.14.0            bit_1.1-14              
-#&gt;  [21] xml2_1.2.0               lubridate_1.7.4         
-#&gt;  [23] httpuv_1.5.1             assertthat_0.2.1        
-#&gt;  [25] viridis_0.5.1            xfun_0.8                
-#&gt;  [27] hms_0.5.0                evaluate_0.14           
-#&gt;  [29] promises_1.0.1           progress_1.2.2          
-#&gt;  [31] readxl_1.3.1             caTools_1.17.1.2        
-#&gt;  [33] dbplyr_1.4.2             igraph_1.2.4.1          
-#&gt;  [35] DBI_1.0.0                geneplotter_1.63.0      
-#&gt;  [37] htmlwidgets_1.3          sparsesvd_0.2           
-#&gt;  [39] backports_1.1.4          annotate_1.63.0         
-#&gt;  [41] gbRd_0.4-11              RcppParallel_4.4.3      
-#&gt;  [43] biomaRt_2.41.7           vctrs_0.2.0             
-#&gt;  [45] ensembldb_2.9.2          ROCR_1.0-7              
-#&gt;  [47] withr_2.1.2              BSgenome_1.53.0         
-#&gt;  [49] doFuture_0.8.1           sctransform_0.2.0       
-#&gt;  [51] GenomicAlignments_1.21.4 prettyunits_1.0.2       
-#&gt;  [53] cluster_2.1.0            ape_5.3                 
-#&gt;  [55] lazyeval_0.2.2           crayon_1.3.4            
-#&gt;  [57] labeling_0.3             edgeR_3.27.9            
-#&gt;  [59] pkgconfig_2.0.2          slam_0.1-45             
-#&gt;  [61] nlme_3.1-140             ProtGenerics_1.17.2     
-#&gt;  [63] rlang_0.4.0              globals_0.12.4          
-#&gt;  [65] BiocFileCache_1.9.1      modelr_0.1.4            
-#&gt;  [67] rsvd_1.0.1               cellranger_1.1.0        
-#&gt;  [69] rprojroot_1.3-2          GSVA_1.33.1             
-#&gt;  [71] lmtest_0.9-37            graph_1.63.0            
-#&gt;  [73] singscore_1.5.0          Rhdf5lib_1.7.3          
-#&gt;  [75] zoo_1.8-6                whisker_0.3-2           
-#&gt;  [77] ggridges_0.5.1           pheatmap_1.0.12         
-#&gt;  [79] png_0.1-7                viridisLite_0.3.0       
-#&gt;  [81] bitops_1.0-6             R.oo_1.22.0             
-#&gt;  [83] KernSmooth_2.23-15       Biostrings_2.53.2       
-#&gt;  [85] blob_1.2.0               workflowr_1.4.0         
-#&gt;  [87] scales_1.0.0             memoise_1.1.0           
-#&gt;  [89] GSEABase_1.47.0          magrittr_1.5            
-#&gt;  [91] plyr_1.8.4               ica_1.0-2               
-#&gt;  [93] gplots_3.0.1.1           bibtex_0.4.2            
-#&gt;  [95] gdata_2.18.0             zlibbioc_1.31.0         
-#&gt;  [97] compiler_3.6.0           HSMMSingleCell_1.5.0    
-#&gt;  [99] lsei_1.2-0               dqrng_0.2.1             
-#&gt; [101] RColorBrewer_1.1-2       fitdistrplus_1.0-14     
-#&gt; [103] cli_1.1.0                Rsamtools_2.1.3         
-#&gt; [105] XVector_0.25.0           listenv_0.7.0           
-#&gt; [107] pbapply_1.4-1            MASS_7.3-51.4           
-#&gt; [109] tidyselect_0.2.5         stringi_1.4.3           
-#&gt; [111] densityClust_0.3         yaml_2.2.0              
-#&gt; [113] askpass_1.1              locfit_1.5-9.1          
-#&gt; [115] ggrepel_0.8.1            pbmcapply_1.5.0         
-#&gt; [117] grid_3.6.0               tools_3.6.0             
-#&gt; [119] future.apply_1.3.0       rstudioapi_0.10         
-#&gt; [121] foreach_1.4.4            git2r_0.26.1            
-#&gt; [123] outliers_0.14            gridExtra_2.3           
-#&gt; [125] plyranges_1.5.12         Rtsne_0.15              
-#&gt; [127] digest_0.6.20            FNN_1.1.3               
-#&gt; [129] shiny_1.3.2              qlcMatrix_0.9.7         
-#&gt; [131] Rcpp_1.0.2               broom_0.5.2             
-#&gt; [133] SDMTools_1.1-221.1       later_0.8.0             
-#&gt; [135] RcppAnnoy_0.0.12         httr_1.4.0              
-#&gt; [137] AnnotationDbi_1.47.0     npsurv_0.4-0            
-#&gt; [139] Rdpack_0.11-0            colorspace_1.4-1        
-#&gt; [141] rvest_0.3.4              XML_3.98-1.20           
-#&gt; [143] fs_1.3.1                 reticulate_1.13         
-#&gt; [145] shinythemes_1.1.2        plotly_4.9.0            
-#&gt; [147] xtable_1.8-4             jsonlite_1.6            
-#&gt; [149] zeallot_0.1.0            R6_2.4.0                
-#&gt; [151] pillar_1.4.2             htmltools_0.3.6         
-#&gt; [153] mime_0.7                 glue_1.3.1              
-#&gt; [155] codetools_0.2-16         tsne_0.1-3              
-#&gt; [157] lattice_0.20-38          curl_4.0                
-#&gt; [159] gtools_3.8.1             openssl_1.4.1           
-#&gt; [161] survival_2.44-1.1        limma_3.41.15           
-#&gt; [163] rmarkdown_1.14           docopt_0.6.1            
-#&gt; [165] fastICA_1.2-2            munsell_0.5.0           
-#&gt; [167] rhdf5_2.29.0             GenomeInfoDbData_1.2.1  
-#&gt; [169] iterators_1.0.10         HDF5Array_1.13.4        
-#&gt; [171] haven_2.1.1              reshape2_1.4.3          
-#&gt; [173] gtable_0.3.0             Seurat_3.0.3.9016</code></pre>
+#&gt;   [1] rappdirs_0.3.1           rtracklayer_1.46.0       R.methodsS3_1.7.1       
+#&gt;   [4] bit64_0.9-7              knitr_1.27               R.utils_2.9.2           
+#&gt;   [7] data.table_1.12.8        RCurl_1.95-4.13          AnnotationFilter_1.10.0 
+#&gt;  [10] doParallel_1.0.15        generics_0.0.2           metap_1.0               
+#&gt;  [13] GenomicFeatures_1.38.0   cowplot_1.0.0            RSQLite_2.2.0           
+#&gt;  [16] RANN_2.6.1               combinat_0.0-8           proxy_0.4-23            
+#&gt;  [19] future_1.16.0            bit_1.1-15.1             xml2_1.2.2              
+#&gt;  [22] lubridate_1.7.4          httpuv_1.5.2             assertthat_0.2.1        
+#&gt;  [25] viridis_0.5.1            xfun_0.12                hms_0.5.3               
+#&gt;  [28] evaluate_0.14            promises_1.1.0           fansi_0.4.1             
+#&gt;  [31] progress_1.2.2           readxl_1.3.1             caTools_1.18.0          
+#&gt;  [34] dbplyr_1.4.2             igraph_1.2.4.2           DBI_1.1.0               
+#&gt;  [37] geneplotter_1.64.0       htmlwidgets_1.5.1        sparsesvd_0.2           
+#&gt;  [40] ellipsis_0.3.0           backports_1.1.5          annotate_1.64.0         
+#&gt;  [43] gbRd_0.4-11              RcppParallel_4.4.4       biomaRt_2.42.0          
+#&gt;  [46] vctrs_0.2.1              ensembldb_2.10.2         ROCR_1.0-7              
+#&gt;  [49] withr_2.1.2              BSgenome_1.54.0          doFuture_0.9.0          
+#&gt;  [52] sctransform_0.2.1        GenomicAlignments_1.22.1 prettyunits_1.1.0       
+#&gt;  [55] cluster_2.1.0            ape_5.3                  lazyeval_0.2.2          
+#&gt;  [58] crayon_1.3.4             labeling_0.3             edgeR_3.28.0            
+#&gt;  [61] pkgconfig_2.0.3          slam_0.1-47              nlme_3.1-143            
+#&gt;  [64] ProtGenerics_1.18.0      rlang_0.4.2              globals_0.12.5          
+#&gt;  [67] lifecycle_0.1.0          BiocFileCache_1.10.2     modelr_0.1.5            
+#&gt;  [70] rsvd_1.0.2               cellranger_1.1.0         rprojroot_1.3-2         
+#&gt;  [73] GSVA_1.34.0              lmtest_0.9-37            graph_1.64.0            
+#&gt;  [76] singscore_1.6.0          Rhdf5lib_1.8.0           zoo_1.8-7               
+#&gt;  [79] reprex_0.3.0             whisker_0.4              ggridges_0.5.2          
+#&gt;  [82] pheatmap_1.0.12          png_0.1-7                viridisLite_0.3.0       
+#&gt;  [85] bitops_1.0-6             R.oo_1.23.0              KernSmooth_2.23-16      
+#&gt;  [88] Biostrings_2.54.0        blob_1.2.0               scales_1.1.0            
+#&gt;  [91] memoise_1.1.0            GSEABase_1.48.0          magrittr_1.5            
+#&gt;  [94] plyr_1.8.5               ica_1.0-2                gplots_3.0.1.2          
+#&gt;  [97] bibtex_0.4.2.2           gdata_2.18.0             zlibbioc_1.32.0         
+#&gt; [100] compiler_3.6.0           HSMMSingleCell_1.6.0     lsei_1.2-0              
+#&gt; [103] dqrng_0.2.1              RColorBrewer_1.1-2       fitdistrplus_1.0-14     
+#&gt; [106] cli_2.0.1                Rsamtools_2.2.1          XVector_0.26.0          
+#&gt; [109] listenv_0.8.0            pbapply_1.4-2            MASS_7.3-51.5           
+#&gt; [112] tidyselect_0.2.5         stringi_1.4.5            densityClust_0.3        
+#&gt; [115] yaml_2.2.0               askpass_1.1              locfit_1.5-9.1          
+#&gt; [118] ggrepel_0.8.1            pbmcapply_1.5.0          grid_3.6.0              
+#&gt; [121] tools_3.6.0              future.apply_1.4.0       rstudioapi_0.10         
+#&gt; [124] foreach_1.4.7            git2r_0.26.1             outliers_0.14           
+#&gt; [127] gridExtra_2.3            farver_2.0.3             plyranges_1.6.4         
+#&gt; [130] Rtsne_0.15               digest_0.6.23            FNN_1.1.3               
+#&gt; [133] shiny_1.4.0              qlcMatrix_0.9.7          Rcpp_1.0.3              
+#&gt; [136] broom_0.5.3              SDMTools_1.1-221.2       later_1.0.0             
+#&gt; [139] RcppAnnoy_0.0.14         httr_1.4.1               AnnotationDbi_1.48.0    
+#&gt; [142] npsurv_0.4-0             Rdpack_0.11-1            colorspace_1.4-1        
+#&gt; [145] rvest_0.3.5              XML_3.99-0.1             fs_1.3.1                
+#&gt; [148] reticulate_1.14          uwot_0.1.5               shinythemes_1.1.2       
+#&gt; [151] plotly_4.9.1             xtable_1.8-4             jsonlite_1.6            
+#&gt; [154] zeallot_0.1.0            R6_2.4.1                 pillar_1.4.3            
+#&gt; [157] htmltools_0.4.0          mime_0.8                 glue_1.3.1              
+#&gt; [160] fastmap_1.0.1            codetools_0.2-16         tsne_0.1-3              
+#&gt; [163] lattice_0.20-38          curl_4.3                 leiden_0.3.1            
+#&gt; [166] gtools_3.8.1             openssl_1.4.1            survival_3.1-8          
+#&gt; [169] limma_3.42.0             rmarkdown_2.0            docopt_0.6.1            
+#&gt; [172] fastICA_1.2-2            munsell_0.5.0            rhdf5_2.30.0            
+#&gt; [175] GenomeInfoDbData_1.2.2   iterators_1.0.12         HDF5Array_1.14.0        
+#&gt; [178] haven_2.2.0              reshape2_1.4.3           gtable_0.3.0            
+#&gt; [181] Seurat_3.1.2</code></pre>
 </div>
 </div>
 
