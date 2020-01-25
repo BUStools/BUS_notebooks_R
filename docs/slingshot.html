@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 <meta name="author" content="Lambda Moses" />
 
-<meta name="date" content="2019-08-15" />
+<meta name="date" content="2020-01-21" />
 
 <title>Pseudotime analysis with slingshot</title>
 
@@ -91,7 +90,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -240,6 +238,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -268,6 +267,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -381,7 +386,7 @@ div.section {
 
 <h1 class="title toc-ignore">Pseudotime analysis with slingshot</h1>
 <h4 class="author">Lambda Moses</h4>
-<h4 class="date">2019-08-15</h4>
+<h4 class="date">2020-01-21</h4>
 
 </div>
 
@@ -406,7 +411,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2019-08-15
+<strong>Last updated:</strong> 2020-01-21
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -416,7 +421,7 @@ div.section {
 </p>
 <p>
 This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
-  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.4.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
 </p>
 <hr>
 </div>
@@ -497,20 +502,23 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtreedb5711cfcc5a1165381c457ef90f233abea36c02targetblankdb5711ca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/db5711cfcc5a1165381c457ef90f233abea36c02" target="_blank">db5711c</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree35eece90745cd1bbe86b13838091cccdce0f82c8targetblank35eece9a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/35eece90745cd1bbe86b13838091cccdce0f82c8" target="_blank">35eece9</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtreedb5711cfcc5a1165381c457ef90f233abea36c02targetblankdb5711ca" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree35eece90745cd1bbe86b13838091cccdce0f82c8targetblank35eece9a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
 Ignored files:
+    Ignored:    .DS_Store
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    BUS_notebooks_R.Rproj
+    Ignored:    analysis/figure/
     Ignored:    data/whitelist_v3.txt.gz
+    Ignored:    output/.DS_Store
     Ignored:    output/out_pbmc1k/
 
 Untracked files:
@@ -554,6 +562,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/35eece90745cd1bbe86b13838091cccdce0f82c8/analysis/slingshot.Rmd" target="_blank">35eece9</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2020-01-21
+</td>
+<td>
+Changed explanation for updates in Seurat and Bioconductor 3.10, and so explain that I no
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/804433809d9830d258ea77acc4fda7cc64dd71a5/docs/slingshot.html" target="_blank">8044338</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-08-15
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -647,7 +689,7 @@ Rmd
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/f8a015aa577511662b7e1b9f8bd9ada307634f5e/analysis/slingshot.Rmd" target="_blank">f8a015a</a>
 </td>
 <td>
-Lior Pachter
+GitHub
 </td>
 <td>
 2019-07-26
@@ -667,7 +709,7 @@ html
 Lambda Moses
 </td>
 <td>
-2019-07-25
+2019-07-24
 </td>
 <td>
 Build site.
@@ -684,7 +726,7 @@ Rmd
 Lambda Moses
 </td>
 <td>
-2019-07-25
+2019-07-24
 </td>
 <td>
 Just realized that the Leiden clustering is not reproducible. Installed Seurat
@@ -770,7 +812,7 @@ slingshot notebook
 <p>This notebook does pseudotime analysis of the <a href="https://support.10xgenomics.com/single-cell-gene-expression/datasets/3.0.0/neuron_10k_v3">10x 10k neurons from an E18 mouse</a> using <a href="https://bioconductor.org/packages/release/bioc/html/slingshot.html"><code>slingshot</code></a>, which is on Bioconductor. The notebook begins with pre-processing of the reads with the <a href="https://www.kallistobus.tools/">kallisto | bustools workflow</a> Like Monocle 2 DDRTree, <code>slingshot</code> builds a minimum spanning tree, but while Monocle 2 builds the tree from individual cells, <code>slingshot</code> does so with clusters. <code>slingshot</code> is also the top rated trajectory inference method in the <a href="https://doi.org/10.1038/s41587-019-0071-9"><code>dynverse</code> paper</a>.</p>
 <p>In the <a href="https://www.biorxiv.org/content/10.1101/673285v1">kallisto | bustools paper</a>, I used the docker container for <code>slingshot</code> provided by <code>dynverse</code> for pseudotime analysis, because <code>dynverse</code> provides unified interface to dozens of different trajectory inference (TI) methods via docker containers, making it easy to try other methods without worrying about installing dependencies. Furthermore, <code>dynverse</code> provides metrics to evaluate TI methods. However, the docker images provided by <code>dynverse</code> do not provide users with the full range of options available from the TI methods themselves. For instance, while any dimension reduction and any kind of clustering can be used for <code>slingshot</code>, <code>dynverse</code> chose PCA and partition around medoids (PAM) clustering for us (see the source code <a href="https://github.com/dynverse/ti_slingshot/blob/master/package/R/ti_slingshot.R">here</a>). So in this notebook, we will directly use <code>slingshot</code> rather than via <code>dynverse</code>.</p>
 <p>The gene count matrix of the 10k neuron dataset has already been generated with the kallisto | bustools pipeline and filtered for the <a href="https://bustools.github.io/BUS_notebooks_R/monocle2.html">Monocle 2 notebook</a>. Cell types have also been annotated with <code>SingleR</code> in that notebook. Please refer to the first 3 main sections of that notebook for instructions on how to use kallisto | bustools, remove empty droplets, and annotate cell types.</p>
-<p>Package <code>slingshot</code> is from Bioconductor. <code>BUSpaRse</code> is on GitHub. The other packages are on CRAN.</p>
+<p>Packages <code>slingshot</code> and <code>BUSpaRse</code> are on Bioconductor (3.10). The other packages are on CRAN.</p>
 <pre class="r"><code>library(slingshot)
 library(BUSpaRse)
 library(tidyverse)
@@ -797,8 +839,8 @@ mat_filtered &lt;- readRDS(&quot;./output/neuron10k/mat_filtered.rds&quot;)</cod
 <pre><code>#&gt; [1] &quot;ENSMUSG00000094619.2&quot;  &quot;ENSMUSG00000095646.1&quot;  &quot;ENSMUSG00000092401.3&quot; 
 #&gt; [4] &quot;ENSMUSG00000109389.1&quot;  &quot;ENSMUSG00000092212.3&quot;  &quot;ENSMUSG00000079293.11&quot;</code></pre>
 <pre class="r"><code>head(colnames(mat_filtered))</code></pre>
-<pre><code>#&gt; [1] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot;
-#&gt; [4] &quot;AAACCCAGTCGCACAC&quot; &quot;AAACCCAGTGCACATT&quot; &quot;AAACCCAGTGGTAATA&quot;</code></pre>
+<pre><code>#&gt; [1] &quot;AAACCCACACGCGGTT&quot; &quot;AAACCCACAGCATACT&quot; &quot;AAACCCACATACCATG&quot; &quot;AAACCCAGTCGCACAC&quot;
+#&gt; [5] &quot;AAACCCAGTGCACATT&quot; &quot;AAACCCAGTGGTAATA&quot;</code></pre>
 <pre class="r"><code>str(annot)</code></pre>
 <pre><code>#&gt; List of 10
 #&gt;  $ scores       : num [1:11037, 1:28] 0.188 0.194 0.182 0.267 0.187 ...
@@ -841,10 +883,6 @@ mat_filtered &lt;- mat_filtered[, cells_use]</code></pre>
                     ensembl_version = 97)[,c(&quot;gene&quot;, &quot;gene_name&quot;)] %&gt;% 
   distinct()</code></pre>
 <pre><code>#&gt; Querying biomart for transcript and gene IDs of Mus musculus</code></pre>
-<pre><code>#&gt; Note: requested host was redirected from
-#&gt; http://jul2019.archive.ensembl.org to https://www.ensembl.org:443/biomart/martservice</code></pre>
-<pre><code>#&gt; This often occurs when connecting to the archive URL for the current Ensembl release</code></pre>
-<pre><code>#&gt; You can check the current version number using listEnsemblArchives()</code></pre>
 <pre><code>#&gt; Cache found</code></pre>
 </div>
 <div id="preprocessing" class="section level1">
@@ -1131,24 +1169,25 @@ Lambda Moses
 </table>
 </div>
 </div>
-<p>UMAP can better preserve pairwise distance of cells than tSNE and can better separate cell populations than the first 2 PCs of PCA (<a href="https://doi.org/10.1038/nbt.4314">Becht et al. 2018</a>), so the TI will be done on UMAP rather than tSNE or PCA. Note that the messages printed below are from the development version of Seurat (not yet on CRAN). The CRAN version still calls Python UMAP so probably does not work on servers. See the <a href="https://bustools.github.io/BUS_notebooks_R/velocity.html#dimension_reduction">RNA velocity notebook</a> for an example of a work around using <code>uwot</code>.</p>
+<p>UMAP can better preserve pairwise distance of cells than tSNE and can better separate cell populations than the first 2 PCs of PCA (<a href="https://doi.org/10.1038/nbt.4314">Becht et al. 2018</a>), so the TI will be done on UMAP rather than tSNE or PCA. The current CRAN version of Seurat uses the R package <code>uwot</code> rather than the Python version for UMAP.</p>
 <pre class="r"><code>seu &lt;- RunUMAP(seu, dims = 1:50, seed.use = 4867)</code></pre>
 <pre><code>#&gt; Warning: The default method for RunUMAP has changed from calling Python UMAP via reticulate to the R-native UWOT using the cosine metric
 #&gt; To use Python UMAP via reticulate, set umap.method to &#39;umap-learn&#39; and metric to &#39;correlation&#39;
 #&gt; This message will be shown once per session</code></pre>
-<pre><code>#&gt; 12:07:28 Read 10699 rows and found 50 numeric columns</code></pre>
-<pre><code>#&gt; 12:07:28 Using Annoy for neighbor search, n_neighbors = 30</code></pre>
-<pre><code>#&gt; 12:07:28 Building Annoy index with metric = cosine, n_trees = 50</code></pre>
+<pre><code>#&gt; 03:56:17 UMAP embedding parameters a = 0.9922 b = 1.112</code></pre>
+<pre><code>#&gt; 03:56:17 Read 10699 rows and found 50 numeric columns</code></pre>
+<pre><code>#&gt; 03:56:17 Using Annoy for neighbor search, n_neighbors = 30</code></pre>
+<pre><code>#&gt; 03:56:17 Building Annoy index with metric = cosine, n_trees = 50</code></pre>
 <pre><code>#&gt; 0%   10   20   30   40   50   60   70   80   90   100%</code></pre>
 <pre><code>#&gt; [----|----|----|----|----|----|----|----|----|----|</code></pre>
 <pre><code>#&gt; **************************************************|
-#&gt; 12:07:31 Writing NN index file to temp file /var/folders/tg/cv0dwcv11q5g13yjt9mc_nh00000gn/T//RtmpiR72qe/file4ee3f92be80
-#&gt; 12:07:31 Searching Annoy index using 1 thread, search_k = 3000
-#&gt; 12:07:34 Annoy recall = 100%
-#&gt; 12:07:35 Commencing smooth kNN distance calibration using 1 thread
-#&gt; 12:07:37 Initializing from normalized Laplacian + noise
-#&gt; 12:07:37 Commencing optimization for 200 epochs, with 430906 positive edges
-#&gt; 12:07:45 Optimization finished</code></pre>
+#&gt; 03:56:19 Writing NN index file to temp file /var/folders/tg/cv0dwcv11q5g13yjt9mc_nh00000gn/T//Rtmpy424Fq/file12f6927c1ba2e
+#&gt; 03:56:19 Searching Annoy index using 1 thread, search_k = 3000
+#&gt; 03:56:23 Annoy recall = 100%
+#&gt; 03:56:26 Commencing smooth kNN distance calibration using 1 thread
+#&gt; 03:56:30 Initializing from normalized Laplacian + noise
+#&gt; 03:56:32 Commencing optimization for 200 epochs, with 430906 positive edges
+#&gt; 03:56:41 Optimization finished</code></pre>
 <pre class="r"><code>DimPlot(seu, reduction = &quot;umap&quot;,
         group.by = &quot;cell_type&quot;, pt.size = 0.5, label = TRUE, repel = TRUE) +
   scale_color_brewer(type = &quot;qual&quot;, palette = &quot;Set2&quot;)</code></pre>
@@ -1203,13 +1242,12 @@ Lambda Moses
 </div>
 <p>Cell type annotation with <code>SingleR</code> requires a reference with bulk RNA seq data for isolated known cell types. The reference used for cell type annotation here does not differentiate between different types of neural progenitor cells; clustering can further partition the neural progenitor cells. Furthermore, <code>slingshot</code> is based on cluster-wise minimum spanning tree, so finding a good clustering is important to good trajectory inference with <code>slingshot</code>. The clustering algorithm used here is <a href="https://www.nature.com/articles/s41598-019-41695-z">Leiden</a>, which is an improvement over the commonly used Louvain; Leiden communities are guaranteed to be well-connected, while Louvain can lead to poorly connected communities.</p>
 <pre class="r"><code>names(seu@meta.data)</code></pre>
-<pre><code>#&gt;  [1] &quot;orig.ident&quot;      &quot;nCount_RNA&quot;      &quot;nFeature_RNA&quot;   
-#&gt;  [4] &quot;nCount_SCT&quot;      &quot;nFeature_SCT&quot;    &quot;cell_type&quot;      
-#&gt;  [7] &quot;SCT_snn_res.1&quot;   &quot;seurat_clusters&quot; &quot;SCT_snn_res.0.8&quot;
-#&gt; [10] &quot;SCT_snn_res.0.7&quot; &quot;SCT_snn_res.0.6&quot;</code></pre>
+<pre><code>#&gt; [1] &quot;orig.ident&quot;   &quot;nCount_RNA&quot;   &quot;nFeature_RNA&quot; &quot;nCount_SCT&quot;   &quot;nFeature_SCT&quot;
+#&gt; [6] &quot;cell_type&quot;</code></pre>
 <pre class="r"><code>seu &lt;- FindNeighbors(seu, verbose = FALSE, dims = 1:50)
-seu &lt;- FindClusters(seu, algorithm = 4, random.seed = 256, resolution = 1)
-DimPlot(seu, pt.size = 0.5, reduction = &quot;umap&quot;, group.by = &quot;seurat_clusters&quot;, label = TRUE)</code></pre>
+seu &lt;- FindClusters(seu, algorithm = 4, random.seed = 256, resolution = 1)</code></pre>
+<pre><code>#&gt; 10653 singletons identified. 17 final clusters.</code></pre>
+<pre class="r"><code>DimPlot(seu, pt.size = 0.5, reduction = &quot;umap&quot;, group.by = &quot;seurat_clusters&quot;, label = TRUE)</code></pre>
 <p><img src="figure/slingshot.Rmd/umap_clust-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-umap_clust-1">
@@ -1252,7 +1290,7 @@ Lambda Moses
 Lambda Moses
 </td>
 <td>
-2019-07-25
+2019-07-24
 </td>
 </tr>
 <tr>
@@ -1281,7 +1319,6 @@ Lambda Moses
 </table>
 </div>
 </div>
-<p>Note that in the current CRAN release of Seurat, Leiden clustering does not take the random seed and gives a somewhat different result every time it’s run. To make the random seed take effect, install the <a href="https://satijalab.org/seurat/install.html#development">development version of Seurat</a>.</p>
 </div>
 </div>
 <div id="slingshot" class="section level1">
@@ -1289,6 +1326,7 @@ Lambda Moses
 <div id="trajectory-inference" class="section level2">
 <h2>Trajectory inference</h2>
 <p>While the <code>slingshot</code> vignette uses <code>SingleCellExperiment</code>, <code>slingshot</code> can also take a matrix of cell embeddings in reduced dimension as input. We can optionally specify the cluster to start or end the trajectory based on biological knowledge. Here, since quiescent neural stem cells are in cluster 4, the starting cluster would be 4 near the top left of the previous plot.</p>
+<p>Here, UMAP projections are used for trajectory inference, as in Monocle 3, for the purpose of visualization. However, <strong>I no longer consider this a good idea</strong>, due to distortions introduced by UMAP. See <a href="https://www.biorxiv.org/content/10.1101/689851v3">this paper</a> for the extent non-linear dimension reduction methods distort the data. The latent dimension of the data is most likely far more than 2 or 3 dimensions, so forcing it down to 2 or 3 dimensions are bound to introduce distortions, just like how projecting the spherical surface of the Earth to 2 dimensions in maps introduces distortions. Furthermore, after the projection, some trajectories are no longer topologically feasible. For instance, imagine a stream coming out of the hole of a doughnut in 3D. This is not possible in 2D, so when that structure is projected to 2D, part of the stream may become buried in the middle of the doughnut, or the doughnut may be broken to allow the stream through, or part of the steam will be intermixed with part of the doughnut though they shouldn’t. I recommend using a larger number of principal components instead, but in that case, the lineages and principal curves can’t be visualized (we can plot the curves within a 2 dimensional subspace, such as the first 2 PCs, but that usually looks like abstract art and isn’t informative about the lineages).</p>
 <pre class="r"><code>sds &lt;- slingshot(Embeddings(seu, &quot;umap&quot;), clusterLabels = seu$seurat_clusters, 
                  start.clus = 4, stretch = 0)</code></pre>
 <p>Unfortunately, <code>slingshot</code> does not natively support <code>ggplot2</code>. So this is a function that assigns colors to each cell in base R graphics.</p>
@@ -1357,7 +1395,7 @@ Lambda Moses
 Lambda Moses
 </td>
 <td>
-2019-07-25
+2019-07-24
 </td>
 </tr>
 <tr>
@@ -1421,7 +1459,7 @@ Lambda Moses
 Lambda Moses
 </td>
 <td>
-2019-07-25
+2019-07-24
 </td>
 </tr>
 <tr>
@@ -1496,7 +1534,7 @@ Lambda Moses
 Lambda Moses
 </td>
 <td>
-2019-07-25
+2019-07-24
 </td>
 </tr>
 <tr>
@@ -1551,6 +1589,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/804433809d9830d258ea77acc4fda7cc64dd71a5/docs/figure/slingshot.Rmd/pt-1.png" target="_blank">8044338</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2019-08-15
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/0a4efbd74ecbf1edf38424113196fa79ad2726f5/docs/figure/slingshot.Rmd/pt-1.png" target="_blank">0a4efbd</a>
 </td>
 <td>
@@ -1568,7 +1617,7 @@ Lambda Moses
 Lambda Moses
 </td>
 <td>
-2019-07-25
+2019-07-24
 </td>
 </tr>
 <tr>
@@ -1590,7 +1639,7 @@ Lambda Moses
 </div>
 <div id="differential-expression" class="section level2">
 <h2>Differential expression</h2>
-<p>Let’s look at which genes are differentially expressed along one of those lineages (linage 2). In <code>dynverse</code>, feature (gene) importance is calculated by using gene expression to predict pseudotime value with random forest and finding genes that contribute the most to the accuracy of the response. Since it’s really not straightforward to convert existing pseudotime results to <code>dynverse</code> format, it would be easier to build a random forest model. Variable importance will be calculated for the top 300 highly variable genes here, with <a href="https://github.com/tidymodels"><code>tidymodels</code></a>.</p>
+<p>Let’s look at which genes are differentially expressed along one of those lineages (linage 2). In <code>dynverse</code>, feature (gene) importance is calculated by using gene expression to predict pseudotime value with random forest and finding genes that contribute the most to the accuracy of the response. Since it’s really not straightforward to convert existing pseudotime results to <code>dynverse</code> format, it would be easier to build a random forest model. Variable importance will be calculated for the top 300 highly variable genes here, with <a href="https://github.com/tidymodels"><code>tidymodels</code></a>. This is to make the code run faster. There are other methods of trajectory DE as well, which may be more appropriate but more time consuming to run, such as <a href="https://bioconductor.org/packages/release/bioc/html/tradeSeq.html"><code>tradeSeq</code></a> and <a href="https://github.com/Teichlab/SpatialDE"><code>SpatialDE</code></a> (when run with one dimension).</p>
 <pre class="r"><code># Get top highly variable genes
 top_hvg &lt;- HVFInfo(seu) %&gt;% 
   mutate(., bc = rownames(.)) %&gt;% 
@@ -1618,9 +1667,9 @@ metrics(data = val_results, truth, estimate)</code></pre>
 <pre><code>#&gt; # A tibble: 3 x 3
 #&gt;   .metric .estimator .estimate
 #&gt;   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-#&gt; 1 rmse    standard       1.37 
-#&gt; 2 rsq     standard       0.969
-#&gt; 3 mae     standard       0.667</code></pre>
+#&gt; 1 rmse    standard       1.47 
+#&gt; 2 rsq     standard       0.962
+#&gt; 3 mae     standard       0.739</code></pre>
 <p>RMSE and MAE should have the same unit as the data. As pseudotime values here usually have values much larger than 2, the error isn’t too bad. Correlation (rsq) between <code>slingshot</code>’s pseudotime and random forest’s prediction is very high, also showing good prediction from the top 300 highly variable genes.</p>
 <pre class="r"><code>summary(dat_use_df$pseudotime)</code></pre>
 <pre><code>#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -1679,7 +1728,7 @@ Lambda Moses
 Lambda Moses
 </td>
 <td>
-2019-07-25
+2019-07-24
 </td>
 </tr>
 <tr>
@@ -1706,9 +1755,9 @@ Lambda Moses
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>#&gt; R version 3.6.1 (2019-07-05)
+<pre><code>#&gt; R version 3.6.2 (2019-12-12)
 #&gt; Platform: x86_64-apple-darwin15.6.0 (64-bit)
-#&gt; Running under: macOS Mojave 10.14.6
+#&gt; Running under: macOS Catalina 10.15.1
 #&gt; 
 #&gt; Matrix products: default
 #&gt; BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
@@ -1721,120 +1770,124 @@ Lambda Moses
 #&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     
 #&gt; 
 #&gt; other attached packages:
-#&gt;  [1] Matrix_1.2-17     viridis_0.5.1     viridisLite_0.3.0
-#&gt;  [4] Seurat_3.0.3.9024 yardstick_0.0.3   rsample_0.0.5    
-#&gt;  [7] recipes_0.1.6     parsnip_0.0.3.1   infer_0.4.0.1    
-#&gt; [10] dials_0.0.2       scales_1.0.0      broom_0.5.2      
-#&gt; [13] tidymodels_0.0.2  forcats_0.4.0     stringr_1.4.0    
-#&gt; [16] dplyr_0.8.3       purrr_0.3.2       readr_1.3.1      
-#&gt; [19] tidyr_0.8.3       tibble_2.1.3      ggplot2_3.2.1    
-#&gt; [22] tidyverse_1.2.1   BUSpaRse_0.99.18  slingshot_1.3.1  
-#&gt; [25] princurve_2.1.4  
+#&gt;  [1] Matrix_1.2-18     viridis_0.5.1     viridisLite_0.3.0 Seurat_3.1.2     
+#&gt;  [5] yardstick_0.0.4   rsample_0.0.5     recipes_0.1.9     parsnip_0.0.5    
+#&gt;  [9] infer_0.5.1       dials_0.0.4       scales_1.1.0      broom_0.5.3      
+#&gt; [13] tidymodels_0.0.3  forcats_0.4.0     stringr_1.4.0     dplyr_0.8.3      
+#&gt; [17] purrr_0.3.3       readr_1.3.1       tidyr_1.0.0       tibble_2.1.3     
+#&gt; [21] ggplot2_3.2.1     tidyverse_1.3.0   BUSpaRse_1.0.0    slingshot_1.4.0  
+#&gt; [25] princurve_2.1.4   workflowr_1.6.0  
 #&gt; 
 #&gt; loaded via a namespace (and not attached):
 #&gt;   [1] rappdirs_0.3.1              SnowballC_0.6.0            
-#&gt;   [3] rtracklayer_1.45.2          R.methodsS3_1.7.1          
-#&gt;   [5] bit64_0.9-7                 knitr_1.24                 
-#&gt;   [7] irlba_2.3.3                 dygraphs_1.1.1.6           
-#&gt;   [9] DelayedArray_0.11.4         R.utils_2.9.0              
-#&gt;  [11] data.table_1.12.2           rpart_4.1-15               
-#&gt;  [13] inline_0.3.15               RCurl_1.95-4.12            
-#&gt;  [15] AnnotationFilter_1.9.0      generics_0.0.2             
-#&gt;  [17] metap_1.1                   BiocGenerics_0.31.5        
-#&gt;  [19] GenomicFeatures_1.37.4      callr_3.3.1                
-#&gt;  [21] cowplot_1.0.0               RSQLite_2.1.2              
-#&gt;  [23] RANN_2.6.1                  future_1.14.0              
-#&gt;  [25] bit_1.1-14                  tokenizers_0.2.1           
-#&gt;  [27] webshot_0.5.1               xml2_1.2.2                 
-#&gt;  [29] lubridate_1.7.4             httpuv_1.5.1               
-#&gt;  [31] StanHeaders_2.18.1-10       SummarizedExperiment_1.15.5
-#&gt;  [33] assertthat_0.2.1            gower_0.2.1                
-#&gt;  [35] xfun_0.8                    hms_0.5.0                  
-#&gt;  [37] bayesplot_1.7.0             evaluate_0.14              
-#&gt;  [39] promises_1.0.1              fansi_0.4.0                
-#&gt;  [41] progress_1.2.2              caTools_1.17.1.2           
-#&gt;  [43] dbplyr_1.4.2                readxl_1.3.1               
-#&gt;  [45] igraph_1.2.4.1              DBI_1.0.0                  
-#&gt;  [47] htmlwidgets_1.3             stats4_3.6.1               
-#&gt;  [49] RSpectra_0.15-0             crosstalk_1.0.0            
-#&gt;  [51] backports_1.1.4             markdown_1.1               
-#&gt;  [53] gbRd_0.4-11                 RcppParallel_4.4.3         
-#&gt;  [55] biomaRt_2.41.7              vctrs_0.2.0                
-#&gt;  [57] SingleCellExperiment_1.7.0  Biobase_2.45.0             
-#&gt;  [59] ensembldb_2.9.2             ROCR_1.0-7                 
-#&gt;  [61] withr_2.1.2                 BSgenome_1.53.0            
-#&gt;  [63] sctransform_0.2.0           GenomicAlignments_1.21.4   
-#&gt;  [65] xts_0.11-2                  prettyunits_1.0.2          
-#&gt;  [67] cluster_2.1.0               ape_5.3                    
-#&gt;  [69] lazyeval_0.2.2              crayon_1.3.4               
-#&gt;  [71] labeling_0.3                pkgconfig_2.0.2            
-#&gt;  [73] GenomeInfoDb_1.21.1         nlme_3.1-141               
-#&gt;  [75] ProtGenerics_1.17.2         nnet_7.3-12                
-#&gt;  [77] rlang_0.4.0                 globals_0.12.4             
-#&gt;  [79] miniUI_0.1.1.1              colourpicker_1.0           
-#&gt;  [81] BiocFileCache_1.9.1         rsvd_1.0.2                 
-#&gt;  [83] modelr_0.1.5                tidytext_0.2.2             
-#&gt;  [85] cellranger_1.1.0            rprojroot_1.3-2            
-#&gt;  [87] lmtest_0.9-37               matrixStats_0.54.0         
-#&gt;  [89] loo_2.1.0                   boot_1.3-23                
-#&gt;  [91] zoo_1.8-6                   base64enc_0.1-3            
-#&gt;  [93] whisker_0.3-2               ggridges_0.5.1             
-#&gt;  [95] processx_3.4.1              png_0.1-7                  
-#&gt;  [97] bitops_1.0-6                R.oo_1.22.0                
-#&gt;  [99] KernSmooth_2.23-15          pROC_1.15.3                
-#&gt; [101] Biostrings_2.53.2           blob_1.2.0                 
-#&gt; [103] rgl_0.100.26                workflowr_1.4.0            
-#&gt; [105] manipulateWidget_0.10.0     shinystan_2.5.0            
-#&gt; [107] S4Vectors_0.23.17           ica_1.0-2                  
-#&gt; [109] memoise_1.1.0               magrittr_1.5               
-#&gt; [111] plyr_1.8.4                  gplots_3.0.1.1             
-#&gt; [113] bibtex_0.4.2                gdata_2.18.0               
-#&gt; [115] zlibbioc_1.31.0             threejs_0.3.1              
-#&gt; [117] compiler_3.6.1              lsei_1.2-0                 
-#&gt; [119] rstantools_1.5.1            RColorBrewer_1.1-2         
-#&gt; [121] lme4_1.1-21                 fitdistrplus_1.0-14        
-#&gt; [123] Rsamtools_2.1.3             cli_1.1.0                  
-#&gt; [125] XVector_0.25.0              listenv_0.7.0              
-#&gt; [127] pbapply_1.4-1               janeaustenr_0.1.5          
-#&gt; [129] ps_1.3.0                    MASS_7.3-51.4              
-#&gt; [131] tidyselect_0.2.5            stringi_1.4.3              
-#&gt; [133] yaml_2.2.0                  askpass_1.1                
-#&gt; [135] ggrepel_0.8.1               grid_3.6.1                 
-#&gt; [137] tidypredict_0.4.2           tools_3.6.1                
-#&gt; [139] future.apply_1.3.0          parallel_3.6.1             
-#&gt; [141] rstudioapi_0.10             git2r_0.26.1               
-#&gt; [143] gridExtra_2.3               prodlim_2018.04.18         
-#&gt; [145] plyranges_1.5.12            Rtsne_0.15                 
-#&gt; [147] digest_0.6.20               shiny_1.3.2                
-#&gt; [149] lava_1.6.6                  Rcpp_1.0.2                 
-#&gt; [151] GenomicRanges_1.37.14       SDMTools_1.1-221.1         
-#&gt; [153] later_0.8.0                 RcppAnnoy_0.0.12           
-#&gt; [155] httr_1.4.1                  AnnotationDbi_1.47.0       
-#&gt; [157] rsconnect_0.8.15            npsurv_0.4-0               
-#&gt; [159] Rdpack_0.11-0               colorspace_1.4-1           
-#&gt; [161] ranger_0.11.2               reticulate_1.13            
-#&gt; [163] rvest_0.3.4                 XML_3.98-1.20              
-#&gt; [165] fs_1.3.1                    IRanges_2.19.10            
-#&gt; [167] splines_3.6.1               uwot_0.1.3                 
-#&gt; [169] shinythemes_1.1.2           plotly_4.9.0               
-#&gt; [171] xtable_1.8-4                rstanarm_2.18.2            
-#&gt; [173] jsonlite_1.6                nloptr_1.2.1               
-#&gt; [175] timeDate_3043.102           rstan_2.19.2               
-#&gt; [177] zeallot_0.1.0               ipred_0.9-9                
-#&gt; [179] R6_2.4.0                    pillar_1.4.2               
-#&gt; [181] htmltools_0.3.6             mime_0.7                   
-#&gt; [183] glue_1.3.1                  minqa_1.2.4                
-#&gt; [185] DT_0.8                      BiocParallel_1.19.0        
-#&gt; [187] class_7.3-15                codetools_0.2-16           
-#&gt; [189] utf8_1.1.4                  tsne_0.1-3                 
-#&gt; [191] pkgbuild_1.0.4              furrr_0.1.0                
-#&gt; [193] lattice_0.20-38             curl_4.0                   
-#&gt; [195] leiden_0.3.1                gtools_3.8.1               
-#&gt; [197] tidyposterior_0.0.2         shinyjs_1.0                
-#&gt; [199] openssl_1.4.1               survival_2.44-1.1          
-#&gt; [201] rmarkdown_1.14              munsell_0.5.0              
-#&gt; [203] GenomeInfoDbData_1.2.1      haven_2.1.1                
-#&gt; [205] reshape2_1.4.3              gtable_0.3.0</code></pre>
+#&gt;   [3] rtracklayer_1.46.0          R.methodsS3_1.7.1          
+#&gt;   [5] bit64_0.9-7                 knitr_1.27                 
+#&gt;   [7] multcomp_1.4-12             irlba_2.3.3                
+#&gt;   [9] dygraphs_1.1.1.6            DelayedArray_0.12.2        
+#&gt;  [11] R.utils_2.9.2               data.table_1.12.8          
+#&gt;  [13] rpart_4.1-15                inline_0.3.15              
+#&gt;  [15] RCurl_1.98-1.1              AnnotationFilter_1.10.0    
+#&gt;  [17] generics_0.0.2              metap_1.2                  
+#&gt;  [19] BiocGenerics_0.32.0         GenomicFeatures_1.38.0     
+#&gt;  [21] TH.data_1.0-10              cowplot_1.0.0              
+#&gt;  [23] callr_3.4.0                 RSQLite_2.2.0              
+#&gt;  [25] RANN_2.6.1                  future_1.16.0              
+#&gt;  [27] bit_1.1-15.1                tokenizers_0.2.1           
+#&gt;  [29] mutoss_0.1-12               xml2_1.2.2                 
+#&gt;  [31] lubridate_1.7.4             httpuv_1.5.2               
+#&gt;  [33] StanHeaders_2.21.0-1        SummarizedExperiment_1.16.1
+#&gt;  [35] assertthat_0.2.1            gower_0.2.1                
+#&gt;  [37] xfun_0.12                   hms_0.5.3                  
+#&gt;  [39] bayesplot_1.7.1             evaluate_0.14              
+#&gt;  [41] promises_1.1.0              fansi_0.4.1                
+#&gt;  [43] progress_1.2.2              caTools_1.18.0             
+#&gt;  [45] dbplyr_1.4.2                readxl_1.3.1               
+#&gt;  [47] igraph_1.2.4.2              DBI_1.1.0                  
+#&gt;  [49] htmlwidgets_1.5.1           stats4_3.6.2               
+#&gt;  [51] RSpectra_0.16-0             crosstalk_1.0.0            
+#&gt;  [53] backports_1.1.5             markdown_1.1               
+#&gt;  [55] gbRd_0.4-11                 RcppParallel_4.4.4         
+#&gt;  [57] biomaRt_2.42.0              vctrs_0.2.1                
+#&gt;  [59] SingleCellExperiment_1.8.0  Biobase_2.46.0             
+#&gt;  [61] ensembldb_2.10.2            ROCR_1.0-7                 
+#&gt;  [63] withr_2.1.2                 BSgenome_1.54.0            
+#&gt;  [65] sctransform_0.2.1           GenomicAlignments_1.22.1   
+#&gt;  [67] xts_0.12-0                  prettyunits_1.1.0          
+#&gt;  [69] mnormt_1.5-5                cluster_2.1.0              
+#&gt;  [71] ape_5.3                     lazyeval_0.2.2             
+#&gt;  [73] crayon_1.3.4                labeling_0.3               
+#&gt;  [75] pkgconfig_2.0.3             GenomeInfoDb_1.22.0        
+#&gt;  [77] nlme_3.1-142                ProtGenerics_1.18.0        
+#&gt;  [79] nnet_7.3-12                 rlang_0.4.2                
+#&gt;  [81] globals_0.12.5              lifecycle_0.1.0            
+#&gt;  [83] miniUI_0.1.1.1              sandwich_2.5-1             
+#&gt;  [85] colourpicker_1.0            BiocFileCache_1.10.2       
+#&gt;  [87] rsvd_1.0.2                  modelr_0.1.5               
+#&gt;  [89] tidytext_0.2.2              cellranger_1.1.0           
+#&gt;  [91] rprojroot_1.3-2             lmtest_0.9-37              
+#&gt;  [93] matrixStats_0.55.0          loo_2.2.0                  
+#&gt;  [95] boot_1.3-23                 zoo_1.8-7                  
+#&gt;  [97] reprex_0.3.0                base64enc_0.1-3            
+#&gt;  [99] whisker_0.4                 ggridges_0.5.2             
+#&gt; [101] processx_3.4.1              png_0.1-7                  
+#&gt; [103] bitops_1.0-6                R.oo_1.23.0                
+#&gt; [105] KernSmooth_2.23-16          pROC_1.16.1                
+#&gt; [107] Biostrings_2.54.0           blob_1.2.1                 
+#&gt; [109] shinystan_2.5.0             S4Vectors_0.24.3           
+#&gt; [111] ica_1.0-2                   memoise_1.1.0              
+#&gt; [113] magrittr_1.5                plyr_1.8.5                 
+#&gt; [115] gplots_3.0.1.2              bibtex_0.4.2.2             
+#&gt; [117] gdata_2.18.0                zlibbioc_1.32.0            
+#&gt; [119] threejs_0.3.1               compiler_3.6.2             
+#&gt; [121] lsei_1.2-0                  rstantools_2.0.0           
+#&gt; [123] RColorBrewer_1.1-2          plotrix_3.7-7              
+#&gt; [125] lme4_1.1-21                 fitdistrplus_1.0-14        
+#&gt; [127] Rsamtools_2.2.1             cli_2.0.1                  
+#&gt; [129] XVector_0.26.0              DiceDesign_1.8-1           
+#&gt; [131] listenv_0.8.0               pbapply_1.4-2              
+#&gt; [133] janeaustenr_0.1.5           ps_1.3.0                   
+#&gt; [135] MASS_7.3-51.4               tidyselect_0.2.5           
+#&gt; [137] stringi_1.4.5               yaml_2.2.0                 
+#&gt; [139] askpass_1.1                 ggrepel_0.8.1              
+#&gt; [141] grid_3.6.2                  tidypredict_0.4.3          
+#&gt; [143] tools_3.6.2                 future.apply_1.4.0         
+#&gt; [145] parallel_3.6.2              rstudioapi_0.10            
+#&gt; [147] git2r_0.26.1                gridExtra_2.3              
+#&gt; [149] prodlim_2019.11.13          farver_2.0.3               
+#&gt; [151] plyranges_1.6.5             Rtsne_0.15                 
+#&gt; [153] digest_0.6.23               shiny_1.4.0                
+#&gt; [155] lava_1.6.6                  Rcpp_1.0.3                 
+#&gt; [157] GenomicRanges_1.38.0        SDMTools_1.1-221.2         
+#&gt; [159] later_1.0.0                 RcppAnnoy_0.0.14           
+#&gt; [161] httr_1.4.1                  AnnotationDbi_1.48.0       
+#&gt; [163] rsconnect_0.8.16            npsurv_0.4-0               
+#&gt; [165] Rdpack_0.11-1               colorspace_1.4-1           
+#&gt; [167] ranger_0.12.1               reticulate_1.14            
+#&gt; [169] rvest_0.3.5                 XML_3.99-0.3               
+#&gt; [171] fs_1.3.1                    IRanges_2.20.2             
+#&gt; [173] splines_3.6.2               uwot_0.1.5                 
+#&gt; [175] sn_1.5-4                    multtest_2.42.0            
+#&gt; [177] shinythemes_1.1.2           plotly_4.9.1               
+#&gt; [179] xtable_1.8-4                rstanarm_2.19.2            
+#&gt; [181] jsonlite_1.6                nloptr_1.2.1               
+#&gt; [183] timeDate_3043.102           rstan_2.19.2               
+#&gt; [185] zeallot_0.1.0               ipred_0.9-9                
+#&gt; [187] R6_2.4.1                    TFisher_0.2.0              
+#&gt; [189] pillar_1.4.3                htmltools_0.4.0            
+#&gt; [191] mime_0.8                    glue_1.3.1                 
+#&gt; [193] fastmap_1.0.1               minqa_1.2.4                
+#&gt; [195] DT_0.11                     BiocParallel_1.20.1        
+#&gt; [197] class_7.3-15                codetools_0.2-16           
+#&gt; [199] utf8_1.1.4                  tsne_0.1-3                 
+#&gt; [201] mvtnorm_1.0-12              pkgbuild_1.0.6             
+#&gt; [203] furrr_0.1.0                 lattice_0.20-38            
+#&gt; [205] numDeriv_2016.8-1.1         curl_4.3                   
+#&gt; [207] leiden_0.3.2                gtools_3.8.1               
+#&gt; [209] tidyposterior_0.0.2         shinyjs_1.1                
+#&gt; [211] openssl_1.4.1               survival_3.1-8             
+#&gt; [213] rmarkdown_2.1               munsell_0.5.0              
+#&gt; [215] GenomeInfoDbData_1.2.2      haven_2.2.0                
+#&gt; [217] reshape2_1.4.3              gtable_0.3.0</code></pre>
 </div>
 </div>
 </div>

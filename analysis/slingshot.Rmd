@@ -16,7 +16,7 @@ In the [kallisto | bustools paper](https://www.biorxiv.org/content/10.1101/67328
 
 The gene count matrix of the 10k neuron dataset has already been generated with the kallisto | bustools pipeline and filtered for the [Monocle 2 notebook](https://bustools.github.io/BUS_notebooks_R/monocle2.html). Cell types have also been annotated with `SingleR` in that notebook. Please refer to the first 3 main sections of that notebook for instructions on how to use kallisto | bustools, remove empty droplets, and annotate cell types. 
 
-Packages `slingshot` and `BUSpaRse` are on Bioconductor. The other packages are on CRAN.
+Packages `slingshot` and `BUSpaRse` are on Bioconductor (3.10). The other packages are on CRAN.
 
 ```{r, message=FALSE}
 library(slingshot)
@@ -133,7 +133,7 @@ DimPlot(seu, reduction = "tsne",
   scale_color_brewer(type = "qual", palette = "Set2")
 ```
 
-UMAP can better preserve pairwise distance of cells than tSNE and can better separate cell populations than the first 2 PCs of PCA ([Becht et al. 2018](https://doi.org/10.1038/nbt.4314)), so the TI will be done on UMAP rather than tSNE or PCA. The current CRAN version of Seurat uses an R implementation of UMAP in `uwot` rather than the Python version.
+UMAP can better preserve pairwise distance of cells than tSNE and can better separate cell populations than the first 2 PCs of PCA ([Becht et al. 2018](https://doi.org/10.1038/nbt.4314)), so the TI will be done on UMAP rather than tSNE or PCA. The current CRAN version of Seurat uses the R package `uwot` rather than the Python version for UMAP.
 
 ```{r umap}
 seu <- RunUMAP(seu, dims = 1:50, seed.use = 4867)
@@ -163,6 +163,7 @@ saveRDS(seu, "./output/neuron10k/seu_ng.rds")
 While the `slingshot` vignette uses `SingleCellExperiment`, `slingshot` can also take a matrix of cell embeddings in reduced dimension as input. We can optionally specify the cluster to start or end the trajectory based on biological knowledge. Here, since quiescent neural stem cells are in cluster 4, the starting cluster would be 4 near the top left of the previous plot.
 
 Here, UMAP projections are used for trajectory inference, as in Monocle 3, for the purpose of visualization. However, **I no longer consider this a good idea**, due to distortions introduced by UMAP. See [this paper](https://www.biorxiv.org/content/10.1101/689851v3) for the extent non-linear dimension reduction methods distort the data. The latent dimension of the data is most likely far more than 2 or 3 dimensions, so forcing it down to 2 or 3 dimensions are bound to introduce distortions, just like how projecting the spherical surface of the Earth to 2 dimensions in maps introduces distortions. Furthermore, after the projection, some trajectories are no longer topologically feasible. For instance, imagine a stream coming out of the hole of a doughnut in 3D. This is not possible in 2D, so when that structure is projected to 2D, part of the stream may become buried in the middle of the doughnut, or the doughnut may be broken to allow the stream through, or part of the steam will be intermixed with part of the doughnut though they shouldn't. I recommend using a larger number of principal components instead, but in that case, the lineages and principal curves can't be visualized (we can plot the curves within a 2 dimensional subspace, such as the first 2 PCs, but that usually looks like abstract art and isn't informative about the lineages).
+
 ```{r, include=FALSE}
 do_sling <- !file.exists("./output/neuron10k/slingshot.rds")
 if (!do_sling) {
@@ -246,7 +247,7 @@ saveRDS(sds, "./output/neuron10k/slingshot.rds")
 ```
 
 ## Differential expression
-Let's look at which genes are differentially expressed along one of those lineages (linage 2). In `dynverse`, feature (gene) importance is calculated by using gene expression to predict pseudotime value with random forest and finding genes that contribute the most to the accuracy of the response. Since it's really not straightforward to convert existing pseudotime results to `dynverse` format, it would be easier to build a random forest model. Variable importance will be calculated for the top 300 highly variable genes here, with [`tidymodels`](https://github.com/tidymodels).
+Let's look at which genes are differentially expressed along one of those lineages (linage 2). In `dynverse`, feature (gene) importance is calculated by using gene expression to predict pseudotime value with random forest and finding genes that contribute the most to the accuracy of the response. Since it's really not straightforward to convert existing pseudotime results to `dynverse` format, it would be easier to build a random forest model. Variable importance will be calculated for the top 300 highly variable genes here, with [`tidymodels`](https://github.com/tidymodels). This is to make the code run faster. There are other methods of trajectory DE as well, which may be more appropriate but more time consuming to run, such as [`tradeSeq`](https://bioconductor.org/packages/release/bioc/html/tradeSeq.html) and [`SpatialDE`](https://github.com/Teichlab/SpatialDE) (when run with one dimension).
 
 ```{r}
 # Get top highly variable genes
