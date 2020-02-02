@@ -12,16 +12,14 @@ knitr::opts_chunk$set(comment = "#>")
 In this vignette, we will process fastq files of the [10x 10k neurons from an E18 mouse](https://support.10xgenomics.com/single-cell-gene-expression/datasets/3.0.0/neuron_10k_v3) with the [kallisto &#124; bustools workflow](https://www.kallistobus.tools/), and perform pseudotime analysis with Monocle 2 on the neuronal cell types. Monocle 2 is deprecated, but it can be easily installed from Bioconductor and still has a user base. At present, Monocle 3 is at beta stage of development, and it can be hard to install on Linux servers due to gdal dependency.
 
 # Setup
-If you would like to rerun this notebook, you can git clone [this repository](https://github.com/BUStools/BUS_notebooks_R) or directly download [this notebook from GitHub](https://github.com/BUStools/BUS_notebooks_R/blob/master/analysis/monocle2.Rmd). 
+If you would like to rerun this notebook, you can git clone [this repository](https://github.com/BUStools/BUS_notebooks_R) or directly download [this notebook from GitHub](https://github.com/BUStools/BUS_notebooks_R/blob/master/analysis/monocle2.Rmd). The [Google colab version of this notebook](https://colab.research.google.com/drive/1tsvybkDa35O2Q_cZL1AyBY6PU7QHbfdW) uses the 10x 1k neurons dataset and the `kb` wrapper of `kallisto` and `bustools` to make that notebook more interactive (the slowest step is installing packages). This static version shows the individual `kallisto` and `bustools` commands, which may be helpful for modularization of the workflow.
 
 ## Install packages
 This notebook demonstrates the use of command line tools `kallisto` and `bustools`. Please use `kallisto` >= 0.46, whose binary can be downloaded [here](https://pachterlab.github.io/kallisto/download). The binary of `bustools` can be found [here](https://github.com/BUStools/bustools/releases). 
 
 After you download the binary, you should decompress the file (if it is `tar.gz`) with `tar -xzvf file.tar.gz` in the `bash` terminal, and add the directory containing the binary to `PATH` by `export PATH=$PATH:/foo/bar`, where `/foo/bar` is the directory of interest. Then you can directly invoke the binary on the command line as we will do in this notebook.
 
-We will be using the R packages below. `BUSpaRse` is now on Bioconductor 3.10. For Mac users, see the [installation note for `BUSpaRse`](https://github.com/BUStools/BUSpaRse). `BUSpaRse` will be used to generate the transcript to gene file for `bustools` and to read output of `bustools` into R. We will also use `Seurat` version 3 which is now on CRAN.
-
-We will use `SingleR`, which is also on Bioconductor 3.10 to annotate cell types.
+We will be using the R packages below. `BUSpaRse` is now on Bioconductor 3.10. For Mac users, see the [installation note for `BUSpaRse`](https://github.com/BUStools/BUSpaRse). `BUSpaRse` will be used to generate the transcript to gene file for `bustools` and to read output of `bustools` into R. We will use `SingleR`, which is also on Bioconductor 3.10 to annotate cell types. We'll use Bioconductor package `scater`, which is based on `SingleCellExperiment`, for QC.
 
 This vignette uses the version of `DropletUtils` from Bioconductor version 3.10; the version from Bioconductor 3.8 has a different user interface. If you are using a version of R older than 3.6.0 and want to rerun this vignette, then you can adapt the knee plot code to the older version of `DropletUtils` or install [`DropletUtils` from GitHub](https://github.com/MarioniLab/DropletUtils). The package `monocle` should also be installed from Bioconductor:
 
@@ -29,12 +27,13 @@ This vignette uses the version of `DropletUtils` from Bioconductor version 3.10;
 if (!require(BiocManager)) {
   install.packages("BiocManager")
 }
-BiocManager::install(c("DropletUtils", "monocle", "SingleR", "BUSpaRse"))
+BiocManager::install(c("DropletUtils", "monocle", "SingleR", "BUSpaRse", "scater", "scran"))
 ```
 
 The other R packages below are on CRAN.
 
 ```{r, message=FALSE}
+library(scater)
 library(BUSpaRse)
 library(DropletUtils)
 library(monocle)
@@ -66,7 +65,7 @@ tar -xvf ./neuron_10k_v3_fastqs.tar
 # Generate the gene count matrix
 
 ## Build the `kallisto` index
-Here we use [kallisto](https://pachterlab.github.io/kallisto/about) to pseudoalign the reads to the transcriptome and then to create the `bus` file to be converted to a sparse matrix. The first step is to build an index of the mouse transcriptome. The transcriptome downloaded here is Ensembl version 97, the most recent version as of writing.
+Here we use [kallisto](https://pachterlab.github.io/kallisto/about) to pseudoalign the reads to the transcriptome and then to create the `bus` file to be converted to a sparse matrix. The first step is to build an index of the mouse transcriptome. The transcriptome downloaded here is Ensembl version 97.
 ```{r dl_tx}
 # Mouse transcriptome
 if (!file.exists("./data/mm_cdna97.fa.gz")) {
@@ -103,29 +102,6 @@ head(tr2g)
 save_tr2g_bustools(tr2g, file_save = "./output/tr2g_mm97.tsv")
 ```
 
-## Using the `kb` wrapper
-With `kallisto` and `bustools`, it takes several commands to go from fastq files to the spliced and unspliced matrices, which is quite cumbersome. So a wrapper called `kb` was written to condense those steps to one. The command line tool `kb` can be installed with
-
-```{bash, eval = FALSE}
-pip install kb-python
-```
-
-Then we can use the following command to generate the spliced and unspliced matrices:
-
-```{bash, eval = FALSE}
-cd ./output/neuron10k
-kb count -i ../mm_tr_index97.idx -g ../tr2g_mm97.tsv -x 10xv3 -o kb \
-../../data/neuron_10k_v3_fastqs/neuron_10k_v3_S1_L002_R1_001.fastq.gz \
-../../data/neuron_10k_v3_fastqs/neuron_10k_v3_S1_L002_R2_001.fastq.gz \
-../../data/neuron_10k_v3_fastqs/neuron_10k_v3_S1_L001_R1_001.fastq.gz \
-../../data/neuron_10k_v3_fastqs/neuron_10k_v3_S1_L001_R2_001.fastq.gz
-```
-
-The `mtx` files are in the `counts_unfiltered` directory.
-
-Read the next section for instructions of going from fastq files to the matrices directly with `kallisto` and `bustools`. This is helpful to modularize the workflow, such as when you want to generate a regular gene count matrix and a TCC matrix for the same data, without having to make the `bus` file over and over again. The matrices for this analysis were generated in the section below.
-
-## Directly using `kallisto` and `bustools`
 With the index and the fastq files, the `kallisto bus` command generates a binary `bus` file called `output.bus`, which will be sorted and processed to generate a gene count matrix.
 ```{bash kallisto, eval=do_bus}
 cd ./data/neuron_10k_v3_fastqs
@@ -190,32 +166,19 @@ bc_rank <- barcodeRanks(res_mat, lower = 1000)
 #' different datasets with a different color. Facets can be added after calling
 #' this function with `facet_*` functions.
 #' 
-#' @param bc_ranks A named list of output from `DropletUtil::barcodeRanks`.
+#' @param bc_rank A `DataFrame` output from `DropletUtil::barcodeRanks`.
 #' @return A ggplot2 object.
-#' @importFrom tibble tibble
-#' @importFrom purrr map map_dbl
-#' @importFrom dplyr distinct
-#' @importFrom ggplot2 geom_line geom_hline geom_vline scale_x_log10 scale_y_log10
-#' @importFrom tidyr unnest
-#' @export
-knee_plot <- function(bc_ranks) {
-  knee_plt <- tibble(rank = map(bc_ranks, ~ .x[["rank"]]),
-                     total = map(bc_ranks, ~ .x[["total"]]),
-                     dataset = names(bc_ranks)) %>% 
-    unnest(cols = c(rank, total)) %>% 
+knee_plot <- function(bc_rank) {
+  knee_plt <- tibble(rank = bc_rank[["rank"]],
+                     total = bc_rank[["total"]]) %>% 
     distinct() %>% 
     dplyr::filter(total > 0)
-  annot <- tibble(inflection = map_dbl(bc_ranks, ~ metadata(.x)[["inflection"]]),
-                  rank_cutoff = map_dbl(bc_ranks, 
-                                        ~ max(.x$rank[.x$total >
-                                                        metadata(.x)[["inflection"]]])),
-                  dataset = names(bc_ranks))
-  p <- ggplot(knee_plt, aes(rank, total, color = dataset)) +
+  annot <- tibble(inflection = metadata(bc_rank)[["inflection"]],
+                  rank_cutoff = max(bc_rank$rank[bc_rank$total > metadata(bc_rank)[["inflection"]]]))
+  p <- ggplot(knee_plt, aes(rank, total)) +
     geom_line() +
-    geom_hline(aes(yintercept = inflection, color = dataset), 
-               data = annot, linetype = 2) +
-    geom_vline(aes(xintercept = rank_cutoff, color = dataset),
-               data = annot, linetype = 2) +
+    geom_hline(aes(yintercept = inflection), data = annot, linetype = 2) +
+    geom_vline(aes(xintercept = rank_cutoff), data = annot, linetype = 2) +
     scale_x_log10() +
     scale_y_log10() +
     labs(x = "Rank", y = "Total UMIs")
@@ -225,8 +188,7 @@ knee_plot <- function(bc_ranks) {
 
 Here the knee plot is transposed, because this is more generalizable to multi-modal data, such that those with not only RNA-seq but also abundance of cell surface markers. In that case, we can plot number of UMIs on the x axis, number of cell surface protein tags on the y axis, and barcode rank based on both UMI and protein tag counts on the z axis; it makes more sense to make barcode rank the dependent variable. See [this blog post by Lior Pachter](https://liorpachter.wordpress.com/2019/06/24/rotating-the-knee-plot-and-related-yoga/) for a more detailed explanation.
 ```{r knee}
-knee_plot(list(neuron_10k = bc_rank)) +
-  coord_flip()
+knee_plot(bc_rank) + coord_flip()
 ```
 
 ```{r filter}
@@ -237,14 +199,16 @@ dim(res_mat)
 
 Now the number of cells is closer to expectation.
 
+```{r}
+rownames(res_mat) <- str_remove(rownames(res_mat), "\\.\\d+")
+```
+
 ## Cell type inference
 Monocle 2 only infers one trajectory for the entire dataset, so non-neuronal cells like endothelial cells and erythrocytes may be mistaken as highly differentiated cells from the neuronal lineage. So we will remove cell types not of the neural or glial lineages. Cell types are also helpful to orient the trajectory; neuronal progenitor cells must come before neurons. Here cell type inference is done programatically with [`SingleR`](https://github.com/dviraran/SingleR), which compares gene expression profiles of individual cells to bulk RNA-seq data of purified known cell types.
 ```{r ref}
-data("mouse.rnaseq")
-# Convert from gene symbols to Ensembl gene ID
-ref_use <- mouse.rnaseq$data
-rownames(ref_use) <- tr2g$gene[match(rownames(ref_use), tr2g$gene_name)]
-ref_use <- ref_use[!is.na(rownames(ref_use)),]
+mouse.rnaseq <- MouseRNAseqData(ensembl = TRUE)
+sce <- SingleCellExperiment(assays = list(counts = res_mat))
+sce <- logNormCounts(sce)
 ```
 
 Then `SingleR` will assign each cell a label based on Spearman correlation with known cell types from bulk RNA-seq. These are meanings of the acronyms:
@@ -256,63 +220,69 @@ Then `SingleR` will assign each cell a label based on Spearman correlation with 
 
 ```{r include=FALSE}
 do_annot <- !file.exists("./output/neuron10k/cell_type.rds")
-if (!do_annot) {
-  annots <- SingleR("single", res_mat, ref_data = ref_use, types = mouse.rnaseq$types)
-}
+if (do_annot) {
+  annots <- SingleR(sce, ref = mouse.rnaseq, labels = colData(mouse.rnaseq)$label.fine,
+de.method = "wilcox", method = "single", BPPARAM = MulticoreParam(10))
+} else annots <- readRDS("./output/neuron10k/cell_type.rds")
 ```
 
 ```{r singlr, results='hide', eval=do_annot}
-annots <- SingleR("single", res_mat, ref_data = ref_use, types = mouse.rnaseq$types)
+annots <- SingleR(sce, ref = mouse.rnaseq, labels = colData(mouse.rnaseq)$label.fine,
+de.method = "wilcox", method = "single", BPPARAM = MulticoreParam(10))
 ```
 
 ```{r}
-inds <- annots$labels %in% c("NPCs", "Neurons", "OPCs", "Oligodendrocytes", 
-                           "qNSCs", "aNSCs", "Astrocytes", "Ependymal")
+inds <- annots$pruned.labels %in% c("NPCs", "Neurons", "OPCs", "Oligodendrocytes", 
+                                    "qNSCs", "aNSCs", "Astrocytes", "Ependymal")
 # Only keep these cell types
-cells_use <- annots$cell.names[inds]
-mat_neu <- res_mat[,cells_use]
+cells_use <- row.names(annots)[inds]
+sce <- sce[, cells_use]
+sce$cell_type <- annots$pruned.labels[inds]
 ```
 
 ```{r, include=FALSE, eval=do_annot}
-saveRDS(mat_neu, "./output/neuron10k/mat_neu.rds")
+saveRDS(sce, "./output/neuron10k/sce.rds")
 saveRDS(annots, "./output/neuron10k/cell_type.rds")
 saveRDS(res_mat, "./output/neuron10k/mat_filtered.rds")
 ```
 
 ## QC
 ```{r}
-df <- data.frame(nGene = Matrix::colSums(mat_neu > 0),
-                 nUMIs = Matrix::colSums(mat_neu))
+df <- perCellQCMetrics(sce)
+colData(sce) <- cbind(colData(sce), df)
 ```
 
-```{r vln}
-df %>% 
-  gather(key = "variable") %>% 
-  ggplot(aes(variable, value)) +
-  geom_violin() +
-  geom_jitter(size = 0.1, alpha = 0.1, width = 0.3) +
-  scale_y_log10()
+Total counts per cell, grouped by cell type
+```{r}
+plotColData(sce, x = "cell_type", y = "sum") +
+  labs(y = "Total UMI count", x = "Cell type")
 ```
 
-```{r gene_umi}
-ggplot(df, aes(nUMIs, nGene)) +
-  geom_point(size = 0.5, alpha = 0.3) +
+```{r}
+plotColData(sce, x = "cell_type", y = "detected") +
+  labs(y = "Number of genes detected", x = "Cell type")
+```
+
+```{r}
+plotColData(sce, x = "sum", y = "detected", colour_by = "cell_type") +
   scale_x_log10() +
-  scale_y_log10()
+  scale_y_log10() +
+  annotation_logticks() +
+  labs(x = "Total UMI count", y = "Number of genes detected")
 ```
 
 # Monocle 2
 ```{r cds}
 # Construct CellDataSet object
 pd <- data.frame(cell_id = cells_use, 
-                 cell_type = annots$labels[inds],
+                 cell_type = annots$pruned.labels[inds],
                  row.names = cells_use)
 pd <- new("AnnotatedDataFrame", data = pd)
-fd <- data.frame(gene_id = rownames(mat_neu), 
-                 gene_short_name = tr2g$gene_name[match(rownames(mat_neu), tr2g$gene)],
-                 row.names = row.names(mat_neu))
+fd <- data.frame(gene_id = rownames(sce), 
+                 gene_short_name = tr2g$gene_name[match(rownames(sce), tr2g$gene)],
+                 row.names = row.names(sce))
 fd <- new("AnnotatedDataFrame", data = fd)
-cds <- newCellDataSet(mat_neu, phenoData = pd, featureData = fd)
+cds <- newCellDataSet(counts(sce), phenoData = pd, featureData = fd)
 ```
 
 Size factor and dispersion will be used to normalize data and select genes for clustering.
