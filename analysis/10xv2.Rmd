@@ -17,30 +17,21 @@ knitr::opts_chunk$set(autodep = TRUE)
 In this vignette, we process fastq data from scRNA-seq (10x v2 chemistry) with to make a sparse matrix that can be used in downstream analysis with command line tools `kallisto` and `bustools`, as described in the [`kallisto bus` paper](https://www.biorxiv.org/content/10.1101/673285v1). Then we will start a standard downstream analysis with `Seurat`. 
 
 # Setup
-If you would like to rerun this notebook, you can git clone [this repository](https://github.com/BUStools/BUS_notebooks_R) or directly download [this notebook from GitHub](https://github.com/BUStools/BUS_notebooks_R/blob/master/analysis/10xv2.Rmd). 
+If you would like to rerun this notebook, you can git clone [this repository](https://github.com/BUStools/BUS_notebooks_R) or use [the Google Colab version](https://colab.research.google.com/github/pachterlab/kallistobustools/blob/master/notebooks/kb_mixed_species_10x_v2.ipynb). 
 
 ## Install packages
 This notebook demonstrates the use of command line tools `kallisto` and `bustools`. Please use `kallisto` >= 0.46, whose binary can be downloaded [here](https://pachterlab.github.io/kallisto/download). The binary of `bustools` can be found [here](https://github.com/BUStools/bustools/releases). 
 
 After you download the binary, you should decompress the file (if it is `tar.gz`) with `tar -xzvf file.tar.gz` in the `bash` terminal, and add the directory containing the binary to `PATH` by `export PATH=$PATH:/foo/bar`, where `/foo/bar` is the directory of interest. Then you can directly invoke the binary on the command line as we will do in this notebook.
 
-We will be using the R packages below. `BUSpaRse` is not yet on CRAN or Bioconductor. For Mac users, see the [installation note for `BUSpaRse`](https://github.com/BUStools/BUSpaRse). `BUSpaRse` will be used to generate the transcript to gene file for `bustools` and to read output of `bustools` into R. We will also use `Seurat` version 3 which is now on CRAN.
-
-```{r, eval=FALSE}
-# Install devtools if it's not already installed
-if (!require(devtools)) {
-  install.packages("devtools")
-}
-# Install from GitHub
-devtools::install_github("BUStools/BUSpaRse")
-```
+We will be using the R packages below. `BUSpaRse` is on Bioconductor >= 3.10. For Mac users, see the [installation note for `BUSpaRse`](https://github.com/BUStools/BUSpaRse). `BUSpaRse` will be used to generate the transcript to gene file for `bustools` and to read output of `bustools` into R. We will also use `Seurat` version 3 which is now on CRAN.
 
 The package `DropletUtils` will be used to estimate the number of real cells as opposed to empty droplets. It's on Bioconductor, and here is how it should be installed:
 ```{r, eval=FALSE}
 if (!require(BiocManager)) {
   install.packages("BiocManager")
 }
-BiocManager::install("DropletUtils")
+BiocManager::install(c("DropletUtils", "BUSpaRse"))
 ```
 
 The other R packages below are on CRAN, and can be installed with `install.packages`.
@@ -74,11 +65,11 @@ Here we use [kallisto](https://pachterlab.github.io/kallisto/about) to pseudoali
 ```{r dl_tx}
 # Human transcriptome
 if (!file.exists("./data/hs_cdna.fa.gz")) {
-  download.file("ftp://ftp.ensembl.org/pub/release-94/fasta/homo_sapiens/cdna/Homo_sapiens.GRCh38.cdna.all.fa.gz", "./data/hs_cdna.fa.gz", method = "wget", quiet = TRUE)
+  download.file("ftp://ftp.ensembl.org/pub/release-99/fasta/homo_sapiens/cdna/Homo_sapiens.GRCh38.cdna.all.fa.gz", "./data/hs_cdna.fa.gz", method = "wget", quiet = TRUE)
 }
 # Mouse transcriptome
 if (!file.exists("./data/mm_cdna.fa.gz")) {
-  download.file("ftp://ftp.ensembl.org/pub/release-94/fasta/mus_musculus/cdna/Mus_musculus.GRCm38.cdna.all.fa.gz", "./data/mm_cdna.fa.gz", method = "wget", quiet = TRUE)
+  download.file("ftp://ftp.ensembl.org/pub/release-99/fasta/mus_musculus/cdna/Mus_musculus.GRCm38.cdna.all.fa.gz", "./data/mm_cdna.fa.gz", method = "wget", quiet = TRUE)
 }
 ```
 
@@ -153,7 +144,7 @@ save_tr2g_bustools(tr2g, "./output/tr2g_hgmm.tsv")
 A whitelist that contains all the barcodes known to be present in the kit is provided by 10x and comes with CellRanger. A CellRanger installation is required, though we will not run CellRanger here.
 ```{bash}
 # Copy v2 chemistry whitelist to working directory
-cp ~/cellranger-3.0.2/cellranger-cs/3.0.2/lib/python/cellranger/barcodes/737K-august-2016.txt \
+cp ~/cellranger-3.1.0/cellranger-cs/3.1.0/lib/python/cellranger/barcodes/737K-august-2016.txt \
 ./data/whitelist_v2.txt
 ```
 
