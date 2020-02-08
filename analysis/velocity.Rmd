@@ -253,7 +253,8 @@ Here the knee plot is transposed, because this is more generalizable to multi-mo
 #' @importFrom tidyr unnest
 #' @export
 knee_plot <- function(bc_ranks) {
-  knee_plt <- tibble(rank = map(bc_ranks, ~ .x[["rank"]]),
+  # purrr pluck shorthand doesn't work on S4Vector DataFrame
+  knee_plt <- tibble(rank = map(bc_ranks, ~ .x[["rank"]]), 
                      total = map(bc_ranks, ~ .x[["total"]]),
                      dataset = names(bc_ranks)) %>% 
     unnest(cols = c(rank, total)) %>% 
@@ -363,45 +364,50 @@ uf <- unspliced[genes_use, bcs_use]
 dim(sf)
 ```
 
-## Cell type annotation
-`SingleR` uses bulk RNA-seq data of isolated known cell types as a reference to annotate cell types in scRNA-seq datasets. The reference uses gene symbols or names rather than Ensembl IDs.
 ```{r}
-# Get gene names
-gns <- tr2g_EnsDb(edb)[,c("gene", "gene_name")] %>% 
-  distinct()
+rownames(sf) <- str_remove(rownames(sf), "\\.\\d+")
+rownames(uf) <- str_remove(rownames(uf), "\\.\\d+")
 ```
 
+## Cell type annotation
+`SingleR` uses bulk RNA-seq data of isolated known cell types as a reference to annotate cell types in scRNA-seq datasets. The reference uses Ensembl IDs without version number.
+
+```{r, results="hide"}
+seu <- CreateSeuratObject(sf, assay = "sf") %>% 
+  SCTransform(assay = "sf", new.assay.name = "spliced")
+```
+
+This is the reference that contains mouse brain cell types.
 ```{r}
-data("mouse.rnaseq")
-# Convert from gene symbols to Ensembl gene ID
-ref_use <- mouse.rnaseq$data
-rownames(ref_use) <- gns$gene[match(rownames(ref_use), gns$gene_name)]
-ref_use <- ref_use[!is.na(rownames(ref_use)),]
+mouse.rnaseq <- MouseRNAseqData(ensembl = TRUE)
 ```
 
 ```{r, include=FALSE}
 do_annot <- !file.exists("./output/neuron10k_velocity/cell_type.rds")
 if (!do_annot) {
-  annot <- readRDS("./output/neuron10k_velocity/cell_type.rds")
+  annots <- readRDS("./output/neuron10k_velocity/cell_type.rds")
 }
 ```
 
 ```{r, eval=do_annot}
-annot <- SingleR("single", sf, ref_data = ref_use, types = mouse.rnaseq$types)
+annots <- SingleR(GetAssayData(seu, assay = "spliced", slot = "data"), 
+                  ref = mouse.rnaseq, labels = colData(mouse.rnaseq)$label.fine,
+                  de.method = "wilcox", method = "single", BPPARAM = MulticoreParam(4))
 ```
 
 ```{r, include = FALSE, eval=do_annot}
-saveRDS(annot, "./output/neuron10k_velocity/cell_type.rds")
+saveRDS(annots, "./output/neuron10k_velocity/cell_type.rds")
 ```
 
 In order not to have cells not of the neural or glial lineages overshadow velocity visualization, only cells of the neural and glial lineages are kept. 
 
 ```{r}
-ind <- annot$labels %in% c("NPCs", "Neurons", "OPCs", "Oligodendrocytes", 
-                           "qNSCs", "aNSCs", "Astrocytes", "Ependymal")
-cells_use <- annot$cell.names[ind]
-sf <- sf[, cells_use]
-uf <- uf[, cells_use]
+inds <- annots$pruned.labels %in% c("NPCs", "Neurons", "OPCs", "Oligodendrocytes", 
+                                    "qNSCs", "aNSCs", "Astrocytes", "Ependymal")
+# Only keep these cell types
+cells_use <- row.names(annots)[inds]
+seu <- seu[, cells_use]
+seu$cell_type <- annots$pruned.labels[inds]
 ```
 
 Meaning of the acronyms:
@@ -411,22 +417,16 @@ Meaning of the acronyms:
 * qNSCs: Quiescent neural stem cells
 * aNSCs: Active neural stem cells
 
-```{r, include=FALSE}
-do_seu <- !file.exists("./output/neuron10k_velocity/seu_ng.rds")
-if (!do_seu) 
-  seu <- readRDS("./output/neuron10k_velocity/seu_ng.rds")
+```{r}
+# Also only keep relevant cell types in the unspliced matrix
+uf <- uf[, cells_use]
 ```
 
 ## QC
 Both the spliced and unspliced matrices are normalized and scaled with [`SCTransform`](https://www.biorxiv.org/content/10.1101/576827v2), which is an alternative to `NormalizeData`, `ScaleData`, and `FindVariableFeatures`.
-```{r, results="hide", eval = do_seu}
-seu <- CreateSeuratObject(sf, assay = "sf") %>% 
-  SCTransform(assay = "sf", new.assay.name = "spliced")
+```{r, results="hide"}
 seu[["uf"]] <- CreateAssayObject(uf)
 seu <- SCTransform(seu, assay = "uf", new.assay.name = "unspliced")
-# Add cell type metadata
-seu <- AddMetaData(seu, setNames(annot$labels[ind], cells_use), 
-                   col.name = "cell_type")
 ```
 
 ```{r, fig.height=12, fig.width=6}
@@ -435,6 +435,7 @@ VlnPlot(seu, cols_use, pt.size = 0.1, ncol = 1, group.by = "cell_type")
 ```
 
 There's only 1 cell labeled ependymal by `SingleR`. How does number of UMI counts relate to number of genes detected? How does number of UMI counts in the spliced matrix relate to the number of gene detected in the unspliced matrix?
+
 ```{r}
 # Helper functions for ggpairs
 log10_diagonal <- function(data, mapping, ...) {
@@ -479,7 +480,7 @@ DimPlot(seu, reduction = "tsne",
 
 This looks quite similar to the tSNE from gene count matrix of this same dataset, except rotated; see the [`slingshot` notebook](https://bustools.github.io/BUS_notebooks_R/slingshot.html#dimension_reduction)
 
-In the current CRAN version of Seurat, `RunUMAP` can use the R package `uwot` as the backend, thus obliterating calling Python UMAP through `reticulate`. On servers, `reticulate` does not work due to [this issue](https://github.com/rstudio/reticulate/issues/428).
+In the current CRAN version of Seurat, `RunUMAP` can use the R package `uwot` as the backend, thus obliterating the need to call Python UMAP through `reticulate`. On servers, `reticulate` does not work due to [this issue](https://github.com/rstudio/reticulate/issues/428).
 
 ```{r}
 seu <- RunUMAP(seu, dims = 1:50, umap.method = "uwot")
@@ -491,7 +492,7 @@ DimPlot(seu, reduction = "umap",
   scale_color_brewer(type = "qual", palette = "Set2")
 ```
 
-As expected, qNSCs are on the one end , and neurons are on the other. Clustering should partition the big blob of NPCs that `SingleR` could not further partition due to limitations in the `SingleR` reference for mouse brains.
+As expected, one end has mostly stem cells, and the other end has mostly neurons. Clustering should partition the big blob of NPCs that `SingleR` could not further partition due to limitations in the `SingleR` reference for mouse brains.
 
 ```{r umap_clust}
 seu <- FindNeighbors(seu, verbose = FALSE) %>% 
@@ -500,12 +501,8 @@ DimPlot(seu, pt.size = 0.5, reduction = "umap", label = TRUE)
 ```
 
 # RNA velocity
-```{r, eval=do_seu}
+```{r}
 seu <- RunVelocity(seu, ncores = 10, reduction = "pca", verbose = FALSE)
-```
-
-```{r, include=FALSE, eval=do_seu}
-saveRDS(seu, "./output/neuron10k_velocity/seu_ng.rds")
 ```
 
 Unfortunately, `velocyto.R` does not natively support `ggplot2`. This is a function that assigns colors to each cell in base R graphics.
@@ -538,7 +535,7 @@ label_clusters <- function(labels, coords, ...) {
 ```{r}
 cell_colors <- cell_pal(seu$cell_type, brewer_pal("qual", "Set2"))
 cell_colors_clust <- cell_pal(seu$seurat_clusters, hue_pal())
-names(cell_colors) <- names(cell_colors_clust) <- colnames(sf)
+names(cell_colors) <- names(cell_colors_clust) <- Cells(seu)
 ```
 
 ```{r, include=FALSE}
@@ -548,7 +545,7 @@ if (!do_cc) {
 }
 ```
 
-Would a clean trajectory from qNSCs to NPCs to neurons be traced? The arrows are projected onto non-linear dimension reductions by correlation between the predicted cell state and gene expression of other cells in the dataset. 
+Would a clean trajectory from qNSCs to NPCs to neurons be traced? The arrows are projected onto non-linear dimension reductions by correlation between the predicted cell state and gene expression of other cells in the dataset. The downside of this approach is that cells at end points of the trajectories point backwards, which is really confusing.
 ```{r v1a, eval=do_cc}
 cc_umap <- show.velocity.on.embedding.cor(emb = Embeddings(seu, "umap"),
                                           vel = Tool(seu, slot = "RunVelocity"),
@@ -569,7 +566,9 @@ show.velocity.on.embedding.cor(emb = Embeddings(seu, "umap"),
                                arrow.scale = 2, arrow.lwd = 0.6,
                                cc = cc_umap$cc,
                                xlab = "UMAP1", ylab = "UMAP2")
-label_clusters(seu$cell_type, Embeddings(seu, "umap"), font = 2, col = "brown")
+legend("topleft", legend = unique(seu$cell_type),
+       col = unique(cell_colors), pch = 16, box.lwd = 0)
+label_clusters(seu$cell_type, Embeddings(seu, "umap"), font = 2)
 ```
 
 This presents a much more complicated picture. The cells labeled qNSCs and astrocytes are at the very top, going into two paths, one going down and to the right to the neurons, and the other going left towards the OPCs. There also seems to be a cycle to the left of what's labeled qNSCs and astrocytes at the top. To the lower right of the cluster containing what's labeled OPCs (cluster 7), there're two branches, but those also look like a cycle. In the [`slingshot` notebook](https://bustools.github.io/BUS_notebooks_R/slingshot.html#trajectory_inference), I did get a lineage that departs on one of the branches near OPCs and returns on the other (curve 13); the RNA velocity velocity results here seems to support the existence of that lineage. The more mature neurons also seem to be changing a lot; they seem to branch into 3 different populations. More detailed manual cell type annotation would be helpful.
@@ -584,6 +583,8 @@ show.velocity.on.embedding.cor(emb = Embeddings(seu, "umap"),
                                arrow.scale = 2, arrow.lwd = 0.6, 
                                cc = cc_umap$cc,
                                xlab = "UMAP1", ylab = "UMAP2")
+legend("topleft", legend = unique(seu$cell_type),
+       col = unique(cell_colors), pch = 16, box.lwd = 0)
 label_clusters(seu$seurat_clusters, Embeddings(seu, "umap"), font = 2, cex = 1.2)
 ```
 
@@ -594,6 +595,12 @@ saveRDS(cc_umap, "./output/neuron10k_velocity/cc_umap.rds")
 ```
 
 ## Phase portraits
+```{r}
+# Get gene names
+gns <- tr2g_EnsDb(edb, use_gene_version = FALSE)[,c("gene", "gene_name")] %>% 
+  distinct()
+```
+
 Let's look at phase portraits of some genes:
 
 ```{r phase1, fig.width=12, fig.height=4}
