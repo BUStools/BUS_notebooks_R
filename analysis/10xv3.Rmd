@@ -17,7 +17,7 @@ knitr::opts_chunk$set(autodep = TRUE)
 This vignette demonstrates how to manipulate `bus` format in R with `BUSpaRse`. The most recent version of `bustools` can generate gene count matrices from `bus` files more efficiently; the purpose of the separate implementation in `BUSpaRse` is for advanced users to experiment with new ways to collapse UMIs mapped to multiple genes and to adapt `bus` format to purposes other than single cell RNA-seq. This implementation is intended to facilitate exploration using R/Rcpp, which is easier to work with than C++.
 
 # Setup
-If you would like to rerun this notebook, you can git clone [this repository](https://github.com/BUStools/BUS_notebooks_R) or directly download [this notebook from GitHub](https://github.com/BUStools/BUS_notebooks_R/blob/master/analysis/10xv3.Rmd). 
+If you would like to rerun this notebook, you can git clone [this repository](https://github.com/BUStools/BUS_notebooks_R) or use [the Google Colab version of this notebook](https://github.com/pachterlab/kallistobustools/blob/master/notebooks/kb_10xv3.ipynb). 
 
 ## Install packages
 We will be using the R packages below. `BUSpaRse` is not yet on CRAN or Bioconductor. For Mac users, see the [installation note for `BUSpaRse`](https://github.com/BUStools/BUSpaRse). The data, which is already in `bus` format, can be downloaded from the package `TENxBUSData`. Both `TENxBUSData` and `BUSpaRse` have been submitted to Bioconductor for review; the data for `TENxBUSData` can only be downloaded from Bioconductor devel (version 3.10), which requires R 3.6.0.
@@ -92,7 +92,7 @@ Alternative ways of getting `tr2g` have been implemented in the `BUSpaRse` packa
 For 10x, we do have a file with all valid cell barcodes that comes with CellRanger. You need to install CellRanger to get this file, though you do not need to run CellRanger for this notebook. The whitelist is optional, so if you don't have one, you may skip the whitelist step and the `whitelist` argument in the `makr_sparse_matrix` function. 
 ```{bash}
 # Copy v3 chemistry whitelist to working directory
-cp ~/cellranger-3.0.2/cellranger-cs/3.0.2/lib/python/cellranger/barcodes/3M-february-2018.txt.gz \
+cp ~/cellranger-3.1.0/cellranger-cs/3.1.0/lib/python/cellranger/barcodes/3M-february-2018.txt.gz \
 ./data/whitelist_v3.txt.gz
 ```
 

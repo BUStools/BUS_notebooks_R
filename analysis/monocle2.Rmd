@@ -12,7 +12,7 @@ knitr::opts_chunk$set(comment = "#>")
 In this vignette, we will process fastq files of the [10x 10k neurons from an E18 mouse](https://support.10xgenomics.com/single-cell-gene-expression/datasets/3.0.0/neuron_10k_v3) with the [kallisto &#124; bustools workflow](https://www.kallistobus.tools/), and perform pseudotime analysis with Monocle 2 on the neuronal cell types. Monocle 2 is deprecated, but it can be easily installed from Bioconductor and still has a user base. At present, Monocle 3 is at beta stage of development, and it can be hard to install on Linux servers due to gdal dependency.
 
 # Setup
-If you would like to rerun this notebook, you can git clone [this repository](https://github.com/BUStools/BUS_notebooks_R) or directly download [this notebook from GitHub](https://github.com/BUStools/BUS_notebooks_R/blob/master/analysis/monocle2.Rmd). The [Google colab version of this notebook](https://colab.research.google.com/drive/1tsvybkDa35O2Q_cZL1AyBY6PU7QHbfdW) uses the 10x 1k neurons dataset and the `kb` wrapper of `kallisto` and `bustools` to make that notebook more interactive (the slowest step is installing packages). This static version shows the individual `kallisto` and `bustools` commands, which may be helpful for modularization of the workflow.
+If you would like to rerun this notebook, you can git clone [this repository](https://github.com/BUStools/BUS_notebooks_R) or use the [Google colab version of this notebook](https://github.com/pachterlab/kallistobustools/blob/master/notebooks/kb_monocle2.ipynb). The Google Colab version uses the 10x 1k neurons dataset and the `kb` wrapper of `kallisto` and `bustools` to make that notebook more interactive (the slowest step is installing packages). This static version shows the individual `kallisto` and `bustools` commands, which may be helpful for modularization of the workflow.
 
 ## Install packages
 This notebook demonstrates the use of command line tools `kallisto` and `bustools`. Please use `kallisto` >= 0.46, whose binary can be downloaded [here](https://pachterlab.github.io/kallisto/download). The binary of `bustools` can be found [here](https://github.com/BUStools/bustools/releases). 
@@ -220,10 +220,9 @@ Then `SingleR` will assign each cell a label based on Spearman correlation with 
 
 ```{r include=FALSE}
 do_annot <- !file.exists("./output/neuron10k/cell_type.rds")
-if (do_annot) {
-  annots <- SingleR(sce, ref = mouse.rnaseq, labels = colData(mouse.rnaseq)$label.fine,
-de.method = "wilcox", method = "single", BPPARAM = MulticoreParam(10))
-} else annots <- readRDS("./output/neuron10k/cell_type.rds")
+if (!do_annot) {
+  annots <- readRDS("./output/neuron10k/cell_type.rds")
+}
 ```
 
 ```{r singlr, results='hide', eval=do_annot}
