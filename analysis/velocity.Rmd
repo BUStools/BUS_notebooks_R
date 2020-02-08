@@ -372,7 +372,7 @@ rownames(uf) <- str_remove(rownames(uf), "\\.\\d+")
 ## Cell type annotation
 `SingleR` uses bulk RNA-seq data of isolated known cell types as a reference to annotate cell types in scRNA-seq datasets. The reference uses Ensembl IDs without version number.
 
-```{r, results="hide"}
+```{r, results="hide", warning=FALSE}
 seu <- CreateSeuratObject(sf, assay = "sf") %>% 
   SCTransform(assay = "sf", new.assay.name = "spliced")
 ```
@@ -424,7 +424,7 @@ uf <- uf[, cells_use]
 
 ## QC
 Both the spliced and unspliced matrices are normalized and scaled with [`SCTransform`](https://www.biorxiv.org/content/10.1101/576827v2), which is an alternative to `NormalizeData`, `ScaleData`, and `FindVariableFeatures`.
-```{r, results="hide"}
+```{r, results="hide", warning=FALSE}
 seu[["uf"]] <- CreateAssayObject(uf)
 seu <- SCTransform(seu, assay = "uf", new.assay.name = "unspliced")
 ```
