@@ -11,7 +11,7 @@
 
 <meta name="author" content="Lambda Moses" />
 
-<meta name="date" content="2020-02-01" />
+<meta name="date" content="2020-02-07" />
 
 <title>Pseudotime analysis with Monocle 2</title>
 
@@ -386,7 +386,7 @@ div.section {
 
 <h1 class="title toc-ignore">Pseudotime analysis with Monocle 2</h1>
 <h4 class="author">Lambda Moses</h4>
-<h4 class="date">2020-02-01</h4>
+<h4 class="date">2020-02-07</h4>
 
 </div>
 
@@ -411,7 +411,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-02-01
+<strong>Last updated:</strong> 2020-02-07
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -502,10 +502,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree46a046e5f0e249e3a832fc322e0c0a91abc23cd3targetblank46a046ea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/46a046e5f0e249e3a832fc322e0c0a91abc23cd3" target="_blank">46a046e</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtreef52668f01f0c658657724f8465b286f72619a094targetblankf52668fa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/BUStools/BUS_notebooks_R/tree/f52668f01f0c658657724f8465b286f72619a094" target="_blank">f52668f</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtree46a046e5f0e249e3a832fc322e0c0a91abc23cd3targetblank46a046ea" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomBUStoolsBUSnotebooksRtreef52668f01f0c658657724f8465b286f72619a094targetblankf52668fa" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -515,14 +515,17 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    BUSpaRse_notebooks.Rproj
-    Ignored:    analysis/figure/
+    Ignored:    MouseMineSynteny.blocks.gz
+    Ignored:    NCBI_Human_forSynteny.gff3.gz
     Ignored:    data/fastqs/
     Ignored:    data/hgmm_100_fastqs.tar
     Ignored:    data/hgmm_1k_fastqs.tar
     Ignored:    data/hgmm_1k_v3_fastqs.tar
     Ignored:    data/hgmm_1k_v3_fastqs/
     Ignored:    data/hs_cdna.fa.gz
+    Ignored:    data/hs_cdna96.fa.gz
     Ignored:    data/mm_cdna.fa.gz
+    Ignored:    data/mm_cdna96.fa.gz
     Ignored:    data/mm_cdna97.fa.gz
     Ignored:    data/neuron_10k_v3_fastqs.tar
     Ignored:    data/neuron_10k_v3_fastqs/
@@ -530,28 +533,45 @@ Ignored files:
     Ignored:    data/whitelist_v2.txt
     Ignored:    data/whitelist_v3.txt
     Ignored:    output/hs_mm_tr_index.idx
+    Ignored:    output/hs_mm_tr_index96.idx
     Ignored:    output/mm_cDNA_introns_97.idx
     Ignored:    output/mm_cDNA_introns_97_collapse.idx
     Ignored:    output/mm_tr_index.idx
     Ignored:    output/mm_tr_index97.idx
-    Ignored:    output/out_hgmm1k/
+    Ignored:    output/out_hgmm1k2/
     Ignored:    output/out_hgmm1k_v3/
+    Ignored:    output/out_pbmc1k/
     Ignored:    output/out_retina/
+    Ignored:    tmp/
 
 Untracked files:
+    Untracked:  .ipynb_checkpoints/
     Untracked:  SRR7244429_1.fastq
     Untracked:  SRR7244429_2.fastq
     Untracked:  analysis/dropseq_retina.Rmd
     Untracked:  analysis/ee_ie_junctions.Rmd
     Untracked:  analysis/junction.Rmd
     Untracked:  analysis/junction2.Rmd
+    Untracked:  human_mouse_transcript_to_gene.tsv
     Untracked:  output/ee_ie/
     Untracked:  output/neuron10k/
     Untracked:  output/neuron10k_collapse/
     Untracked:  output/neuron10k_junction/
     Untracked:  output/neuron10k_velocity/
+    Untracked:  output/out_hgmm1k/
+    Untracked:  output/tr2g_hgmm.tsv
     Untracked:  output/tr2g_mm97.tsv
+    Untracked:  problem5.ipynb
     Untracked:  test/
+
+Unstaged changes:
+    Deleted:    colab/.ipynb_checkpoints/10xv3-checkpoint.ipynb
+    Deleted:    colab/.ipynb_checkpoints/Monocle 2-checkpoint.ipynb
+    Deleted:    colab/.ipynb_checkpoints/Slingshot-checkpoint.ipynb
+    Deleted:    colab/10xv3.ipynb
+    Deleted:    colab/Mixed species (10x v2 chemistry).ipynb
+    Deleted:    colab/Monocle 2.ipynb
+    Deleted:    colab/Slingshot.ipynb
 
 </code></pre>
 <p>
@@ -590,6 +610,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/f52668f01f0c658657724f8465b286f72619a094/analysis/monocle2.Rmd" target="_blank">f52668f</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2020-02-07
+</td>
+<td>
+Link to Google Colab version
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/BUStools/BUS_notebooks_R/f6d94b42bb942fecf771c82962a880d81ee13f5a/docs/monocle2.html" target="_blank">f6d94b4</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2020-02-01
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -770,7 +824,7 @@ Added Monocle 2 notebook
 <p>In this vignette, we will process fastq files of the <a href="https://support.10xgenomics.com/single-cell-gene-expression/datasets/3.0.0/neuron_10k_v3">10x 10k neurons from an E18 mouse</a> with the <a href="https://www.kallistobus.tools/">kallisto | bustools workflow</a>, and perform pseudotime analysis with Monocle 2 on the neuronal cell types. Monocle 2 is deprecated, but it can be easily installed from Bioconductor and still has a user base. At present, Monocle 3 is at beta stage of development, and it can be hard to install on Linux servers due to gdal dependency.</p>
 <div id="setup" class="section level1">
 <h1>Setup</h1>
-<p>If you would like to rerun this notebook, you can git clone <a href="https://github.com/BUStools/BUS_notebooks_R">this repository</a> or directly download <a href="https://github.com/BUStools/BUS_notebooks_R/blob/master/analysis/monocle2.Rmd">this notebook from GitHub</a>. The <a href="https://colab.research.google.com/drive/1tsvybkDa35O2Q_cZL1AyBY6PU7QHbfdW">Google colab version of this notebook</a> uses the 10x 1k neurons dataset and the <code>kb</code> wrapper of <code>kallisto</code> and <code>bustools</code> to make that notebook more interactive (the slowest step is installing packages). This static version shows the individual <code>kallisto</code> and <code>bustools</code> commands, which may be helpful for modularization of the workflow.</p>
+<p>If you would like to rerun this notebook, you can git clone <a href="https://github.com/BUStools/BUS_notebooks_R">this repository</a> or use the <a href="https://github.com/pachterlab/kallistobustools/blob/master/notebooks/kb_monocle2.ipynb">Google colab version of this notebook</a>. The Google Colab version uses the 10x 1k neurons dataset and the <code>kb</code> wrapper of <code>kallisto</code> and <code>bustools</code> to make that notebook more interactive (the slowest step is installing packages). This static version shows the individual <code>kallisto</code> and <code>bustools</code> commands, which may be helpful for modularization of the workflow.</p>
 <div id="install-packages" class="section level2">
 <h2>Install packages</h2>
 <p>This notebook demonstrates the use of command line tools <code>kallisto</code> and <code>bustools</code>. Please use <code>kallisto</code> &gt;= 0.46, whose binary can be downloaded <a href="https://pachterlab.github.io/kallisto/download">here</a>. The binary of <code>bustools</code> can be found <a href="https://github.com/BUStools/bustools/releases">here</a>.</p>
@@ -920,6 +974,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/f6d94b42bb942fecf771c82962a880d81ee13f5a/docs/figure/monocle2.Rmd/knee-1.png" target="_blank">f6d94b4</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2020-02-01
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/d5c995e66f2128a323a54f4348d5b7e2582968dc/docs/figure/monocle2.Rmd/knee-1.png" target="_blank">d5c995e</a>
 </td>
 <td>
@@ -1001,15 +1066,126 @@ colData(sce) &lt;- cbind(colData(sce), df)</code></pre>
 <pre class="r"><code>plotColData(sce, x = &quot;cell_type&quot;, y = &quot;sum&quot;) +
   labs(y = &quot;Total UMI count&quot;, x = &quot;Cell type&quot;)</code></pre>
 <p><img src="figure/monocle2.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-20-1">
+Past versions of unnamed-chunk-20-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-20-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/f6d94b42bb942fecf771c82962a880d81ee13f5a/docs/figure/monocle2.Rmd/unnamed-chunk-20-1.png" target="_blank">f6d94b4</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2020-02-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plotColData(sce, x = &quot;cell_type&quot;, y = &quot;detected&quot;) +
   labs(y = &quot;Number of genes detected&quot;, x = &quot;Cell type&quot;)</code></pre>
 <p><img src="figure/monocle2.Rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-21-1">
+Past versions of unnamed-chunk-21-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-21-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/f6d94b42bb942fecf771c82962a880d81ee13f5a/docs/figure/monocle2.Rmd/unnamed-chunk-21-1.png" target="_blank">f6d94b4</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2020-02-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plotColData(sce, x = &quot;sum&quot;, y = &quot;detected&quot;, colour_by = &quot;cell_type&quot;) +
   scale_x_log10() +
   scale_y_log10() +
   annotation_logticks() +
   labs(x = &quot;Total UMI count&quot;, y = &quot;Number of genes detected&quot;)</code></pre>
 <p><img src="figure/monocle2.Rmd/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-22-1">
+Past versions of unnamed-chunk-22-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-22-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/f6d94b42bb942fecf771c82962a880d81ee13f5a/docs/figure/monocle2.Rmd/unnamed-chunk-22-1.png" target="_blank">f6d94b4</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2020-02-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="monocle-2" class="section level1">
@@ -1071,6 +1247,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/f6d94b42bb942fecf771c82962a880d81ee13f5a/docs/figure/monocle2.Rmd/tsne1-1.png" target="_blank">f6d94b4</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2020-02-01
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/a1bf0168648afe1af82cc0282db8392ee940f5a6/docs/figure/monocle2.Rmd/tsne1-1.png" target="_blank">a1bf016</a>
 </td>
 <td>
@@ -1124,6 +1311,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/f6d94b42bb942fecf771c82962a880d81ee13f5a/docs/figure/monocle2.Rmd/tsne2-1.png" target="_blank">f6d94b4</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2020-02-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/a1bf0168648afe1af82cc0282db8392ee940f5a6/docs/figure/monocle2.Rmd/tsne2-1.png" target="_blank">a1bf016</a>
@@ -1187,6 +1385,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/f6d94b42bb942fecf771c82962a880d81ee13f5a/docs/figure/monocle2.Rmd/traj1-1.png" target="_blank">f6d94b4</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2020-02-01
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/a1bf0168648afe1af82cc0282db8392ee940f5a6/docs/figure/monocle2.Rmd/traj1-1.png" target="_blank">a1bf016</a>
 </td>
 <td>
@@ -1237,6 +1446,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/f6d94b42bb942fecf771c82962a880d81ee13f5a/docs/figure/monocle2.Rmd/traj2-1.png" target="_blank">f6d94b4</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2020-02-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/d5c995e66f2128a323a54f4348d5b7e2582968dc/docs/figure/monocle2.Rmd/traj2-1.png" target="_blank">d5c995e</a>
@@ -1301,6 +1521,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/BUStools/BUS_notebooks_R/blob/f6d94b42bb942fecf771c82962a880d81ee13f5a/docs/figure/monocle2.Rmd/traj3-1.png" target="_blank">f6d94b4</a>
+</td>
+<td>
+Lambda Moses
+</td>
+<td>
+2020-02-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/BUStools/BUS_notebooks_R/blob/d5c995e66f2128a323a54f4348d5b7e2582968dc/docs/figure/monocle2.Rmd/traj3-1.png" target="_blank">d5c995e</a>
